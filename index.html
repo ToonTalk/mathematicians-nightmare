@@ -792,6 +792,9 @@ const ringCols = new Float32Array(NRINGS * 3);
 RINGS.forEach((R, i) => { const c = new THREE.Color(R.hex); ringCols.set([c.r, c.g, c.b], i * 3); });
 const groundMat = new THREE.ShaderMaterial({
   fog: true,
+  // Push the floor back in the depth test, so feet, shadows and hems resting on it
+  // always win instead of flickering against it (z-fighting) at a distance.
+  polygonOffset: true, polygonOffsetFactor: 4, polygonOffsetUnits: 4,
   uniforms: THREE.UniformsUtils.merge([THREE.UniformsLib.fog, {
     uA: { value: ringUniform(R => R.a) }, uB: { value: ringUniform(R => R.b) }, uCol: { value: ringCols },
     uS: { value: S }, uTime: { value: 0 }, uProcFrom: { value: 5 }, uPatch: { value: new THREE.Vector3(0, 0, 0) },
