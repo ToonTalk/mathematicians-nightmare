@@ -47,6 +47,8 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--gold);outline-o
 #cap.song{font-style:italic;color:#f4e3b2}
 #cap.song::before{content:"♪ ";font-style:normal;color:var(--gold)}
 #cap small{display:block;font-size:.7em;font-style:italic;color:var(--dim);margin-top:.35em}
+#title a,#cap a{pointer-events:auto;color:var(--ink);text-decoration-color:var(--gold);text-underline-offset:2px}
+#title a:hover,#cap a:hover{color:var(--gold)}
 #seek{pointer-events:auto;cursor:pointer;width:min(440px,80%);margin:6px auto 0;padding:8px 0;touch-action:none;border-radius:4px}
 #seek:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
 #prog{height:3px;background:var(--edge);border-radius:2px;overflow:hidden;transition:height .15s}
@@ -97,7 +99,7 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--gold);outline-o
 
 <header id="title" class="hud">
   <h1>The Mathematician's Nightmare</h1>
-  <p>The vision of Professor Squarepunt, after Bertrand Russell (1954)</p>
+  <p>The vision of Professor Squarepunt, after Bertrand Russell’s <a href="https://archive.org/details/nightmaresofemin032011mbp/page/40/mode/1up" target="_blank" rel="noopener">“The Mathematician’s Nightmare”</a> (1954) · <a href="https://docs.google.com/document/d/1jwWDMvPcTK_UEbPh5Ig8-5sIYsG6fUsTjigtBtzRw9k/edit?usp=sharing" target="_blank" rel="noopener">How this was made</a></p>
 </header>
 
 <nav id="bar" class="hud" aria-label="Controls">
@@ -181,7 +183,7 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--gold);outline-o
     "profWake": {"voice": "ash", "pitch": 0.94, "instructions": "An elderly English professor just waking from a nightmare: drowsy, relieved and wryly amused, murmuring to himself."}
   },
   "lines": [
-    {"id": "t00", "text": "Professor Squarepunt, a mathematician, has fallen asleep.", "sub": "After Bertrand Russell, “The Mathematician’s Nightmare” (1954)"},
+    {"id": "t00", "text": "Professor Squarepunt, a mathematician, has fallen asleep.", "sub": "After Bertrand Russell, <a href='https://archive.org/details/nightmaresofemin032011mbp/page/40/mode/1up' target='_blank' rel='noopener'>“The Mathematician’s Nightmare”</a> (1954)"},
     {"id": "t01", "text": "He has always thought of numbers as bloodless categories. In his dream they are alive and breathing, with all the passions of his colleagues."},
     {"id": "t02", "text": "He stands at the center of the dream. Beside him stands Pi, the Master of Ceremonies."},
     {"id": "t03", "text": "Pi wears a mask; no one could look upon that face and live. Behind it, cold eyes watch everything."},
@@ -248,7 +250,7 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--gold);outline-o
     {"id": "f12", "who": "profShout", "text": "Avaunt! You are nothing but Symbolic Conveniences!"},
     {"id": "f13", "text": "With a banshee wail, the whole vast array dissolved into mist. And as he woke, the professor heard himself saying:"},
     {"id": "f14", "who": "profWake", "text": "So much for Plato!"},
-    {"id": "f15", "silent": true, "text": "The End", "sub": "After Bertrand Russell, “The Mathematician’s Nightmare”, in Nightmares of Eminent Persons (1954)"},
+    {"id": "f15", "silent": true, "text": "The End", "sub": "After Bertrand Russell, <a href='https://archive.org/details/nightmaresofemin032011mbp/page/40/mode/1up' target='_blank' rel='noopener'>“The Mathematician’s Nightmare”</a>, in Nightmares of Eminent Persons (1954) · <a href='https://docs.google.com/document/d/1jwWDMvPcTK_UEbPh5Ig8-5sIYsG6fUsTjigtBtzRw9k/edit?usp=sharing' target='_blank' rel='noopener'>How this animation was made</a>"},
     {"id": "x00", "silent": true, "text": "Your turn. Drag to look around, scroll or pinch to zoom, click any number to meet it, or find one by name."}
   ]
 }

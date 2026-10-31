@@ -1,8 +1,10 @@
 # The Mathematician's Nightmare
 
-A narrated 3D animation of Bertrand Russell's story "The Mathematician's Nightmare: The Vision of Professor Squarepunt" (in *Nightmares of Eminent Persons*, 1954).
+A narrated 3D animation of Bertrand Russell's story ["The Mathematician's Nightmare: The Vision of Professor Squarepunt"](https://archive.org/details/nightmaresofemin032011mbp/page/40/mode/1up) (in *Nightmares of Eminent Persons*, 1954).
 
 **Watch it:** https://toontalk.github.io/mathematicians-nightmare/
+
+**How it was made:** [a post about building this animation](https://docs.google.com/document/d/1jwWDMvPcTK_UEbPh5Ig8-5sIYsG6fUsTjigtBtzRw9k/edit?usp=sharing)
 
 Professor Squarepunt dreams that numbers are living beings, standing in endless concentric circles around Pi, the masked Master of Ceremonies. The tour follows the story: the circles and their uniforms, the ballet and the numbers' ode, their quarrelsome introductions, and the revolt of the prime 137. Afterwards you can explore the plain, click any number to meet it, or find any number up to ten billion.
 
