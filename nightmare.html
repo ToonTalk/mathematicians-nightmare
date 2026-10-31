@@ -969,8 +969,10 @@ function buildProfessor() {
     const arm = new THREE.Group(); arm.position.set(sx * .26, 1.26, 0); g.add(arm); arms.push(arm);
     arm.add(between([0, 0, 0], [sx * .08, -.46, .08], .075, gown));
     const hand = new THREE.Mesh(new THREE.SphereGeometry(.055, 10, 8), skin); hand.position.set(sx * .085, -.52, .09); arm.add(hand);
-    const slip = new THREE.Mesh(new THREE.BoxGeometry(.11, .06, .24), new THREE.MeshLambertMaterial({ color: '#3c2a20' }));
-    slip.position.set(sx * .1, .03, .14); g.add(slip);
+    // slippers whose toes clearly poke out from under the gown (when they only grazed
+    // the hem, the two surfaces fought and the slivers flickered)
+    const slip = new THREE.Mesh(new THREE.BoxGeometry(.11, .07, .22), new THREE.MeshLambertMaterial({ color: '#3c2a20' }));
+    slip.position.set(sx * .1, .035, .27); g.add(slip);
   }
   const head = new THREE.Group(); head.position.y = 1.56; g.add(head);
   head.add(new THREE.Mesh(new THREE.SphereGeometry(.17, 24, 16), skin));
