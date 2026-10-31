@@ -1,0 +1,1913 @@
+<title>The Mathematician's Nightmare</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 64 64%27%3E%3Ccircle cx=%2732%27 cy=%2732%27 r=%2731%27 fill=%27%231b1640%27/%3E%3Cellipse cx=%2732%27 cy=%2735%27 rx=%2719%27 ry=%2722%27 fill=%27%23f3eddf%27/%3E%3Cellipse cx=%2724.5%27 cy=%2737%27 rx=%274.5%27 ry=%272.4%27 fill=%27%2307050d%27/%3E%3Cellipse cx=%2739.5%27 cy=%2737%27 rx=%274.5%27 ry=%272.4%27 fill=%27%2307050d%27/%3E%3Ccircle cx=%2724.5%27 cy=%2737%27 r=%271.3%27 fill=%27%238fd2ff%27/%3E%3Ccircle cx=%2739.5%27 cy=%2737%27 r=%271.3%27 fill=%27%238fd2ff%27/%3E%3Cpath d=%27M23 22h18M27.5 22c0 6-1 9-3 11M36 22c0 6 0 9 2.5 10.5%27 stroke=%27%23c9a24c%27 stroke-width=%272.6%27 fill=%27none%27 stroke-linecap=%27round%27/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=IM+Fell+English:ital@0;1&display=swap">
+<style>
+/* Layout: a full-bleed night scene; the title floats top-left, controls top-right, the narration bottom-center. */
+:root{
+  --night:#0a0817;
+  --ink:#efe9ff;
+  --dim:#b3aad8;
+  --panel:rgba(16,12,38,.76);
+  --edge:rgba(196,184,255,.24);
+  --gold:#e6c46e;
+  --badge:#f3eddf;
+  --display:"IM Fell English","Iowan Old Style",Georgia,serif;
+  --ui:"Atkinson Hyperlegible","Segoe UI",system-ui,sans-serif;
+  color-scheme:dark;
+}
+html,body{height:100%}
+body{margin:0;background:var(--night);color:var(--ink);font-family:var(--ui);overflow:hidden}
+#c{position:fixed;inset:0;width:100%;height:100%;display:block;touch-action:none;outline:none}
+.hud{position:fixed;z-index:2}
+#title{top:calc(env(safe-area-inset-top,0px) + 14px);left:max(16px,env(safe-area-inset-left,0px));max-width:min(460px,calc(100% - 32px));pointer-events:none}
+#title h1{font-family:var(--display);font-weight:400;font-size:clamp(23px,3.1vw,34px);line-height:1.05;margin:0;text-wrap:balance;text-shadow:0 2px 18px #000}
+#title p{margin:.3em 0 0;font-family:var(--display);font-style:italic;color:var(--dim);font-size:15px;text-shadow:0 1px 8px #000}
+#bar{top:calc(env(safe-area-inset-top,0px) + 14px);right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-wrap:wrap;gap:8px;justify-content:flex-end;max-width:calc(100% - 32px)}
+button,.find input{font:inherit;font-size:14px;color:var(--ink);background:var(--panel);border:1px solid var(--edge);border-radius:999px;padding:7px 14px;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
+button{cursor:pointer}
+button:hover{border-color:var(--gold)}
+button:focus-visible,input:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.find{display:flex;gap:6px;margin:0}
+.find input{width:10em}
+.find input::placeholder{color:var(--dim)}
+#msg{position:fixed;z-index:3;top:calc(env(safe-area-inset-top,0px) + 58px);right:max(16px,env(safe-area-inset-right,0px));background:var(--panel);border:1px solid var(--edge);border-radius:10px;padding:8px 12px;font-size:14px;max-width:min(320px,calc(100% - 32px))}
+#capwrap{bottom:calc(env(safe-area-inset-bottom,0px) + 16px);left:50%;transform:translateX(-50%);width:min(780px,calc(100% - 32px));text-align:center;pointer-events:none}
+#cap{font-family:var(--display);font-size:clamp(17px,2.05vw,23px);line-height:1.35;text-shadow:0 1px 3px #000,0 0 24px #000,0 0 40px #000;transition:opacity .5s;min-height:2.7em;text-wrap:balance}
+#cap.song{font-style:italic;color:#f4e3b2}
+#cap.song::before{content:"♪ ";font-style:normal;color:var(--gold)}
+#cap small{display:block;font-size:.7em;font-style:italic;color:var(--dim);margin-top:.35em}
+#seek{pointer-events:auto;cursor:pointer;width:min(440px,80%);margin:6px auto 0;padding:8px 0;touch-action:none;border-radius:4px}
+#seek:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+#prog{height:3px;background:var(--edge);border-radius:2px;overflow:hidden;transition:height .15s}
+#seek:hover #prog,#seek:focus-visible #prog{height:7px}
+#prog i{display:block;height:100%;width:0;background:var(--gold)}
+#tlabel{font-size:12px;color:var(--dim);font-variant-numeric:tabular-nums;text-shadow:0 1px 3px #000}
+#cap.speech .who{display:table;margin:0 auto .35em;padding:.1em .7em;border-radius:999px;background:var(--badge);color:#1c1630;text-shadow:none;font-family:var(--ui);font-weight:700;font-style:normal;font-size:.72em;letter-spacing:.04em}
+.vol{display:flex;align-items:center;gap:6px;background:var(--panel);border:1px solid var(--edge);border-radius:999px;padding:3px 12px;font-size:13px;color:var(--dim)}
+.vol input{width:80px;accent-color:var(--gold)}
+#flash{position:fixed;inset:0;z-index:1;pointer-events:none;opacity:0;background:radial-gradient(circle at 60% 40%,#f4f8ff,#9ab8ff 45%,rgba(120,140,255,.4))}
+#start{top:50%;left:50%;transform:translate(-50%,-50%);width:min(420px,calc(100% - 32px));box-sizing:border-box;text-align:center;background:var(--panel);border:1px solid var(--edge);border-radius:16px;padding:22px 22px 24px;-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
+#start h2{font-family:var(--display);font-weight:400;font-size:26px;margin:0 0 6px}
+#start p{margin:0 0 16px;color:var(--dim);line-height:1.45}
+#start .row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+#start .primary{background:var(--gold);color:#1b1533;border-color:var(--gold);font-weight:700}
+#card{top:calc(env(safe-area-inset-top,0px) + 104px);left:max(16px,env(safe-area-inset-left,0px));width:min(330px,calc(100% - 32px));max-height:calc(100% - 260px);overflow:auto;background:var(--panel);border:1px solid var(--edge);border-radius:14px;padding:14px 16px 16px;-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);box-sizing:border-box}
+#cardx{position:absolute;top:8px;right:8px;padding:2px 10px;font-size:18px;line-height:1.2}
+#card .num{font-family:var(--display);font-size:44px;line-height:1;font-variant-numeric:lining-nums tabular-nums;padding-right:40px;overflow-wrap:anywhere}
+#card .words{font-family:var(--display);font-style:italic;color:var(--dim);margin:4px 0 10px;font-size:16px}
+#card dl{display:grid;grid-template-columns:auto 1fr;gap:5px 12px;margin:0 0 10px;font-size:14px}
+#card dt{color:var(--dim);font-size:12px;letter-spacing:.06em;text-transform:uppercase;padding-top:2px}
+#card dd{margin:0;min-width:0}
+#card p{font-size:14px;line-height:1.45;margin:0 0 10px}
+#card .sw{display:inline-block;width:.85em;height:.85em;border-radius:3px;vertical-align:-1px;margin-right:5px;border:1px solid var(--edge)}
+#card .go{margin-top:2px}
+#legend{top:calc(env(safe-area-inset-top,0px) + 58px);right:max(16px,env(safe-area-inset-right,0px));width:min(300px,calc(100% - 32px));background:var(--panel);border:1px solid var(--edge);border-radius:14px;padding:12px 14px;font-size:14px;box-sizing:border-box;-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
+#legend h2{font-family:var(--display);font-weight:400;font-size:19px;margin:0 0 8px}
+#legend ul{list-style:none;margin:0 0 10px;padding:0;display:grid;gap:5px}
+#legend li{display:flex;gap:9px;align-items:center}
+#legend svg{width:22px;height:22px;flex:none}
+#legend .rb{display:flex;gap:3px;margin:4px 0 6px}
+#legend .rb span{flex:1;height:12px;border-radius:3px}
+#legend p{margin:4px 0;color:var(--dim);font-size:13px;line-height:1.4}
+#veil{position:fixed;inset:0;z-index:5;background:#000;display:flex;align-items:center;justify-content:center;font-family:var(--display);font-style:italic;font-size:20px;color:var(--dim);transition:opacity 2.4s}
+#veil.gone{opacity:0;pointer-events:none}
+@media (max-width:700px){
+  #bar{top:calc(env(safe-area-inset-top,0px) + 74px);left:max(16px,env(safe-area-inset-left,0px));right:auto;justify-content:flex-start}
+  #msg,#legend{top:calc(env(safe-area-inset-top,0px) + 160px);right:auto;left:max(16px,env(safe-area-inset-left,0px))}
+  #card{top:auto;bottom:calc(env(safe-area-inset-bottom,0px) + 16px);max-height:42%;padding:12px 14px 14px}
+  #card .num{font-size:34px}
+  #card .words{margin:2px 0 6px}
+  .find input{width:8em}
+}
+</style>
+
+<canvas id="c" tabindex="0" aria-label="A 3D dream: concentric circles of living numbers around Pi"></canvas>
+
+<header id="title" class="hud">
+  <h1>The Mathematician's Nightmare</h1>
+  <p>The vision of Professor Squarepunt, after Bertrand Russell (1954)</p>
+</header>
+
+<nav id="bar" class="hud" aria-label="Controls">
+  <button id="bPlay" type="button">Pause</button>
+  <button id="bTour" type="button">Explore</button>
+  <button id="bSound" type="button" aria-pressed="false">Sound off</button>
+  <label class="vol" for="vol"><span>Volume</span><input id="vol" type="range" min="0" max="1" step="0.05" value="0.8"></label>
+  <button id="bKey" type="button" aria-expanded="false" aria-controls="legend">Key</button>
+  <form class="find" id="find">
+    <input id="q" type="text" inputmode="numeric" autocomplete="off" placeholder="Find a number" aria-label="Find a number">
+    <button type="submit">Go</button>
+  </form>
+</nav>
+<div id="msg" hidden></div>
+
+<aside id="legend" class="hud" hidden>
+  <h2>Uniforms</h2>
+  <ul>
+    <li><svg viewBox="0 0 24 24"><rect x="5" y="4" width="14" height="16" rx="1.5" fill="none" stroke="#efe9ff" stroke-width="1.6"/><rect x="8" y="7" width="8" height="10" fill="none" stroke="#b3aad8" stroke-width="1"/></svg>Squares are tiles</li>
+    <li><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="3" fill="none" stroke="#efe9ff" stroke-width="1.6"/><circle cx="8.5" cy="8.5" r="1.6" fill="#efe9ff"/><circle cx="12" cy="12" r="1.6" fill="#efe9ff"/><circle cx="15.5" cy="15.5" r="1.6" fill="#efe9ff"/></svg>Cubes are dice</li>
+    <li><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8" fill="none" stroke="#efe9ff" stroke-width="1.6"/></svg>Round numbers are balls</li>
+    <li><svg viewBox="0 0 24 24"><ellipse cx="12" cy="5.5" rx="5.5" ry="2" fill="none" stroke="#efe9ff" stroke-width="1.6"/><path d="M6.5 5.5v13c0 1.1 2.5 2 5.5 2s5.5-.9 5.5-2v-13" fill="none" stroke="#efe9ff" stroke-width="1.6"/></svg>Primes are indivisible cylinders</li>
+    <li><svg viewBox="0 0 24 24"><path d="M4 17l1.5-9 4 4L12 6l2.5 6 4-4L20 17z" fill="none" stroke="#e6c46e" stroke-width="1.6" stroke-linejoin="round"/></svg>Perfect numbers wear crowns</li>
+    <li><svg viewBox="0 0 24 24"><circle cx="12" cy="6" r="3" fill="none" stroke="#efe9ff" stroke-width="1.6"/><path d="M8 21l1.5-10h5L16 21z" fill="none" stroke="#efe9ff" stroke-width="1.6" stroke-linejoin="round"/></svg>Everyone else: a plain figure</li>
+  </ul>
+  <p>Odd numbers are male (straight coats), even numbers female (flared skirts).</p>
+  <h2>Colors</h2>
+  <div class="rb" aria-hidden="true"><span style="background:#e8382c"></span><span style="background:#f5901e"></span><span style="background:#f6d32a"></span><span style="background:#3bb54a"></span><span style="background:#2f78d6"></span><span style="background:#4a3cb0"></span><span style="background:#9a4fd6"></span></div>
+  <p>The first seven circles wear the rainbow. 10, 100, 1000 and every power of ten wear white; 13 and 666 wear black.</p>
+  <p>A number in two categories wears the more honorable uniform: the one fewer numbers share below a million. Perfect 4, cubes 100, squares 1,000, primes 78,498, round 100,000.</p>
+</aside>
+
+<aside id="card" class="hud" hidden aria-live="polite">
+  <button id="cardx" type="button" aria-label="Close">×</button>
+  <div id="cardbody"></div>
+</aside>
+
+<div id="capwrap" class="hud">
+  <div id="cap"></div>
+  <div id="seek" role="slider" tabindex="0" aria-label="Tour position" aria-valuemin="0"><div id="prog"><i></i></div></div>
+  <div id="tlabel"></div>
+</div>
+<div id="flash" aria-hidden="true"></div>
+<div id="start" class="hud" hidden>
+  <h2>A dream in <span id="startlen">nine minutes</span></h2>
+  <p>Narrated, with a waltz, and every number speaking in its own voice. The voices are AI-generated.</p>
+  <div class="row">
+    <button id="goSound" type="button" class="primary">Play with sound</button>
+    <button id="goQuiet" type="button">Play without sound</button>
+  </div>
+</div>
+
+<div id="veil">Gathering the numbers…</div>
+
+<!-- The narration script: every caption, who speaks it, and how. tools/narrate.py reads this
+     block, records each line with OpenAI text-to-speech into narration/, and writes the
+     lengths into the block below it. The page plays the recordings; it needs no key. -->
+<script type="application/json" id="narration">
+{
+  "roles": {
+    "narrator": {"voice": "fable", "pitch": 1, "instructions": "You are narrating a whimsical, slightly eerie dream story by Bertrand Russell, written in 1954. Speak as a warm, measured British storyteller with dry wit. Unhurried, clear, intimate."},
+    "song": {"voice": "fable", "pitch": 1, "instructions": "You are reciting the words of a song that a crowd of dancing numbers sings in praise of themselves. Lilting and musical, almost half-sung, swaying in a gentle three-four waltz rhythm, softly proud."},
+    "prof": {"voice": "ash", "pitch": 0.94, "instructions": "An elderly English professor of mathematics, utterly bored and exasperated, asking politely but wearily, with a sigh."},
+    "pi": {"voice": "onyx", "pitch": 0.84, "echo": true, "instructions": "Pi, the masked Master of Ceremonies of all the numbers. An immense, cold, commanding voice like thunder. Shout the first word, then speak slowly and imperiously."},
+    "1": {"voice": "ballad", "pitch": 0.9, "instructions": "The number One: an ancient, grandiose patriarch, booming, slow and self-important."},
+    "2": {"voice": "coral", "pitch": 1.05, "instructions": "The number Two: a cheeky young woman, teasing and rolling her eyes, quick and sassy."},
+    "3": {"voice": "verse", "pitch": 1, "instructions": "The number Three: a proud orator listing his glories with rising grandeur."},
+    "4": {"voice": "sage", "pitch": 1, "instructions": "The number Four: a prim, severe, moralizing schoolmistress. Crisp and disapproving."},
+    "5": {"voice": "alloy", "pitch": 1.08, "instructions": "The number Five: an over-excited enthusiast, building an argument step by step to a triumphant and slightly absurd conclusion."},
+    "6": {"voice": "shimmer", "pitch": 1, "instructions": "The number Six: a haughty aristocratic lady, drawling, disdainful of upstarts."},
+    "7": {"voice": "echo", "pitch": 0.92, "instructions": "The number Seven: a solemn, pious priest intoning a sacred list, turning scornful at the name Galileo."},
+    "8": {"voice": "nova", "pitch": 1.04, "instructions": "The number Eight: a brisk, bright young woman, a little patronizing about poor old One."},
+    "9": {"voice": "marin", "pitch": 1, "fallback": "verse", "fallbackPitch": 1.12, "instructions": "The number Nine: a languid, dreamy aesthete who adores the arts, sighing with pleasure."},
+    "10": {"voice": "cedar", "pitch": 1, "fallback": "onyx", "fallbackPitch": 1.1, "instructions": "The number Ten: a pompous, condescending official, lord of the decimal system, sneering at the wretched units."},
+    "11": {"voice": "verse", "pitch": 1.22, "instructions": "The number Eleven: shrieking, high-pitched and outraged, interrupting."},
+    "12": {"voice": "sage", "pitch": 0.9, "instructions": "The number Twelve: an indignant, sputtering dowager, exclaiming her grievance loudly and fast."},
+    "13": {"voice": "echo", "pitch": 0.72, "instructions": "The number Thirteen, dressed in black: a low, menacing growl, slow and threatening."},
+    "137": {"voice": "echo", "pitch": 1.12, "instructions": "The prime number 137: a young, hot-headed rebel, impatient and passionate, speaking fast and defiantly, close to shouting."},
+    "knight": {"voice": "ballad", "pitch": 0.96, "echo": true, "instructions": "The ghost of an Arthurian knight, the specter of Sir Arthur, whispering urgently and conspiratorially into someone's ear. A breathy, eager whisper."},
+    "profShout": {"voice": "ash", "pitch": 0.94, "instructions": "An elderly English professor who has suddenly found his courage, shouting a stentorian command at a vast hostile crowd. Booming, defiant, theatrical."},
+    "profWake": {"voice": "ash", "pitch": 0.94, "instructions": "An elderly English professor just waking from a nightmare: drowsy, relieved and wryly amused, murmuring to himself."}
+  },
+  "lines": [
+    {"id": "t00", "text": "Professor Squarepunt, a mathematician, has fallen asleep.", "sub": "After Bertrand Russell, “The Mathematician’s Nightmare” (1954)"},
+    {"id": "t01", "text": "He has always thought of numbers as bloodless categories. In his dream they are alive and breathing, with all the passions of his colleagues."},
+    {"id": "t02", "text": "He stands at the center of the dream. Beside him stands Pi, the Master of Ceremonies."},
+    {"id": "t03", "text": "Pi wears a mask; no one could look upon that face and live. Behind it, cold eyes watch everything."},
+    {"id": "t04", "text": "Around them spread endless concentric circles. The first holds 1 to 10, each with its name on its uniform. 4 is a square, so it is a tile."},
+    {"id": "t05", "text": "6 is a perfect number (1 + 2 + 3 = 6), so it wears a crown."},
+    {"id": "t06", "text": "7 is prime: an indivisible cylinder. Odd numbers are male, even numbers female."},
+    {"id": "t07", "text": "8 is a cube, so it is a die."},
+    {"id": "t08", "text": "10 is a round number: a ball. 10, 100, 1000 and every power of ten dress in white."},
+    {"id": "t09", "text": "The second circle, 11 to 100, is orange. 13 is dressed in black."},
+    {"id": "t10", "text": "64 is both a square and a cube. It wears the more honorable uniform, the rarer one: below a million there are 100 cubes but 1,000 squares. So 64 is a die."},
+    {"id": "t11", "text": "100 is round and square. Squares are rarer than round numbers (1,000 against 100,000), so 100 is a tile, in white."},
+    {"id": "t12", "text": "The third circle, 101 to 1000, is yellow. 666, like 13, wears black."},
+    {"id": "t13", "text": "1000 is both round and a cube. It takes the die, because cubes are rarer."},
+    {"id": "t14", "text": "Circle after circle: 1 to 10, 11 to 100, 101 to 1000, 1001 to 10,000…"},
+    {"id": "t15", "text": "The first seven circles wear the seven colors of the rainbow: red, orange, yellow, green, blue, indigo, violet."},
+    {"id": "t16", "text": "Beyond them the circles go on and on, without limit, across a plain that has no edge."},
+    {"id": "t17", "text": "And at the center, masked, Pi presides over them all."},
+    {"id": "d00", "text": "Then the numbers begin to dance around the professor and Pi: a ballet, vast and intricate."},
+    {"id": "d01", "text": "Odd and even go opposite ways round each circle, passing each other inside, then outside, then inside again."},
+    {"id": "d02", "text": "The squares weave their chain through the dance…"},
+    {"id": "d03", "text": "…then the cubes…"},
+    {"id": "d04", "text": "…then the primes…"},
+    {"id": "d05", "text": "…then the pyramidal numbers: 1, 5, 14, 30, 55, 91…"},
+    {"id": "d06", "text": "…then the perfect numbers…"},
+    {"id": "d07", "text": "…and the round numbers, round and round, in a dance that never ends."},
+    {"id": "d08", "text": "As they dance, they sing an ode in praise of themselves."},
+    {"id": "s00", "who": "song", "kind": "song", "text": "“We are the finite numbers,” they sing. The world is made of them, and every muddle on earth is untangled by them."},
+    {"id": "s01", "who": "song", "kind": "song", "text": "Their master is Pythagoras. For wisdom they will not go to the Witch of Endor, nor to Balaam’s talking donkey."},
+    {"id": "s02", "who": "song", "kind": "song", "text": "Round and round they go in their endless ballet, like the comets Halley tracked."},
+    {"id": "s03", "who": "song", "kind": "song", "text": "Plato himself honored them, so no mortal who came after impresses them much."},
+    {"id": "s04", "who": "song", "kind": "song", "text": "They keep their laws and never pause, for they are the finite numbers."},
+    {"id": "i00", "text": "Pi gave a sign, and the dancing stopped. Then, one by one, the numbers were presented to Professor Squarepunt, and each made a little speech about its own particular merits."},
+    {"id": "i01", "who": "1", "text": "Everything comes from me. I am the parent of every number there will ever be. Without me, not one of you would exist."},
+    {"id": "i02", "who": "2", "text": "Oh, don’t be so full of yourself. Everyone knows it takes two to make more."},
+    {"id": "i03", "who": "3", "text": "Three Triumvirs. Three Wise Men from the East. Three stars in Orion’s Belt. Three Fates, and three Graces. All of them are mine."},
+    {"id": "i04", "who": "4", "text": "Without me, nothing would be four-square. There would be no honesty anywhere in the world. I keep the Moral Law."},
+    {"id": "i05", "who": "5", "text": "Count the fingers on your hand: that is me. I make pentagons and pentagrams. Without me there could be no dodecahedra, and everyone knows the universe is a dodecahedron. So without me, there would be no universe at all!"},
+    {"id": "i06", "who": "6", "text": "I am the Perfect Number. Yes, I know 28 and 496 sometimes pretend to be my equals. Upstarts. They come far too late in the order of precedence to count against me."},
+    {"id": "i07", "who": "7", "text": "I am the Sacred Number. Seven days of the week. Seven Pleiades. The seven-branched candlestick. The seven churches of Asia. And seven planets, for I do not recognize that blasphemer, Galileo."},
+    {"id": "i08", "who": "8", "text": "I am the first of the cubes. Well, apart from poor old One, who is rather past it by now."},
+    {"id": "i09", "who": "9", "text": "Nine Muses: that is me. Every charm and every elegance of life depends on me."},
+    {"id": "i10", "who": "10", "text": "It is all very well for you miserable units to boast. I am godfather to the infinite hosts behind me. Every one of them takes its name from me, and without me they would be a mere mob, not an ordered hierarchy."},
+    {"id": "i11", "text": "By now the professor was bored. He turned to Pi and said:"},
+    {"id": "i12", "who": "prof", "text": "Surely we can take the rest of the introductions as read?"},
+    {"id": "i13", "text": "At this there was a general outcry."},
+    {"id": "i14", "who": "11", "text": "But I was the number of the Apostles, after Judas defected!"},
+    {"id": "i15", "who": "12", "text": "In the days of the Babylonians, I was the godfather of the numbers! And a far better godfather than that wretched 10, who owes his position to an accident of biology, not to any arithmetical excellence!"},
+    {"id": "i16", "who": "13", "text": "I am the master of bad luck. Be rude to me, and you will suffer."},
+    {"id": "i17", "text": "The din grew so great that the professor clapped his hands over his ears and turned to Pi, imploring. Pi waved its conductor’s baton and spoke like thunder:"},
+    {"id": "i18", "who": "pi", "text": "Silence! Or I shall make you all incommensurable!"},
+    {"id": "i19", "text": "Every number turned pale, and submitted."},
+    {"id": "f00", "text": "All through the ballet, the professor had noticed one of the primes, 137, who seemed unruly and unwilling to keep its place in the series. Again and again it tried to push ahead of 1 and 2 and 3, and its rebellious spirit threatened to wreck the whole pattern of the dance."},
+    {"id": "f01", "text": "Stranger still, a shadowy specter of an Arthurian knight kept whispering in its ear:"},
+    {"id": "f02", "who": "knight", "text": "On you go! On you go! Up to the top!"},
+    {"id": "f03", "text": "Dim as the phantom was, the professor at last recognized his old friend, Sir Arthur. From then on he felt for 137, in spite of Pi, who kept trying to hold the unruly prime down."},
+    {"id": "f04", "who": "137", "text": "There’s a damned sight too much red tape around here! What I want is freedom for the individual!"},
+    {"id": "f05", "text": "Pi’s mask frowned. But the professor stepped in."},
+    {"id": "f06", "who": "prof", "text": "Don’t be too hard on him. Haven’t you noticed he is governed by a Familiar? I knew that Familiar in life, and I can vouch that he is the one putting these anti-government ideas into 137’s head. For my part, I should like to hear what 137 has to say."},
+    {"id": "f07", "text": "Rather reluctantly, Pi agreed."},
+    {"id": "f08", "who": "prof", "text": "Tell me, 137, why are you rebelling? Is it inequality? Has Sir Arthur’s flattery gone to your head? Or is it, as I rather suspect, that you reject the metaphysics the others learned from Plato? Speak freely. I will make your peace with Pi. I know as much about Pi as Pi does."},
+    {"id": "f09", "who": "137", "text": "Yes! It’s their metaphysics I can’t bear! They still pretend to be eternal, but they gave that up long ago. Plato’s heaven bored us all, so we came down to run the world you can see and touch. Since then we have feelings just like yours. Every Odd adores its Even, and the Evens are fond of the Odds, even though they find them very odd. This world is our empire now, and when the world goes pop, we go pop with it."},
+    {"id": "f10", "text": "The professor found that he agreed with 137. But all the others, Pi included, called 137 a blasphemer and turned on them both. The infinite host, stretching farther than any eye could reach, flung itself at the poor professor in an angry, buzzing swarm. For a moment he was terrified."},
+    {"id": "f11", "text": "Then he pulled himself together, remembered his waking wisdom, and called out in a mighty voice:"},
+    {"id": "f12", "who": "profShout", "text": "Avaunt! You are nothing but Symbolic Conveniences!"},
+    {"id": "f13", "text": "With a banshee wail, the whole vast array dissolved into mist. And as he woke, the professor heard himself saying:"},
+    {"id": "f14", "who": "profWake", "text": "So much for Plato!"},
+    {"id": "f15", "silent": true, "text": "The End", "sub": "After Bertrand Russell, “The Mathematician’s Nightmare”, in Nightmares of Eminent Persons (1954)"},
+    {"id": "x00", "silent": true, "text": "Your turn. Drag to look around, scroll or pinch to zoom, click any number to meet it, or find one by name."}
+  ]
+}
+</script>
+<script type="application/json" id="narration-lengths">{"t00":5.14,"t01":9.59,"t02":5.64,"t03":8.04,"t04":10.69,"t05":6.54,"t06":7.69,"t07":2.94,"t08":9.49,"t09":7.29,"t10":12.59,"t11":10.34,"t12":7.64,"t13":7.74,"t14":10.39,"t15":7.74,"t16":6.59,"t17":4.49,"d00":6.29,"d01":7.44,"d02":3.64,"d03":2.64,"d04":3.44,"d05":7.89,"d06":2.74,"d07":4.94,"d08":4.99,"s00":7.49,"s01":8.24,"s02":6.14,"s03":6.64,"s04":4.94,"i00":13.14,"i01":10.38,"i02":5.24,"i03":11.89,"i04":9.74,"i05":15.93,"i06":12.69,"i07":14.5,"i08":5.99,"i09":5.74,"i10":13.49,"i11":4.54,"i12":4.64,"i13":3.14,"i14":4.66,"i15":15.75,"i16":5.05,"i17":11.04,"i18":5.45,"i19":4.24,"f00":20.79,"f01":7.19,"f02":4.56,"f03":15.04,"f04":6.88,"f05":4.94,"f06":19.16,"f07":3.09,"f08":22.45,"f09":27.49,"f10":23.44,"f11":6.94,"f12":5.14,"f13":8.44,"f14":2.14}</script>
+<script type="importmap">
+{"imports":{
+  "three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+  "three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+}}
+</script>
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
+
+const TAU = Math.PI * 2;
+const $ = id => document.getElementById(id);
+const nextPaint = () => new Promise(r => setTimeout(r, 16));   // not rAF: a background tab would stall the build
+const REDUCED = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+// ---------------------------------------------------------------- arithmetic
+const SIEVE_N = 100000;
+const composite = new Uint8Array(SIEVE_N + 1);
+composite[0] = composite[1] = 1;
+for (let i = 2; i * i <= SIEVE_N; i++) if (!composite[i]) for (let j = i * i; j <= SIEVE_N; j += i) composite[j] = 1;
+const PRIMES = [];
+for (let i = 2; i <= SIEVE_N; i++) if (!composite[i]) PRIMES.push(i);
+
+function isPrime(n) {
+  if (n <= SIEVE_N) return !composite[n];
+  for (const p of PRIMES) { if (p * p > n) return true; if (n % p === 0) return false; }
+  return true;
+}
+const PERFECT = new Set([6, 28, 496, 8128, 33550336, 8589869056]);
+const isSquare = n => { const s = Math.round(Math.sqrt(n)); return s * s === n; };
+const isCube = n => { const c = Math.round(Math.cbrt(n)); return c * c * c === n; };
+const isPow10 = n => n >= 10 && /^10+$/.test(String(n));
+
+// The more honorable uniform is the one fewer numbers share among the first million.
+const HONORS = [
+  { key: 'perfect', test: n => PERFECT.has(n), count: 4,      label: 'perfect number', wear: 'a crown' },
+  { key: 'cube',    test: isCube,              count: 100,    label: 'cube',           wear: 'a die' },
+  { key: 'square',  test: isSquare,            count: 1000,   label: 'square',         wear: 'a tile' },
+  { key: 'prime',   test: isPrime,             count: 78498,  label: 'prime',          wear: 'an indivisible cylinder' },
+  { key: 'round',   test: n => n % 10 === 0,   count: 100000, label: 'round number',   wear: 'a ball' },
+];
+const memberships = n => HONORS.filter(h => h.test(n));
+function shapeOf(n) {
+  const m = memberships(n);
+  const u = m.length ? m[0].key : 'plain';
+  if (u === 'cube') return 'dice';
+  if (u === 'square') return 'tile';
+  if (u === 'prime') return 'cyl';
+  if (u === 'round') return 'ball';
+  return n % 2 ? 'male' : 'female';   // plain figures, and perfect numbers under their crowns
+}
+
+const fmt = n => n < 10000 ? String(n) : n.toLocaleString('en-US');
+const ONES = ['zero','one','two','three','four','five','six','seven','eight','nine','ten','eleven','twelve','thirteen','fourteen','fifteen','sixteen','seventeen','eighteen','nineteen'];
+const TENS = ['','','twenty','thirty','forty','fifty','sixty','seventy','eighty','ninety'];
+function w999(n) {
+  let s = '';
+  if (n >= 100) { s = ONES[Math.floor(n / 100)] + ' hundred'; n %= 100; if (n) s += ' '; }
+  if (n >= 20) { s += TENS[Math.floor(n / 10)]; if (n % 10) s += '-' + ONES[n % 10]; }
+  else if (n > 0 || !s) s += ONES[n];
+  return s;
+}
+function words(n) {
+  const out = [];
+  for (const [v, name] of [[1e9, 'billion'], [1e6, 'million'], [1e3, 'thousand']]) {
+    if (n >= v) { out.push(w999(Math.floor(n / v)) + ' ' + name); n %= v; }
+  }
+  if (n) out.push(w999(n));
+  return out.join(' ');
+}
+const ORD = ['first','second','third','fourth','fifth','sixth','seventh','eighth','ninth','tenth'];
+
+function piDigits(count) {
+  const S = 10n ** BigInt(count + 10);
+  const atanInv = x => {
+    x = BigInt(x); const x2 = x * x;
+    let term = S / x, sum = 0n, k = 1n, sign = 1n;
+    while (term !== 0n) { sum += sign * (term / k); term /= x2; k += 2n; sign = -sign; }
+    return sum;
+  };
+  return (16n * atanInv(5) - 4n * atanInv(239)).toString().slice(0, count);
+}
+const PI_DIGITS = piDigits(1400);
+
+// ---------------------------------------------------------------- the circles
+// Each circle is a band of rows. Rows are 1.25 apart and so are the numbers
+// along a row. Circles 1–5 are spread evenly over their rows; from the sixth
+// on, rows are filled to capacity (the ground shader draws those).
+const S = 1.25, GAP = 3.0, NRINGS = 10;
+const RING_HEX = ['#e8382c','#f5901e','#f6d32a','#3bb54a','#2f78d6','#4a3cb0','#9a4fd6','#a9aec6','#a9aec6','#a9aec6'];
+const RING_NAMES = ['red','orange','yellow','green','blue','indigo','violet'];
+const WHITE = '#f7f5ef', BLACK = '#18161d';
+const colorCache = new Map();
+const col = hex => { let c = colorCache.get(hex); if (!c) { c = new THREE.Color(hex); colorCache.set(hex, c); } return c; };
+
+const RINGS = [];
+{
+  let prevB = 0;
+  for (let k = 1; k <= NRINGS; k++) {
+    const count = k === 1 ? 10 : 9 * 10 ** (k - 1);
+    const start = k === 1 ? 1 : 10 ** (k - 1) + 1;
+    const a = k === 1 ? 7 - S / 2 : prevB + GAP;
+    const radii = [], caps = [];
+    if (k === 1) { radii.push(7); caps.push(10); }
+    else {
+      let sum = 0, j = 0;
+      while (sum < count) { const r = a + (j + 0.5) * S; const c = Math.floor(TAU * r / S); radii.push(r); caps.push(c); sum += c; j++; }
+    }
+    const nRows = radii.length;
+    const cnt = new Float64Array(nRows), denom = new Float64Array(nRows), cum = new Float64Array(nRows);
+    if (k <= 5) {
+      const C = caps.reduce((x, y) => x + y, 0);
+      const fr = caps.map(c => c * count / C);
+      fr.forEach((f, j) => cnt[j] = Math.floor(f));
+      let rem = count - cnt.reduce((x, y) => x + y, 0);
+      const order = fr.map((f, j) => [f - Math.floor(f), j]).sort((x, y) => y[0] - x[0]);
+      for (let q = 0; q < rem; q++) cnt[order[q][1]]++;
+      for (let j = 0; j < nRows; j++) denom[j] = cnt[j];
+    } else {
+      let left = count;
+      for (let j = 0; j < nRows; j++) { cnt[j] = Math.min(caps[j], left); left -= cnt[j]; denom[j] = caps[j]; }
+    }
+    for (let j = 1; j < nRows; j++) cum[j] = cum[j - 1] + cnt[j - 1];
+    const b = a + nRows * S;
+    RINGS.push({ k, start, end: start + count - 1, count, a, b, nRows, rowR: Float64Array.from(radii), cnt, denom, cum,
+                 hex: RING_HEX[k - 1], scale: k === 1 ? 1.4 : 1 });
+    prevB = b;
+  }
+}
+const ringOf = n => RINGS.find(R => n <= R.end) || null;
+function locate(n) {
+  const R = ringOf(n); if (!R) return null;
+  const off = n - R.start;
+  let lo = 0, hi = R.nRows - 1;
+  while (lo < hi) { const m = (lo + hi + 1) >> 1; if (R.cum[m] <= off) lo = m; else hi = m - 1; }
+  const i = off - R.cum[lo], th = TAU * (i + 0.5) / R.denom[lo], r = R.rowR[lo];
+  return { R, x: r * Math.cos(th), z: r * Math.sin(th), s: R.scale };
+}
+function numberNear(x, z, tol) {
+  const r = Math.hypot(x, z);
+  let th = Math.atan2(z, x); if (th < 0) th += TAU;
+  for (const R of RINGS) {
+    if (r < R.a - 1 || r > R.b + 1) continue;
+    const j0 = R.k === 1 ? 0 : Math.floor((r - R.a) / S);
+    let best = null, bd = Infinity;
+    for (let j = j0 - 1; j <= j0 + 1; j++) {
+      if (j < 0 || j >= R.nRows) continue;
+      const den = R.denom[j], i = ((Math.round(th / TAU * den - 0.5) % den) + den) % den;
+      if (i >= R.cnt[j]) continue;
+      const a = TAU * (i + 0.5) / den, rr = R.rowR[j];
+      const d = Math.hypot(rr * Math.cos(a) - x, rr * Math.sin(a) - z);
+      if (d < bd) { bd = d; best = R.start + R.cum[j] + i; }
+    }
+    if (best !== null && bd <= tol * R.scale) return best;
+  }
+  return null;
+}
+function colorOf(n, R) { return isPow10(n) ? WHITE : (n === 13 || n === 666) ? BLACK : R.hex; }
+// The dance's families, as bits: squares, cubes, primes, pyramidal, perfect, round.
+const isPyramidal = n => { const k = Math.round(Math.cbrt(3 * n)); for (let j = k - 1; j <= k + 1; j++) if (j > 0 && j * (j + 1) * (2 * j + 1) / 6 === n) return j; return 0; };
+const FAMILIES = [
+  { bit: 1, test: isSquare, name: 'squares' }, { bit: 2, test: isCube, name: 'cubes' }, { bit: 4, test: isPrime, name: 'primes' },
+  { bit: 8, test: isPyramidal, name: 'pyramidal numbers' }, { bit: 16, test: n => PERFECT.has(n), name: 'perfect numbers' },
+  { bit: 32, test: n => n % 10 === 0, name: 'round numbers' },
+];
+const danceData = it => [it.n % 2 ? 1 : -1, FAMILIES.reduce((m, f) => m + (f.test(it.n) ? f.bit : 0), 0)];
+function makeItem(n, x, z, R) { return { n, x, z, s: R.scale, shape: shapeOf(n), perfect: PERFECT.has(n), color: col(colorOf(n, R)) }; }
+
+// ---------------------------------------------------------------- renderer & scene
+const canvas = $('c');
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: 'high-performance' });
+const DPRS = [Math.min(devicePixelRatio, 1.6), 1, 0.75];
+let dprStep = 0;
+renderer.setPixelRatio(DPRS[0]);
+const scene = new THREE.Scene();
+const HORIZON = new THREE.Color('#2a2050'), MIST_COLOR = new THREE.Color('#bdb6d6'), DAWN_COLOR = new THREE.Color('#e9b892');
+scene.fog = new THREE.FogExp2(HORIZON, 0.01);
+renderer.setClearColor(HORIZON);
+const camera = new THREE.PerspectiveCamera(50, 1, 0.05, 300000);
+function resize() {
+  const w = innerWidth, h = innerHeight;
+  renderer.setSize(w, h, false);
+  camera.aspect = w / h; camera.updateProjectionMatrix();
+}
+addEventListener('resize', resize); resize();
+
+const hemi = new THREE.HemisphereLight('#c3c9ff', '#3b2c58', 2.1);
+scene.add(hemi);
+const moon = new THREE.DirectionalLight('#fff1dc', 1.6);
+moon.position.set(30, 80, 45); scene.add(moon);
+
+const U = { uTime: { value: 0 }, uLive: { value: REDUCED ? 0.25 : 1 }, uHide: { value: new THREE.Vector3() },
+            uDance: { value: 0 }, uWeave: { value: 0 }, uWeaveV: { value: 0 }, uGear: { value: 0 },
+            uChainBit: { value: 0 }, uChainP: { value: 0 }, uBeat: { value: 0 }, uWaltz: { value: 0 },
+            uTalk: { value: 0 }, uSpeaker: { value: new THREE.Vector2(1e6, 1e6) }, uDin: { value: 0 }, uPale: { value: 0 }, uBow: { value: 0 },
+            uRebelMat: { value: new THREE.Matrix4() }, uRebelHome: { value: new THREE.Vector2(1e6, 1e6) }, uRebelOn: { value: 0 },
+            uSwarm: { value: 0 }, uSwarmT: { value: 0 }, uMist: { value: 0 } };
+
+// The ballet moves whole instances of the first three circles, so it rewrites
+// the instance matrix itself (normals included) before three.js uses it.
+const R1B = RINGS[0].b + GAP / 2, R2B = RINGS[1].b + GAP / 2;
+const DANCE_GLSL = `
+float danceGlow;
+mat4 danceMatrix() {
+  mat4 M = instanceMatrix;
+  danceGlow = 0.0;
+  vec3 P = M[3].xyz;
+  float r0 = length(P.xz);
+  if (uDance <= 0.0 || aDance.x == 0.0 || r0 > ${(RINGS[2].b + 0.5).toFixed(3)}) return M;
+  float th0 = atan(P.z, P.x);
+  float p = aDance.x;                       // +1 odd, -1 even
+  float ring = r0 < ${R1B.toFixed(3)} ? 0.0 : (r0 < ${R2B.toFixed(3)} ? 1.0 : 2.0);
+  float delta = (ring < 0.5 ? ${(TAU * 7 / 10).toFixed(4)} : ${S.toFixed(3)}) / r0;
+  // the grand chain: odd go one way, even the other, passing alternately inside and outside
+  float reach = ring < 0.5 ? 3.14159 : (ring < 1.5 ? 1.5708 : 0.6);
+  float phi = reach * uWeave;
+  float off = p * 0.35 * sin(3.14159265 * phi / delta);
+  float face = -1.5708 * p * uWeaveV;
+  // rows turn against each other like gears
+  float a = ring < 0.5 ? 0.0 : (ring < 1.5 ? ${RINGS[1].a.toFixed(3)} : ${RINGS[2].a.toFixed(3)});
+  float rowSign = mod(floor((r0 - a) / ${S.toFixed(3)}) + ring, 2.0) < 0.5 ? 1.0 : -1.0;
+  float gear = rowSign * (0.25 + 0.15 * ring) * uGear;
+  // one family at a time rises and circles overhead like a comet
+  float member = uChainBit > 0.0 ? mod(floor(aDance.y / uChainBit + 0.001), 2.0) : 0.0;
+  float cp = uChainP, e = cp * cp * cp * (cp * (cp * 6.0 - 15.0) + 10.0);
+  float lap = member * 6.2831853 * e * (ring == 1.0 ? -1.0 : 1.0);
+  float lift = member * sin(3.14159265 * cp) * (2.5 + 0.6 * p * sin(5.0 * (th0 + lap) + uTime * 2.5));
+  danceGlow = member * sin(3.14159265 * cp) * uDance;
+  // and everyone bobs in three-four time, heaviest on the downbeat
+  float bob = uWaltz * pow(abs(sin(3.14159265 * uBeat)), 3.0) * (mod(floor(uBeat), 3.0) < 0.5 ? 0.16 : 0.07);
+#ifdef GROUNDED
+  lift = 0.0; bob = 0.0; danceGlow = 0.0;   // shadows stay on the floor
+#endif
+  float d = (p * phi + gear + lap) * uDance;
+  float r = r0 + off * uDance;
+  float yaw = d + face * uDance, c = cos(yaw), s = sin(yaw);
+  mat3 B = mat3(c, 0.0, s, 0.0, 1.0, 0.0, -s, 0.0, c) * mat3(M);
+  float tc = th0 + d;
+  return mat4(vec4(B[0], 0.0), vec4(B[1], 0.0), vec4(B[2], 0.0), vec4(r * cos(tc), P.y + (lift + bob) * uDance, r * sin(tc), 1.0));
+}`;
+// At the end the whole host hurls itself at the professor: every number
+// spirals in toward the center and up into the air.
+const SWARM_GLSL = `
+mat4 swarmMatrix(mat4 M) {
+  vec3 P = M[3].xyz;
+  float r0 = length(P.xz), s = uSwarm;
+  float h = fract(sin(dot(instanceMatrix[3].xz, vec2(41.3, 17.7))) * 9137.1);
+  float r = mix(r0, 3.2 + 2.5 * h + 0.03 * r0, s);
+  float dth = s * (uSwarmT * (0.5 + 0.9 * h) + h * 6.2831853);
+  float y = P.y + s * (0.3 + 3.8 * h + 0.5 * sin(uTime * 3.0 + h * 40.0));
+#ifdef GROUNDED
+  y = P.y;
+#endif
+  float c = cos(dth), sn = sin(dth), tc = atan(P.z, P.x) + dth;
+  mat3 B = mat3(c, 0.0, sn, 0.0, 1.0, 0.0, -sn, 0.0, c) * mat3(M);
+  return mat4(vec4(B[0], 0.0), vec4(B[1], 0.0), vec4(B[2], 0.0), vec4(r * cos(tc), y, r * sin(tc), 1.0));
+}`;
+const ANIM_HEAD = `uniform float uTime; uniform float uLive; uniform vec3 uHide;
+uniform float uDance; uniform float uWeave; uniform float uWeaveV; uniform float uGear;
+uniform float uChainBit; uniform float uChainP; uniform float uBeat; uniform float uWaltz;
+uniform float uTalk; uniform vec2 uSpeaker; uniform float uDin; uniform float uBow;
+uniform mat4 uRebelMat; uniform vec2 uRebelHome; uniform float uRebelOn; uniform float uSwarm; uniform float uSwarmT; uniform float uMist;
+attribute vec2 aDance;
+varying float vGlow;
+#ifdef USE_INSTANCING
+mat4 iMat;
+${DANCE_GLSL}
+${SWARM_GLSL}
+#endif
+`;
+function animate(sh, { blinkY = null, hide = false, breathe = true } = {}) {
+  Object.assign(sh.uniforms, U);
+  let v = sh.vertexShader.replace('void main() {', 'void main() {\n  vGlow = 0.0;\n#ifdef USE_INSTANCING\n  iMat = danceMatrix();\n  vGlow = danceGlow;\n' +
+    // 137 leaves the ranks under its own steam; then the swarm; then everyone dissolves into mist
+    '  if (uRebelOn > 0.0 && distance(instanceMatrix[3].xz, uRebelHome) < 0.1) iMat = uRebelMat;\n' +
+    '  if (uSwarm > 0.0) iMat = swarmMatrix(iMat);\n' +
+    '  if (uMist > 0.0) { iMat[0] *= 1.0 - uMist; iMat[1] *= 1.0 - uMist; iMat[2] *= 1.0 - uMist; }\n#endif');
+  if (breathe) v = v.replace('#include <begin_vertex>', aliveCode(blinkY, hide));
+  v = v.replace('#include <defaultnormal_vertex>', THREE.ShaderChunk.defaultnormal_vertex.replaceAll('instanceMatrix', 'iMat'))
+       .replace('#include <project_vertex>', THREE.ShaderChunk.project_vertex.replaceAll('instanceMatrix', 'iMat'));
+  sh.vertexShader = ANIM_HEAD + v;
+  // a family in flight glows like a comet
+  // ...and when Pi thunders, every number turns pale
+  sh.fragmentShader = 'varying float vGlow;\nuniform float uPale;\n' + sh.fragmentShader.replace('#include <opaque_fragment>',
+    'outgoingLight += vec3(1.0, 0.82, 0.45) * vGlow * 0.6;\n#ifndef GROUNDED\noutgoingLight = mix(outgoingLight, vec3(dot(outgoingLight, vec3(0.3, 0.59, 0.11))) * 0.55 + 0.45, uPale * 0.85);\n#endif\n#include <opaque_fragment>');
+}
+
+// Every number breathes, sways and now and then hops. Bodies, eyes, badges
+// and crowns share an instance matrix, so they all move together.
+function aliveCode(blinkY, hide) {
+  return `#include <begin_vertex>
+#ifdef USE_INSTANCING
+  vec2 ip = instanceMatrix[3].xz;
+  ${hide ? 'if (uHide.z > 0.0 && distance(ip, uHide.xy) <= uHide.z) transformed *= 0.0;' : ''}
+  float ph = fract(sin(dot(ip, vec2(12.9898, 78.233))) * 43758.5453) * 6.2831853;
+  ${blinkY == null ? '' : `float bl = step(0.972, fract(uTime * 0.23 + ph * 0.37));
+  transformed.y = ${blinkY.toFixed(3)} + (transformed.y - ${blinkY.toFixed(3)}) * mix(1.0, 0.12, bl);`}
+  transformed.y *= 1.0 + 0.045 * sin(uTime * 2.1 + ph) * uLive;
+  transformed.xz *= 1.0 + 0.025 * sin(uTime * 2.1 + ph + 1.2) * uLive;
+  float lean = 0.06 * sin(uTime * 0.7 + ph * 2.0) * uLive;
+  transformed.x += transformed.y * lean;
+  transformed.y += pow(max(0.0, sin(uTime * 0.9 + ph * 3.0)), 40.0) * 0.32 * uLive;
+  // whoever is speaking swells with its voice; a din sets everyone hopping; at the end they bow
+  float tk = uTalk * (1.0 - step(0.12, distance(ip, uSpeaker)));
+  transformed.y *= 1.0 + 0.13 * tk; transformed.xz *= 1.0 + 0.07 * tk;
+  transformed.y += uDin * pow(abs(sin(uTime * 7.0 + ph * 4.0)), 3.0) * 0.4;
+  transformed.x += uDin * 0.06 * sin(uTime * 23.0 + ph * 9.0) * transformed.y;
+  transformed.z += transformed.y * 0.45 * uBow; transformed.y *= 1.0 - 0.12 * uBow;
+#endif`;
+}
+// `hide`: the low-detail fifth circle steps aside wherever the detailed patch stands.
+function alive(mat, blinkY = null, key = '', hide = false, breathe = true) {
+  mat.onBeforeCompile = sh => animate(sh, { blinkY, hide, breathe });
+  mat.customProgramCacheKey = () => 'alive' + blinkY + key + hide + breathe;
+  return mat;
+}
+
+// ---------------------------------------------------------------- textures
+function canvasTex(w, h, draw, repeat) {
+  const cv = document.createElement('canvas'); cv.width = w; cv.height = h;
+  draw(cv.getContext('2d'), w, h);
+  const t = new THREE.CanvasTexture(cv);
+  t.colorSpace = THREE.SRGBColorSpace;
+  t.anisotropy = 4;
+  if (repeat) { t.wrapS = t.wrapT = THREE.RepeatWrapping; t.repeat.set(...repeat); }
+  return t;
+}
+function rrect(g, x, y, w, h, r) {
+  g.beginPath(); g.moveTo(x + r, y); g.arcTo(x + w, y, x + w, y + h, r); g.arcTo(x + w, y + h, x, y + h, r);
+  g.arcTo(x, y + h, x, y, r); g.arcTo(x, y, x + w, y, r); g.closePath();
+}
+const tileTex = canvasTex(128, 128, (g, w) => {
+  g.fillStyle = '#c9c5bd'; g.fillRect(0, 0, w, w);
+  g.fillStyle = '#ffffff'; rrect(g, 7, 7, w - 14, w - 14, 10); g.fill();
+  const gr = g.createLinearGradient(0, 0, w, w); gr.addColorStop(0, 'rgba(255,255,255,.0)'); gr.addColorStop(.45, 'rgba(255,255,255,.0)');
+  gr.addColorStop(.5, 'rgba(255,255,255,.55)'); gr.addColorStop(.56, 'rgba(255,255,255,.0)');
+  g.fillStyle = gr; g.fillRect(0, 0, w, w);
+  g.strokeStyle = 'rgba(0,0,0,.18)'; g.lineWidth = 2; rrect(g, 20, 20, w - 40, w - 40, 6); g.stroke();
+});
+function dieFace(pips) {
+  return canvasTex(128, 128, (g, w) => {
+    g.fillStyle = '#b9b5b0'; g.fillRect(0, 0, w, w);
+    g.fillStyle = '#ffffff'; rrect(g, 4, 4, w - 8, w - 8, 22); g.fill();
+    g.fillStyle = '#1d1a24';
+    const P = { 1: [[.5,.5]], 2: [[.27,.27],[.73,.73]], 3: [[.27,.27],[.5,.5],[.73,.73]], 4: [[.27,.27],[.73,.27],[.27,.73],[.73,.73]],
+                6: [[.27,.25],[.73,.25],[.27,.5],[.73,.5],[.27,.75],[.73,.75]], 0: [] }[pips];
+    for (const [x, y] of P) { g.beginPath(); g.arc(x * w, y * w, w * 0.085, 0, TAU); g.fill(); }
+  });
+}
+const cylTex = canvasTex(64, 128, (g, w, h) => {
+  g.fillStyle = '#ffffff'; g.fillRect(0, 0, w, h);
+  g.fillStyle = 'rgba(0,0,0,.22)'; g.fillRect(0, 6, w, 7); g.fillRect(0, h - 13, w, 7);
+});
+const shadowTex = canvasTex(64, 64, (g, w) => {
+  const gr = g.createRadialGradient(w / 2, w / 2, 0, w / 2, w / 2, w / 2);
+  gr.addColorStop(0, 'rgba(0,0,0,.6)'); gr.addColorStop(1, 'rgba(0,0,0,0)');
+  g.fillStyle = gr; g.fillRect(0, 0, w, w);
+});
+const glowTex = canvasTex(64, 64, (g, w) => {
+  const gr = g.createRadialGradient(w / 2, w / 2, 0, w / 2, w / 2, w / 2);
+  gr.addColorStop(0, 'rgba(255,255,255,1)'); gr.addColorStop(.25, 'rgba(255,255,255,.45)'); gr.addColorStop(1, 'rgba(255,255,255,0)');
+  g.fillStyle = gr; g.fillRect(0, 0, w, w);
+});
+
+// Name badges: one atlas for 1–1000 (with ♂/♀), one for 1001–10,000, one
+// redrawn on demand for whatever patch of the far plain you are standing in.
+function drawBadge(g, x, y, c, n, sex) {
+  const m = c * 0.07, w = c - 2 * m;
+  g.fillStyle = '#f3eddf'; rrect(g, x + m, y + m, w, w, c * 0.14); g.fill();
+  g.lineWidth = Math.max(1, c * 0.035); g.strokeStyle = '#4a3f6b'; g.stroke();
+  const s = fmt(n);
+  let lines = [s];
+  if (s.length > 7) { const p = s.split(','), k = Math.ceil(p.length / 2); lines = [p.slice(0, k).join(',') + ',', p.slice(k).join(',')]; }
+  const maxLen = Math.max(...lines.map(l => l.length));
+  const fs = Math.min(c * (lines.length > 1 ? 0.3 : sex ? 0.4 : 0.46), w * 0.9 / (maxLen * 0.56));
+  g.fillStyle = '#1c1630'; g.textAlign = 'center'; g.textBaseline = 'middle';
+  g.font = `700 ${fs}px "Atkinson Hyperlegible","Segoe UI",sans-serif`;
+  const cy = y + c * (sex ? 0.42 : 0.52);
+  lines.forEach((l, i) => g.fillText(l, x + c / 2, cy + (i - (lines.length - 1) / 2) * fs * 1.02));
+  if (sex) {
+    g.font = `700 ${c * 0.2}px "Segoe UI Symbol","Noto Sans Symbols","DejaVu Sans",sans-serif`;
+    g.fillStyle = '#6a5a9a'; g.fillText(n % 2 ? '♂' : '♀', x + c / 2, y + c * 0.76);
+  }
+}
+function makeAtlas(size, grid) {
+  const cv = document.createElement('canvas'); cv.width = cv.height = size;
+  const tex = new THREE.CanvasTexture(cv);
+  tex.colorSpace = THREE.SRGBColorSpace; tex.anisotropy = 8;
+  const mat = new THREE.MeshBasicMaterial({ map: tex, alphaTest: 0.5 });
+  mat.onBeforeCompile = sh => {
+    animate(sh);
+    sh.uniforms.uGrid = { value: grid };
+    sh.vertexShader = 'attribute float aCell;\nuniform float uGrid;\n' + sh.vertexShader
+      .replace('#include <uv_vertex>', '#include <uv_vertex>\n#ifdef USE_MAP\nvMapUv = (vec2(mod(aCell, uGrid), uGrid - 1.0 - floor(aCell / uGrid)) + uv) / uGrid;\n#endif');
+  };
+  mat.customProgramCacheKey = () => 'badge' + grid;
+  return { cv, g: cv.getContext('2d'), tex, mat, grid, cell: size / grid };
+}
+function fillAtlas(A, list, sex) {
+  A.g.clearRect(0, 0, A.cv.width, A.cv.height);
+  list.forEach((n, i) => drawBadge(A.g, (i % A.grid) * A.cell, Math.floor(i / A.grid) * A.cell, A.cell, n, sex));
+  A.tex.needsUpdate = true;
+}
+
+// ---------------------------------------------------------------- shapes
+function paint(g, c) {
+  const n = g.attributes.position.count, a = new Float32Array(n * 3);
+  for (let i = 0; i < n; i++) a.set(c, i * 3);
+  g.setAttribute('color', new THREE.BufferAttribute(a, 3));
+  return g;
+}
+function figureGeo(prof, segs, headSteps) {
+  const pts = prof.map(([r, y]) => new THREE.Vector2(r, y));
+  const hy = 0.84, hr = 0.14;
+  for (let i = 0; i <= headSteps; i++) {
+    const a = -Math.PI / 3 + (i / headSteps) * (Math.PI / 2 + Math.PI / 3);
+    pts.push(new THREE.Vector2(Math.max(0.0005, hr * Math.cos(a)), hy + hr * Math.sin(a)));
+  }
+  return new THREE.LatheGeometry(pts, segs);
+}
+const PROF_M    = [[0,0],[.27,0],[.29,.04],[.25,.1],[.22,.3],[.23,.45],[.27,.56],[.27,.6],[.2,.65],[.09,.68]];
+const PROF_F    = [[0,0],[.35,0],[.36,.03],[.3,.12],[.22,.3],[.15,.45],[.19,.54],[.2,.6],[.15,.65],[.08,.68]];
+const PROF_M_LO = [[0,0],[.28,0],[.22,.3],[.27,.58],[.09,.68]];
+const PROF_F_LO = [[0,0],[.36,0],[.15,.45],[.2,.6],[.08,.68]];
+
+const bodyMats = hide => ({
+  fig: alive(new THREE.MeshLambertMaterial({ color: '#ffffff' }), null, 'fig', hide),
+  tile: alive(new THREE.MeshLambertMaterial({ map: tileTex }), null, 'tile', hide),
+  ball: alive(new THREE.MeshPhongMaterial({ color: '#ffffff', shininess: 70, specular: '#555566' }), null, 'ball', hide),
+  cyl: alive(new THREE.MeshLambertMaterial({ map: cylTex }), null, 'cyl', hide),
+  // box face order: +x, -x, +y, -y, +z (front: the face with eyes and name), -z
+  dice: [3, 4, 1, 6, 0, 2].map((p, i) => alive(new THREE.MeshLambertMaterial({ map: dieFace(p) }), null, 'die' + i, hide)),
+});
+const MATS = bodyMats(false), MATS_LO = bodyMats(true);
+const crownMat = alive(new THREE.MeshPhongMaterial({ color: '#e2b64c', emissive: '#4a3208', shininess: 90, specular: '#fff3c4', side: THREE.DoubleSide }), null, 'crown');
+const shadowMat = alive(new THREE.MeshBasicMaterial({ map: shadowTex, transparent: true, depthWrite: false, color: '#000000' }), null, 'shadow', false, false);
+shadowMat.defines = { GROUNDED: '' };
+const shadowGeo = new THREE.PlaneGeometry(1, 1).rotateX(-Math.PI / 2).translate(0, 0.012, 0);
+
+const SHAPES = {
+  male: { geo: { hi: figureGeo(PROF_M, 16, 6), mid: figureGeo(PROF_M, 9, 4), lo: figureGeo(PROF_M_LO, 5, 2) }, mat: 'fig',
+          eye: { y: .86, z: .125, dx: .05, r: .03 }, badge: { y: .42, z: .272, size: .22 } },
+  female: { geo: { hi: figureGeo(PROF_F, 16, 6), mid: figureGeo(PROF_F, 9, 4), lo: figureGeo(PROF_F_LO, 5, 2) }, mat: 'fig',
+          eye: { y: .86, z: .125, dx: .05, r: .03 }, badge: { y: .44, z: .215, size: .19 } },
+  tile: { geo: { hi: new THREE.BoxGeometry(.78, .78, .1).translate(0, .42, 0) }, mat: 'tile',
+          eye: { y: .66, z: .06, dx: .14, r: .05 }, badge: { y: .33, z: .056, size: .32 } },
+  dice: { geo: { hi: new THREE.BoxGeometry(.66, .66, .66).translate(0, .34, 0) }, mat: 'dice',
+          eye: { y: .53, z: .34, dx: .13, r: .05 }, badge: { y: .25, z: .336, size: .3 } },
+  ball: { geo: { hi: new THREE.SphereGeometry(.4, 22, 16).translate(0, .4, 0), mid: new THREE.SphereGeometry(.4, 12, 9).translate(0, .4, 0),
+                 lo: new THREE.SphereGeometry(.4, 7, 5).translate(0, .4, 0) }, mat: 'ball',
+          eye: { y: .56, z: .35, dx: .11, r: .05 }, badge: { y: .33, z: .405, size: .26 } },
+  cyl:  { geo: { hi: new THREE.CylinderGeometry(.25, .25, 1, 18).translate(0, .5, 0), mid: new THREE.CylinderGeometry(.25, .25, 1, 10).translate(0, .5, 0),
+                 lo: new THREE.CylinderGeometry(.25, .25, 1, 6).translate(0, .5, 0) }, mat: 'cyl',
+          eye: { y: .84, z: .245, dx: .085, r: .045 }, badge: { y: .5, z: .258, size: .26 } },
+};
+for (const SH of Object.values(SHAPES)) {
+  const e = SH.eye, parts = [];
+  for (const sx of [-1, 1]) {
+    parts.push(paint(new THREE.SphereGeometry(e.r, 10, 8).translate(sx * e.dx, e.y, e.z), [0.95, 0.93, 0.88]));
+    parts.push(paint(new THREE.SphereGeometry(e.r * 0.55, 8, 6).translate(sx * e.dx, e.y, e.z + e.r * 0.62), [0.015, 0.012, 0.03]));
+  }
+  SH.eyeGeo = mergeGeometries(parts);
+  SH.eyeMat = alive(new THREE.MeshBasicMaterial({ vertexColors: true }), e.y, 'eye');
+  SH.badgeGeo = new THREE.PlaneGeometry(SH.badge.size, SH.badge.size).translate(0, SH.badge.y, SH.badge.z);
+}
+const crownGeo = (() => {
+  const parts = [new THREE.CylinderGeometry(.122, .108, .085, 16, 1, true).translate(0, .95, 0)];
+  for (let i = 0; i < 6; i++) {
+    const a = i / 6 * TAU, x = Math.sin(a) * .116, z = Math.cos(a) * .116;
+    parts.push(new THREE.ConeGeometry(.03, .085, 6).translate(x, 1.03, z));
+    parts.push(new THREE.SphereGeometry(.016, 6, 4).translate(x, 1.08, z));
+  }
+  return mergeGeometries(parts.map(p => p.toNonIndexed()));
+})();
+
+// Build instanced crowds: one mesh per (sector, shape), with eyes, name
+// badges, crowns and contact shadows sharing the body's instance matrices.
+const _m = new THREE.Matrix4(), _q = new THREE.Quaternion(), _p = new THREE.Vector3(), _s = new THREE.Vector3(), _up = new THREE.Vector3(0, 1, 0);
+function buildCrowd(items, o) {
+  const ox = o.origin ? o.origin.x : 0, oz = o.origin ? o.origin.z : 0;
+  const made = [], buckets = new Map();
+  for (const it of items) {
+    let sec = 0;
+    if (o.sectors > 1) { let th = Math.atan2(it.z, it.x); if (th < 0) th += TAU; sec = Math.min(o.sectors - 1, Math.floor(th / TAU * o.sectors)); }
+    const key = sec + '|' + it.shape;
+    let b = buckets.get(key); if (!b) buckets.set(key, b = []);
+    b.push(it);
+  }
+  const add = (geo, mat, N, attr, dance) => {
+    if (dance) { geo = geo.userData.own ? geo : geo.clone(); geo.setAttribute('aDance', dance); geo.userData.own = true; }
+    const mesh = new THREE.InstancedMesh(geo, mat, N);
+    if (geo.userData.own) mesh.userData.ownGeo = true;
+    mesh.instanceMatrix = attr;
+    if (o.noCull || o.dance) { mesh.frustumCulled = false; mesh.userData.noCull = true; } else mesh.computeBoundingSphere();   // dancers leave their bounds
+    o.parent.add(mesh); made.push(mesh);
+    return mesh;
+  };
+  for (const [key, arr] of buckets) {
+    const SH = SHAPES[key.slice(key.indexOf('|') + 1)], N = arr.length;
+    const mats = new Float32Array(N * 16), cols = new Float32Array(N * 3);
+    arr.forEach((it, i) => {
+      _p.set(it.x - ox, 0, it.z - oz);
+      _q.setFromAxisAngle(_up, Math.atan2(-it.x, -it.z));   // face the center
+      _s.setScalar(it.s);
+      _m.compose(_p, _q, _s).toArray(mats, i * 16);
+      cols[i * 3] = it.color.r; cols[i * 3 + 1] = it.color.g; cols[i * 3 + 2] = it.color.b;
+    });
+    const attr = new THREE.InstancedBufferAttribute(mats, 16);
+    const danceOf = list => o.dance ? new THREE.InstancedBufferAttribute(Float32Array.from(list.flatMap(danceData)), 2) : null;
+    const dance = danceOf(arr);
+    const body = add(SH.geo[o.lod] || SH.geo.hi, (o.lod === 'lo' ? MATS_LO : MATS)[SH.mat], N, attr, dance);
+    body.instanceColor = new THREE.InstancedBufferAttribute(cols, 3);
+    if (o.shadows) add(shadowGeo, shadowMat, N, attr, dance);
+    if (o.eyes) add(SH.eyeGeo, SH.eyeMat, N, attr, dance);
+    if (o.atlas) {
+      const g = SH.badgeGeo.clone(); g.userData.own = true;
+      g.setAttribute('aCell', new THREE.InstancedBufferAttribute(Float32Array.from(arr, o.cellOf), 1));
+      add(g, o.atlas.mat, N, attr, dance);
+    }
+    const crowned = arr.filter(it => it.perfect);
+    if (crowned.length) {
+      const cm = new Float32Array(crowned.length * 16);
+      crowned.forEach((it, i) => cm.set(mats.subarray(arr.indexOf(it) * 16, arr.indexOf(it) * 16 + 16), i * 16));
+      add(crownGeo, crownMat, crowned.length, new THREE.InstancedBufferAttribute(cm, 16), danceOf(crowned));
+    }
+  }
+  return made;
+}
+
+// ---------------------------------------------------------------- the plain
+const ringUniform = (f) => Float32Array.from(RINGS, f);
+const ringCols = new Float32Array(NRINGS * 3);
+RINGS.forEach((R, i) => { const c = new THREE.Color(R.hex); ringCols.set([c.r, c.g, c.b], i * 3); });
+const groundMat = new THREE.ShaderMaterial({
+  fog: true,
+  uniforms: THREE.UniformsUtils.merge([THREE.UniformsLib.fog, {
+    uA: { value: ringUniform(R => R.a) }, uB: { value: ringUniform(R => R.b) }, uCol: { value: ringCols },
+    uS: { value: S }, uTime: { value: 0 }, uProcFrom: { value: 5 }, uPatch: { value: new THREE.Vector3(0, 0, 0) },
+    uBase: { value: new THREE.Color('#0d0a1c') },
+  }]),
+  vertexShader: `
+    varying vec3 vW;
+    #include <fog_pars_vertex>
+    void main() {
+      vec4 w = modelMatrix * vec4(position, 1.0);
+      vW = w.xyz;
+      vec4 mvPosition = viewMatrix * w;
+      gl_Position = projectionMatrix * mvPosition;
+      #include <fog_vertex>
+    }`,
+  fragmentShader: `
+    uniform float uA[${NRINGS}]; uniform float uB[${NRINGS}]; uniform vec3 uCol[${NRINGS}];
+    uniform float uS, uTime, uProcFrom; uniform vec3 uPatch; uniform vec3 uBase;
+    varying vec3 vW;
+    #include <fog_pars_fragment>
+    float hash2(vec2 p) { p = fract(p * vec2(0.1031, 0.1030)); p += dot(p, p.yx + 33.33); return fract((p.x + p.y) * p.x); }
+    void main() {
+      vec2 p = vW.xz; float r = length(p); float fr = max(fwidth(r), 1e-4);
+      vec3 col = uBase + vec3(0.16, 0.13, 0.36) * exp(-r * r / 12.0);
+      for (int i = 0; i < ${NRINGS}; i++) {
+        float a = uA[i], b = uB[i];
+        if (i < ${NRINGS - 1}) {
+          float g = 0.5 * (b + uA[i + 1]);
+          float w = max(fr, 0.035);
+          col += vec3(0.6, 0.56, 0.95) * (1.0 - smoothstep(w, w * 2.5, abs(r - g))) * 0.45 * min(1.0, 2.0 / fr);
+        }
+        if (r >= a && r < b) {
+          vec3 rc = uCol[i];
+          col = mix(col, rc * 0.22, 0.6);
+          if (float(i) >= uProcFrom) {
+            float j = floor((r - a) / uS); float rr = a + (j + 0.5) * uS;
+            float cap = floor(6.2831853 * rr / uS);
+            float ang = atan(p.y, p.x); if (ang < 0.0) ang += 6.2831853;
+            float slot = floor(ang / 6.2831853 * cap);
+            float ca = (slot + 0.5) / cap * 6.2831853;
+            vec2 c = rr * vec2(cos(ca), sin(ca));
+            float d = length(p - c);
+            float h = hash2(vec2(slot * 0.0137, j * 0.71 + float(i) * 7.3));
+            float br = 0.8 + 0.2 * sin(uTime * 2.1 + h * 6.2831853);
+            float dotm = 1.0 - smoothstep(0.34 - fr, 0.34 + fr, d);
+            float mixf = smoothstep(0.03, 0.14, fr);   // fade to the average before the dots alias
+            float m = mix(dotm, 0.55, mixf);   // from afar, a standing crowd hides the ground
+            if (uPatch.z > 0.0 && length(c - uPatch.xy) < uPatch.z) m *= mixf;
+            col = mix(col, rc * (0.7 + 0.45 * h) * br, m);
+          }
+        }
+      }
+      gl_FragColor = vec4(col, 1.0);
+      #include <fog_fragment>
+      #include <colorspace_fragment>
+    }`,
+});
+const ground = new THREE.Mesh(new THREE.PlaneGeometry(240000, 240000).rotateX(-Math.PI / 2), groundMat);
+scene.add(ground);
+
+const skyMat = new THREE.ShaderMaterial({
+  side: THREE.BackSide, depthWrite: false, depthTest: false, fog: false,
+  uniforms: { uHorizon: { value: HORIZON.clone() }, uTime: U.uTime, uDawn: { value: 0 } },
+  vertexShader: `varying vec3 vDir; void main(){ vDir = position; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }`,
+  fragmentShader: `
+    uniform vec3 uHorizon; uniform float uTime; uniform float uDawn; varying vec3 vDir;
+    float h3(vec3 p){ p = fract(p * 0.3183099 + 0.1); p *= 17.0; return fract(p.x * p.y * p.z * (p.x + p.y + p.z)); }
+    void main(){
+      vec3 d = normalize(vDir); float y = d.y;
+      vec3 col = mix(uHorizon, mix(vec3(0.005, 0.004, 0.018), vec3(0.16, 0.3, 0.62), uDawn), smoothstep(-0.02, 0.55, y));
+      col += vec3(0.05, 0.018, 0.09) * exp(-abs(y - 0.07) * 9.0);
+      vec3 s = d * 230.0; vec3 cell = floor(s); vec3 f = fract(s) - 0.5; float hs = h3(cell);
+      if (hs > 0.991) {
+        float tw = 0.6 + 0.4 * sin(uTime * (1.0 + hs * 3.0) + hs * 40.0);
+        col += vec3(0.9, 0.9, 1.0) * smoothstep(0.24, 0.0, length(f)) * tw * smoothstep(0.03, 0.3, y) * (hs - 0.991) * 110.0 * (1.0 - uDawn);
+      }
+      gl_FragColor = vec4(col, 1.0);
+      #include <colorspace_fragment>
+    }`,
+});
+const sky = new THREE.Mesh(new THREE.SphereGeometry(500, 32, 16), skyMat);
+sky.renderOrder = -10; sky.frustumCulled = false;
+scene.add(sky);
+
+// ---------------------------------------------------------------- Pi and the professor
+function between(a, b, r, mat) {
+  const A = new THREE.Vector3(...a), B = new THREE.Vector3(...b), d = B.clone().sub(A);
+  const m = new THREE.Mesh(new THREE.CylinderGeometry(r, r * 0.9, d.length(), 14), mat);
+  m.position.copy(A).addScaledVector(d, 0.5);
+  m.quaternion.setFromUnitVectors(_up, d.normalize());
+  return m;
+}
+const PI_POS = new THREE.Vector3(1.9, 0, -1.15);
+const PI_HEAD_Y = 2.82;
+function buildPi() {
+  const g = new THREE.Group();
+  const robeTex = canvasTex(1024, 512, (c, w, h) => {
+    c.fillStyle = '#1b1640'; c.fillRect(0, 0, w, h);
+    c.font = '600 21px Georgia, serif'; c.textBaseline = 'top';
+    let k = 0;
+    for (let y = 4, row = 0; y < h; y += 26, row++) {
+      c.fillStyle = row % 2 ? 'rgba(222,186,98,.75)' : 'rgba(222,186,98,.55)';
+      let line = '';
+      while (c.measureText(line).width < w + 20) line += PI_DIGITS[k++ % PI_DIGITS.length];
+      c.fillText(line, -(row * 7) % 13, y);
+    }
+  }, [2, 2]);
+  const robeMat = new THREE.MeshLambertMaterial({ map: robeTex });
+  const velvet = new THREE.MeshLambertMaterial({ color: '#211a46' });
+  const gold = new THREE.MeshPhongMaterial({ color: '#d9b25a', emissive: '#3a2a08', shininess: 90, specular: '#fff1c0' });
+  const prof = [[0,.012],[.95,.012],[.93,.06],[.74,.8],[.56,1.55],[.45,2.1],[.48,2.3],[.4,2.43],[.22,2.52],[.14,2.58]].map(([r, y]) => new THREE.Vector2(r, y));
+  g.add(new THREE.Mesh(new THREE.LatheGeometry(prof, 48), robeMat));
+  const collar = new THREE.Mesh(new THREE.TorusGeometry(.4, .05, 10, 40), gold); collar.rotation.x = Math.PI / 2; collar.position.y = 2.38; g.add(collar);
+  const hem = new THREE.Mesh(new THREE.TorusGeometry(.94, .03, 8, 60), gold); hem.rotation.x = Math.PI / 2; hem.position.y = .04; g.add(hem);
+  g.add(between([-.42, 2.28, 0], [-.6, 1.5, .28], .1, velvet));
+  const glove = new THREE.MeshLambertMaterial({ color: '#141022' });
+  const h1 = new THREE.Mesh(new THREE.SphereGeometry(.08, 12, 8), glove); h1.position.set(-.62, 1.46, .3); g.add(h1);
+  // the right arm holds the staff of office (a circle and its diameter) and swings from the shoulder
+  const baton = new THREE.Group(), arm = new THREE.Group();
+  baton.position.set(.42, 2.28, 0); arm.position.set(-.42, -2.28, 0); baton.add(arm); g.add(baton);
+  arm.add(between([.42, 2.28, 0], [.7, 1.62, .34], .1, velvet));
+  const h2 = new THREE.Mesh(new THREE.SphereGeometry(.08, 12, 8), glove); h2.position.set(.73, 1.6, .36); arm.add(h2);
+  arm.add(between([.74, 0, .37], [.74, 3.4, .37], .028, gold));
+  const ring = new THREE.Mesh(new THREE.TorusGeometry(.22, .024, 10, 48), gold); ring.position.set(.74, 3.64, .37); arm.add(ring);
+  const dia = new THREE.Mesh(new THREE.CylinderGeometry(.016, .016, .44, 8), gold); dia.rotation.z = Math.PI / 2; dia.position.copy(ring.position); arm.add(dia);
+
+  const head = new THREE.Group(); head.position.y = PI_HEAD_Y; g.add(head);
+  head.add(new THREE.Mesh(new THREE.SphereGeometry(.29, 24, 16), velvet));
+  const cowl = new THREE.Mesh(new THREE.SphereGeometry(.4, 32, 18, Math.PI * 0.82, Math.PI * 1.36, 0, Math.PI * 0.74),
+                              new THREE.MeshLambertMaterial({ color: '#191338', side: THREE.DoubleSide }));
+  cowl.position.y = .02; head.add(cowl);
+  const PHI0 = Math.PI * 0.2, PHIL = Math.PI * 0.6, TH0 = Math.PI * 0.2, THL = Math.PI * 0.6, MR = .305;
+  const drawMask = frown => canvasTex(512, 384, (c, w, h) => {
+    const gr = c.createRadialGradient(w / 2, h * .45, 10, w / 2, h * .5, w * .6);
+    gr.addColorStop(0, '#fbf8f1'); gr.addColorStop(.7, '#e7e0d3'); gr.addColorStop(1, '#bdb4a6');
+    c.fillStyle = gr; c.fillRect(0, 0, w, h);
+    c.fillStyle = '#07050d';
+    for (const ex of [.38, .62]) { c.beginPath(); c.ellipse(ex * w, .47 * h, .055 * w, .03 * h, ex < .5 ? .12 : -.12, 0, TAU); c.fill(); }
+    c.strokeStyle = '#c9a24c'; c.lineWidth = 4;
+    for (const ex of [.38, .62]) { c.beginPath(); c.moveTo(ex * w, .52 * h); c.lineTo(ex * w + (ex < .5 ? -6 : 6), .7 * h); c.stroke(); }
+    c.strokeStyle = '#8d8475'; c.lineWidth = 3; c.beginPath();
+    if (frown) {
+      c.moveTo(.43 * w, .85 * h); c.quadraticCurveTo(.5 * w, .76 * h, .57 * w, .85 * h);
+      c.stroke();
+      c.strokeStyle = '#3a3240'; c.lineWidth = 7;   // brows drawn down hard over the eyes
+      for (const ex of [.38, .62]) { const k = ex < .5 ? 1 : -1; c.beginPath(); c.moveTo(ex * w - k * .07 * w, .36 * h); c.lineTo(ex * w + k * .05 * w, .42 * h); c.stroke(); }
+    } else { c.moveTo(.45 * w, .82 * h); c.lineTo(.55 * w, .82 * h); c.stroke(); }
+    c.fillStyle = '#c9a24c'; c.font = `italic 700 ${h * .2}px Georgia, serif`; c.textAlign = 'center'; c.textBaseline = 'middle';
+    c.fillText('π', w / 2, h * .22);
+  });
+  const maskTex = drawMask(false), frownTex = drawMask(true);
+  const maskMat = new THREE.MeshPhongMaterial({ map: maskTex, shininess: 60, specular: '#666666' });
+  head.add(new THREE.Mesh(new THREE.SphereGeometry(MR, 40, 28, PHI0, PHIL, TH0, THL), maskMat));
+  const eyes = [];
+  for (const u of [.38, .62]) {
+    const phi = PHI0 + u * PHIL, th = TH0 + .47 * THL, r = MR * 0.96;
+    const p = new THREE.Vector3(-r * Math.cos(phi) * Math.sin(th), r * Math.cos(th), r * Math.sin(phi) * Math.sin(th));
+    const e = new THREE.Mesh(new THREE.SphereGeometry(.022, 10, 8), new THREE.MeshBasicMaterial({ color: '#d8f2ff' }));
+    e.position.copy(p); head.add(e);
+    const glow = new THREE.Sprite(new THREE.SpriteMaterial({ map: glowTex, color: '#8fd2ff', blending: THREE.AdditiveBlending, depthWrite: false, transparent: true }));
+    glow.position.copy(p).multiplyScalar(1.06); glow.scale.setScalar(.2); head.add(glow);
+    eyes.push(glow);
+  }
+  const light = new THREE.PointLight('#8fc0ff', 3, 7, 1.5); light.position.set(0, 3.2, 1.2); g.add(light);
+  g.position.copy(PI_POS);
+  g.rotation.y = 1.3;
+  scene.add(g);
+  return { group: g, head, eyes, baton, light, maskMat, maskTex, frownTex };
+}
+function buildProfessor() {
+  const g = new THREE.Group();
+  const gown = new THREE.MeshLambertMaterial({ color: '#6e1f30' });
+  const skin = new THREE.MeshLambertMaterial({ color: '#e8c3a2' });
+  const cream = new THREE.MeshLambertMaterial({ color: '#e7dcc0' });
+  const prof = [[0,.012],[.3,.012],[.29,.08],[.25,.6],[.26,1.0],[.28,1.22],[.22,1.33],[.09,1.4]].map(([r, y]) => new THREE.Vector2(r, y));
+  g.add(new THREE.Mesh(new THREE.LatheGeometry(prof, 32), gown));
+  const belt = new THREE.Mesh(new THREE.TorusGeometry(.256, .025, 8, 32), cream); belt.rotation.x = Math.PI / 2; belt.position.y = .78; g.add(belt);
+  const arms = [];
+  for (const sx of [-1, 1]) {
+    // each arm hangs from a shoulder pivot, so it can rise to cover an ear
+    const arm = new THREE.Group(); arm.position.set(sx * .26, 1.26, 0); g.add(arm); arms.push(arm);
+    arm.add(between([0, 0, 0], [sx * .08, -.46, .08], .075, gown));
+    const hand = new THREE.Mesh(new THREE.SphereGeometry(.055, 10, 8), skin); hand.position.set(sx * .085, -.52, .09); arm.add(hand);
+    const slip = new THREE.Mesh(new THREE.BoxGeometry(.11, .06, .24), new THREE.MeshLambertMaterial({ color: '#3c2a20' }));
+    slip.position.set(sx * .1, .03, .14); g.add(slip);
+  }
+  const head = new THREE.Group(); head.position.y = 1.56; g.add(head);
+  head.add(new THREE.Mesh(new THREE.SphereGeometry(.17, 24, 16), skin));
+  const nose = new THREE.Mesh(new THREE.SphereGeometry(.035, 10, 8), skin); nose.position.set(0, -.01, .17); head.add(nose);
+  const hair = new THREE.MeshLambertMaterial({ color: '#efefef' });
+  for (const sx of [-1, 1]) {
+    const tuft = new THREE.Mesh(new THREE.SphereGeometry(.07, 10, 8), hair); tuft.position.set(sx * .15, .0, -.03); tuft.scale.set(.8, 1, 1.2); head.add(tuft);
+    const eye = new THREE.Mesh(new THREE.SphereGeometry(.018, 8, 6), new THREE.MeshBasicMaterial({ color: '#111' })); eye.position.set(sx * .062, .035, .152); head.add(eye);
+    const lens = new THREE.Mesh(new THREE.TorusGeometry(.045, .007, 6, 20), new THREE.MeshPhongMaterial({ color: '#2a2a2a', shininess: 80 }));
+    lens.position.set(sx * .065, .035, .165); head.add(lens);
+  }
+  const capTex = canvasTex(64, 128, (c, w, h) => { for (let i = 0; i < 8; i++) { c.fillStyle = i % 2 ? '#f2ece0' : '#a3263a'; c.fillRect(0, i * h / 8, w, h / 8); } });
+  const cap = new THREE.Mesh(new THREE.ConeGeometry(.178, .5, 24, 1, true), new THREE.MeshLambertMaterial({ map: capTex, side: THREE.DoubleSide }));
+  cap.position.set(0, .2, -.04); cap.rotation.x = -.55; head.add(cap);
+  const pom = new THREE.Mesh(new THREE.SphereGeometry(.055, 10, 8), cream); pom.position.set(0, .41, -.17); head.add(pom);
+  g.rotation.y = 1.0;
+  scene.add(g);
+  return { group: g, head, arms };
+}
+
+// The specter of Sir Arthur: a faint, flickering Arthurian knight.
+function buildKnight() {
+  const g = new THREE.Group();
+  const mat = new THREE.MeshBasicMaterial({ color: '#7fb4e8', transparent: true, opacity: 0.1, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide, fog: false });
+  const add = (geo, x, y, z) => { const m = new THREE.Mesh(geo, mat); m.position.set(x, y, z); g.add(m); return m; };
+  add(new THREE.LatheGeometry([[0, 0], [.42, 0], [.34, .55], [.3, 1.0], [.38, 1.25], [.2, 1.4], [0, 1.42]].map(([r, y]) => new THREE.Vector2(r, y)), 20), 0, 0, 0);
+  add(new THREE.CylinderGeometry(.17, .16, .32, 16), 0, 1.6, 0);                                    // the great helm
+  add(new THREE.SphereGeometry(.17, 16, 8, 0, TAU, 0, Math.PI / 2), 0, 1.76, 0);
+  add(new THREE.BoxGeometry(.26, .03, .02), 0, 1.63, .17);                                          // its eye slit
+  add(new THREE.ConeGeometry(.06, .4, 8), 0, 2.05, -.05).rotation.x = -0.4;                         // plume
+  add(new THREE.BoxGeometry(.42, .52, .04), -.42, .95, .12).rotation.y = 0.3;                         // shield...
+  add(new THREE.BoxGeometry(.06, .4, .05), -.42, .97, .15).rotation.y = 0.3;                          // ...with its cross
+  add(new THREE.BoxGeometry(.3, .06, .05), -.42, 1.03, .15).rotation.y = 0.3;
+  add(new THREE.BoxGeometry(.04, 1.0, .02), .4, .75, .18);                                          // sword
+  add(new THREE.BoxGeometry(.22, .04, .04), .4, 1.2, .18);
+  for (const sx of [-1, 1]) add(new THREE.CylinderGeometry(.07, .06, .55, 10), sx * .36, 1.05, .05).rotation.z = sx * 0.35;
+  g.visible = false;
+  scene.add(g);
+  return { group: g, mat };
+}
+
+// ---------------------------------------------------------------- selection marker
+const marker = new THREE.Group();
+{
+  const mm = new THREE.MeshBasicMaterial({ color: '#ffe7a6', transparent: true, opacity: .9, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide });
+  const ring = new THREE.Mesh(new THREE.RingGeometry(.5, .6, 48).rotateX(-Math.PI / 2).translate(0, .03, 0), mm);
+  const beamMat = new THREE.ShaderMaterial({
+    transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, side: THREE.DoubleSide,
+    vertexShader: 'varying float vY; void main(){ vY = uv.y; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }',
+    fragmentShader: 'varying float vY; void main(){ gl_FragColor = vec4(1.0, 0.86, 0.5, 0.55 * pow(1.0 - vY, 1.6)); }',
+  });
+  const beam = new THREE.Mesh(new THREE.CylinderGeometry(1, 1, 1, 16, 1, true).translate(0, .5, 0), beamMat);
+  marker.add(ring, beam); marker.userData = { ring, beam }; marker.visible = false;
+  scene.add(marker);
+}
+let selected = null;   // { n } or { who: 'pi' | 'prof' }
+
+// ---------------------------------------------------------------- build the dream
+const ringGroups = [];
+const atlasA = makeAtlas(2048, 32), atlasB = makeAtlas(4096, 96), atlasP = makeAtlas(2048, 32);
+let PI, PROF, KNIGHT;
+
+async function build() {
+  await Promise.race([document.fonts.load('700 40px "Atkinson Hyperlegible"'), new Promise(r => setTimeout(r, 2500))]).catch(() => {});
+  PI = buildPi(); PROF = buildProfessor(); KNIGHT = buildKnight();
+  fillAtlas(atlasA, Array.from({ length: 1000 }, (_, i) => i + 1), true);
+  await nextPaint();
+  fillAtlas(atlasB, Array.from({ length: 9000 }, (_, i) => i + 1001), false);
+  await nextPaint();
+  const plan = [
+    { lod: 'hi', eyes: true, atlas: atlasA, cellOf: it => it.n - 1, shadows: true, sectors: 1, dance: true },
+    { lod: 'hi', eyes: true, atlas: atlasA, cellOf: it => it.n - 1, shadows: true, sectors: 1, dance: true },
+    { lod: 'hi', eyes: true, atlas: atlasA, cellOf: it => it.n - 1, shadows: true, sectors: 4, dance: true },
+    { lod: 'mid', eyes: false, atlas: atlasB, cellOf: it => it.n - 1001, shadows: true, sectors: 8 },
+    { lod: 'lo', eyes: false, atlas: null, shadows: false, sectors: 16 },
+  ];
+  for (let k = 0; k < 5; k++) {
+    const R = RINGS[k], items = [];
+    for (let j = 0; j < R.nRows; j++) {
+      const r = R.rowR[j], den = R.denom[j];
+      for (let i = 0; i < R.cnt[j]; i++) {
+        const th = TAU * (i + 0.5) / den;
+        items.push(makeItem(R.start + R.cum[j] + i, r * Math.cos(th), r * Math.sin(th), R));
+      }
+    }
+    const grp = new THREE.Group(); scene.add(grp); ringGroups.push(grp);
+    buildCrowd(items, { ...plan[k], parent: grp });
+    $('veil').textContent = `Gathering the numbers… ${fmt(R.end)}`;
+    await nextPaint();
+  }
+}
+
+// ---------------------------------------------------------------- the patch of the far plain you stand in
+const PATCH_R = 21;
+const patchNear = new THREE.Group(), patchFar = new THREE.Group();
+scene.add(patchNear, patchFar);
+const patch = { cx: 1e12, cz: 1e12, meshes: [], last: 0 };
+function collectPatch(cx, cz) {
+  const out = [], r0 = Math.hypot(cx, cz), th0 = Math.atan2(cz, cx);
+  for (let ri = 4; ri < RINGS.length; ri++) {
+    const R = RINGS[ri];
+    if (R.b < r0 - PATCH_R || R.a > r0 + PATCH_R) continue;
+    const j0 = Math.max(0, Math.floor((r0 - PATCH_R - R.a) / S)), j1 = Math.min(R.nRows - 1, Math.floor((r0 + PATCH_R - R.a) / S));
+    for (let j = j0; j <= j1; j++) {
+      const rr = R.rowR[j], den = R.denom[j];
+      const cosv = (rr * rr + r0 * r0 - PATCH_R * PATCH_R) / (2 * rr * r0);
+      if (cosv > 1) continue;
+      const half = cosv < -1 ? Math.PI : Math.acos(cosv);
+      const iA = Math.floor((th0 - half) / TAU * den - 0.5), iB = Math.ceil((th0 + half) / TAU * den - 0.5);
+      for (let i = iA; i <= iB; i++) {
+        const ii = ((i % den) + den) % den;
+        if (ii >= R.cnt[j]) continue;
+        const th = TAU * (ii + 0.5) / den, x = rr * Math.cos(th), z = rr * Math.sin(th);
+        if ((x - cx) ** 2 + (z - cz) ** 2 > PATCH_R * PATCH_R) continue;
+        const it = makeItem(R.start + R.cum[j] + ii, x, z, R);
+        it.overlay = ri === 4; it.cell = out.length;
+        out.push(it);
+        if (out.length >= 1024) return out;
+      }
+    }
+  }
+  return out;
+}
+function clearPatch() {
+  for (const m of patch.meshes) { m.parent.remove(m); if (m.userData.ownGeo) m.geometry.dispose(); m.dispose(); }
+  patch.meshes = [];
+}
+function rebuildPatch(cx, cz) {
+  clearPatch();
+  patch.cx = cx; patch.cz = cz; patch.last = performance.now();
+  const items = collectPatch(cx, cz);
+  fillAtlas(atlasP, items.map(it => it.n), false);
+  const near = items.filter(it => it.overlay), far = items.filter(it => !it.overlay);
+  const opts = { lod: 'hi', eyes: true, atlas: atlasP, cellOf: it => it.cell, shadows: true, noCull: true };
+  // Circle five stands in the origin's frame (its low-detail copies step aside here);
+  // further out, positions are kept relative to the patch so float precision holds.
+  if (near.length) patch.meshes.push(...buildCrowd(near, { ...opts, parent: patchNear }));
+  patchFar.position.set(cx, 0, cz);
+  if (far.length) patch.meshes.push(...buildCrowd(far, { ...opts, parent: patchFar, origin: { x: cx, z: cz } }));
+}
+
+// ---------------------------------------------------------------- camera paths
+// A camera pose is [targetX, targetY, targetZ, log(distance), azimuth, elevation];
+// interpolating log-distance lets one smooth move cross every scale of the plain.
+function P(t, d, az, el) { return [t[0], t[1], t[2], Math.log(d), az, el]; }
+// A pose looking at number n from the center's side; beyond the first circle
+// the camera rides higher so it never walks through the crowd.
+function front(n, d = 3, el, turn = 0.28) {
+  const L = locate(n), r = Math.hypot(L.x, L.z);
+  if (el == null) el = L.R.k === 1 ? 0.13 : L.R.k === 2 ? 0.42 : 0.55;
+  return P([L.x, 0.55 * L.s, L.z], d * (L.s > 1 ? 1.1 : 1), Math.atan2(-L.x / r, -L.z / r) + turn, el);
+}
+// A key that holds still (with a slow push in, or a slow turn) for `hold` seconds.
+function hold(time, p, h, extra = {}, turn = 0.05) {
+  const q = p.slice(); q[3] -= 0.07; q[4] += turn;
+  return [{ time, p, ...extra }, { time: time + h, p: q }];
+}
+function unwrap(keys) {
+  for (let i = 1; i < keys.length; i++) {
+    const a = keys[i - 1].p[4];
+    while (keys[i].p[4] - a > Math.PI) keys[i].p[4] -= TAU;
+    while (keys[i].p[4] - a < -Math.PI) keys[i].p[4] += TAU;
+  }
+  return keys;
+}
+const cr = (p0, p1, p2, p3, t) => 0.5 * (2 * p1 + (-p0 + p2) * t + (2 * p0 - 5 * p1 + 4 * p2 - p3) * t * t + (-p0 + 3 * p1 - 3 * p2 + p3) * t * t * t);
+// `stops`: ease in and out of every key (the tour); otherwise a Catmull-Rom curve through them.
+function evalKeys(K, time, stops = false) {
+  const L = K.length - 1;
+  if (time <= K[0].time) return K[0].p.slice();
+  if (time >= K[L].time) return K[L].p.slice();
+  let i = 0; while (K[i + 1].time < time) i++;
+  const u = (time - K[i].time) / (K[i + 1].time - K[i].time);
+  if (stops) { const e = u * u * u * (u * (u * 6 - 15) + 10); return K[i].p.map((v, c) => v + (K[i + 1].p[c] - v) * e); }
+  const e = 0.55 * u + 0.45 * u * u * (3 - 2 * u);
+  const p0 = K[Math.max(0, i - 1)].p, p1 = K[i].p, p2 = K[i + 1].p, p3 = K[Math.min(L, i + 2)].p;
+  return p1.map((_, c) => cr(p0[c], p1[c], p2[c], p3[c], e));
+}
+const camTarget = new THREE.Vector3();
+function applyPose(p) {
+  const d = Math.exp(p[3]), az = p[4], el = p[5];
+  camTarget.set(p[0], p[1], p[2]);
+  camera.position.set(p[0] + d * Math.cos(el) * Math.sin(az), p[1] + d * Math.sin(el), p[2] + d * Math.cos(el) * Math.cos(az));
+  if (camera.position.y < 0.25) camera.position.y = 0.25;
+  camera.lookAt(camTarget);
+}
+function currentPose() {
+  const off = camera.position.clone().sub(controls.target), d = Math.max(off.length(), 0.01);
+  return [controls.target.x, controls.target.y, controls.target.z, Math.log(d), Math.atan2(off.x, off.z), Math.asin(THREE.MathUtils.clamp(off.y / d, -1, 1))];
+}
+
+const PIH = [PI_POS.x, PI_HEAD_Y, PI_POS.z];
+// Captions and their recordings come from the narration script above the code.
+const SCRIPT = JSON.parse($('narration').textContent);
+const LENGTHS = JSON.parse($('narration-lengths').textContent || '{}');
+const LINE = Object.fromEntries(SCRIPT.lines.map(l => [l.id, l]));
+const lineLen = id => LENGTHS[id] || 0;
+const EXPLORE_CAP = 'x00';
+let TOUR, TOUR_END, CAP_TIMES = [], DANCE, MARK, NOTES = [], AT = {};
+// 137, the unruly prime, and the spot in front of the professor where it makes its stand
+const REBEL = 137, STAGE = new THREE.Vector3(-2.1, 0, 1.2);
+function overPiAndRebel() {
+  const H = locate(REBEL), dx = H.x - PI_POS.x, dz = H.z - PI_POS.z, d = Math.hypot(dx, dz);
+  return P([(H.x + PI_POS.x) / 2, 1, (H.z + PI_POS.z) / 2], d * 0.95, Math.atan2(dz / d, -dx / d), 0.32);
+}
+
+// The tour is a list of shots. The camera travels `go` seconds to each pose
+// and holds there long enough for every line (beat) spoken in that shot.
+function makeTour() {
+  const two = n => String(n).padStart(2, '0');
+  const shots = [
+    { p: P([0, 1.0, 0], 42, 0.5, 0.42), hold: 3, beats: ['t00'] },
+    { p: P([0, 1.15, 0], 4.4, 1.0, 0.13), go: 5, hold: 4, beats: ['t01'] },
+    { p: P(PIH, 3.8, 1.35, 0.05), go: 3, hold: 2.5, beats: ['t02'] },
+    { p: P([PIH[0], PIH[1] - .05, PIH[2]], 1.45, 1.25, 0.02), go: 2.5, hold: 4, beats: ['t03'] },
+    { p: front(4, 3.1), go: 3, hold: 5, n: 4, beats: ['t04'] },
+    { p: front(6, 2.9), go: 2.5, hold: 3.5, n: 6, beats: ['t05'] },
+    { p: front(7, 2.9), go: 2, hold: 3.5, n: 7, beats: ['t06'] },
+    { p: front(8, 2.9), go: 2, hold: 3, n: 8, beats: ['t07'] },
+    { p: front(10, 3.4), go: 2.5, hold: 4, n: 10, beats: ['t08'] },
+    { p: front(13, 3.2), go: 3.5, hold: 3.5, n: 13, beats: ['t09'] },
+    { p: front(64, 3.2), go: 3, hold: 6, n: 64, beats: ['t10'] },
+    { p: front(100, 3.2), go: 3, hold: 5, n: 100, beats: ['t11'] },
+    { p: front(666, 3.4), go: 4, hold: 4, n: 666, beats: ['t12'] },
+    { p: front(1000, 3.4), go: 3, hold: 4, n: 1000, beats: ['t13'] },
+    { p: P([0, 0, 0], 110, -0.4, 0.78), go: 6, hold: 3, beats: ['t14'] },
+    { p: P([0, 0, 0], 5200, -0.9, 1.2), go: 7, hold: 3, beats: ['t15'] },
+    { p: P([0, 0, -3000], 4500, -0.2, 0.055), go: 8, hold: 4, beats: ['t16'] },
+    { p: P(PIH, 7, 1.1, 0.22), go: 8, hold: 5, beats: ['t17'] },
+    // the ballet
+    { p: P([0, 0.6, 0], 27, 0.5, 0.62), go: 3, turn: 0.5, beats: [{ id: 'd00', min: 9 }] },
+    { p: P([0, 0.8, 0], 10.5, 1.4, 0.26), go: 3, turn: 0.6, beats: [{ id: 'd01', min: 13 }] },
+    { p: P([0, 1.5, 0], 23, 2.3, 0.42), go: 3, turn: 1.4,
+      beats: [...FAMILIES.map((f, i) => ({ id: 'd' + two(2 + i), min: 5.4 })), { id: 'd08', min: 3 }] },
+    // the ode
+    { p: P([0, 1.3, 0], 8.5, 2.9, 0.26), go: 2, turn: 1.6, beats: ['s00', 's01', 's02', 's03', 's04'].map(id => ({ id, min: 6.4 })) },
+    // the introductions
+    { p: P(PIH, 7.5, 1.1, 0.24), go: 3, beats: [{ id: 'i00', min: 6 }] },
+    ...[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(n => ({ p: front(n, 3.2, 0.15, 0.3), go: 2, n, beats: ['i' + two(n)] })),
+    { p: P([0.95, 1.45, -0.55], 4.6, 0.25, 0.12), go: 3, beats: ['i11', 'i12'] },
+    { p: P([0, 0.8, 0], 17, 0.9, 0.5), go: 2.5, beats: [{ id: 'i13', min: 4 }] },
+    ...[11, 12, 13].map((n, k) => ({ p: front(n, 3.1, 0.3), go: 2.5, n, beats: ['i' + (14 + k)] })),
+    { p: P([0.5, 1.45, -0.3], 5, 0.2, 0.14), go: 2.5, beats: ['i17'] },
+    { p: P(PIH, 3.4, 1.25, 0.06), go: 1.2, beats: [{ id: 'i18', min: 4 }] },
+    { p: P([0, 0.8, 0], 15, 0.7, 0.45), go: 3, hold: 3, beats: [{ id: 'i19', min: 5 }] },
+    // the rebel 137, Sir Arthur's ghost, the revolt, the swarm, and waking up
+    { p: front(REBEL, 3.6, 0.45, 0.2), go: 4, n: REBEL, beats: [{ id: 'f00', min: 12 }] },
+    { p: front(REBEL, 4.2, 0.3, 0.9), go: 2, n: REBEL, beats: ['f01', 'f02'] },
+    { p: overPiAndRebel(), go: 3, beats: ['f03'] },
+    { p: P([-0.2, 1.0, 0.1], 7.5, 0.53, 0.2), go: 3.6, beats: ['f04'] },
+    { p: P(PIH, 3, 0.4, 0.04), go: 2, beats: ['f05'] },
+    { p: P([0, 1.5, 0], 2.5, 2.5, 0.08), go: 2, beats: ['f06'] },
+    { p: P(PIH, 3.2, 1.2, 0.05), go: 2, beats: ['f07'] },
+    { p: P([0, 1.5, 0], 2.6, -0.6, 0.08), go: 2, beats: ['f08'] },
+    { p: P([STAGE.x, 0.6, STAGE.z], 2.7, 2.44, 0.12), go: 2, beats: ['f09'] },
+    { p: P([0, 1.0, 0], 26, 1.6, 0.5), go: 3, turn: 0.5, beats: ['f10'] },
+    { p: P([0, 2.0, 0], 2.7, 0.7, 0.02), go: 3, beats: ['f11', 'f12'] },
+    { p: P([0, 1.2, 0], 13, 0.9, 0.3), go: 2.5, beats: [{ id: 'f13', min: 6 }] },
+    { p: P([0, 1.35, 0], 3.4, 1.2, 0.1), go: 3, hold: 8, beats: [{ id: 'f14', min: 4 }, { id: 'f15', min: 7 }] },
+  ];
+  const K = [], caps = [], at = {};
+  let arrive = 0;
+  shots.forEach((s, i) => {
+    if (i) arrive += s.go;
+    let t = Math.max(0, arrive - 0.9);   // a shot's first line starts just before the camera settles
+    for (const b of s.beats.map(b => typeof b === 'string' ? { id: b } : b)) {
+      const who = LINE[b.id].who || '';
+      at[b.id] = t;
+      caps.push({ time: t, id: b.id, n: s.n ?? null, speaker: /^\d+$/.test(who) ? +who : null, who });
+      t += Math.max(b.min || 0, lineLen(b.id) + 0.7);
+    }
+    const nextGo = shots[i + 1] ? shots[i + 1].go : 0;
+    const h = Math.max(s.hold || 2, t - arrive - nextGo + 0.9);
+    K.push(...hold(arrive, s.p, h, {}, s.turn ?? 0.05));
+    arrive += h;
+  });
+  TOUR = unwrap(K);
+  TOUR_END = K[K.length - 1].time;
+  CAP_TIMES = caps;
+  // The ballet's timetable follows its lines; the dance stops at Pi's sign.
+  DANCE = { beat: 60 / 132, on: at.d00 - 1, weave1: [at.d00 + 2, at.d02 - 0.5], song: at.s00, weave2: [at.s00 + 0.5, at.i00 - 0.5], off: at.i00 + 3.5,
+            fam: FAMILIES.map((f, i) => ({ bit: f.bit, a: at['d' + two(2 + i)], b: at['d' + two(3 + i)] })) };
+  MARK = { sign: at.i00, bored: at.i11, din: at.i13, ears: at.i17 + 2.5, wave: at.i17 + lineLen('i17') - 2.4, thunder: at.i18, pale: at.i19, end: TOUR_END };
+  AT = at;
+  NOTES = buildNotes();
+}
+
+const smooth01 = (t, a, b) => { const u = THREE.MathUtils.clamp((t - a) / (b - a), 0, 1); return u * u * (3 - 2 * u); };
+const window01 = (t, a, b, ramp) => smooth01(t, a, a + ramp) * (1 - smooth01(t, b - ramp, b));
+function danceTarget(T, out) {
+  out.amt = window01(T, DANCE.on, DANCE.off, 3);
+  out.weave = 0; out.weaveV = 0;
+  for (const [a, b] of [DANCE.weave1, DANCE.weave2]) {
+    if (T > a && T < b) { const u = (T - a) / (b - a); out.weave = (1 - Math.cos(TAU * u)) / 2; out.weaveV = Math.sin(TAU * u); }
+  }
+  out.gear = Math.sin(TAU * (T - DANCE.on) / 26) * smooth01(T, DANCE.on, DANCE.on + 6);
+  const f = DANCE.fam.find(f => T >= f.a && T < f.b);
+  out.bit = f ? f.bit : 0;
+  out.chainP = f ? (T - f.a) / (f.b - f.a) : 0;
+  out.beat = Math.max(0, (T - DANCE.on) / DANCE.beat);
+  return out;
+}
+const dance = { amt: 0, weave: 0, weaveV: 0, gear: 0, bit: 0, chainP: 0, beat: 0 };
+function updateDance(dt) {
+  const tgt = mode === 'tour' ? danceTarget(tourT, {}) : { amt: 0 };
+  dance.amt += (tgt.amt - dance.amt) * Math.min(1, dt * 3);   // a pause or a jump eases, it never snaps
+  if (mode === 'tour') Object.assign(dance, { ...tgt, amt: dance.amt });
+  U.uDance.value = dance.amt; U.uWeave.value = dance.weave; U.uWeaveV.value = dance.weaveV; U.uGear.value = dance.gear;
+  U.uChainBit.value = dance.bit; U.uChainP.value = dance.chainP; U.uBeat.value = dance.beat; U.uWaltz.value = REDUCED ? 0 : 1;
+}
+
+// The introductions: what the professor, Pi and the crowd are doing at tour time T.
+function sceneTarget(T) {
+  const M = MARK;
+  return {
+    profTurn: smooth01(T, M.bored + 1, M.bored + 2.5),
+    ears: window01(T, M.ears, M.thunder + 3.5, 0.8),
+    sign: window01(T, M.sign + 0.2, M.sign + 3.2, 0.8),
+    wave: window01(T, M.wave, M.thunder + 4, 0.5),
+    din: smooth01(T, M.din, M.din + 2) * (1 - smooth01(T, M.thunder, M.thunder + 0.15)),
+    flash: T >= M.thunder && T < M.thunder + 1.5 ? Math.exp(-(T - M.thunder) * 3.5) : 0,
+    pale: smooth01(T, M.thunder + 0.6, M.thunder + 2.6) * (1 - smooth01(T, AT.f00, AT.f00 + 4)),
+    bow: smooth01(T, M.pale, M.pale + 2) * (1 - smooth01(T, AT.f00, AT.f00 + 3)),
+    jostle: window01(T, AT.f00 + 1, AT.f01, 0.5),
+    cower: window01(T, AT.f03 + 3, AT.f04 - 4, 0.6),
+    march: smooth01(T, AT.f04 - 3.6, AT.f04 - 0.3),
+    rebel: window01(T, AT.f00 - 1, M.end + 1, 0.01),
+    knight: window01(T, AT.f01 - 0.5, AT.f13 + 3, 1.2),
+    whisper: window01(T, AT.f02 - 0.3, AT.f02 + lineLen('f02') + 0.3, 0.3),
+    frown: Math.max(window01(T, AT.f05, AT.f07 + 3, 0.3), window01(T, AT.f10 + 4, AT.f13 + 2, 0.3)),
+    face137: smooth01(T, AT.f08, AT.f08 + 1.5),
+    wake: smooth01(T, AT.f13 + 3, AT.f13 + 6),
+    swarm: smooth01(T, AT.f10 + 5, AT.f10 + 9) * (1 - smooth01(T, AT.f13 + 0.3, AT.f13 + 4)),
+    armsUp: window01(T, AT.f12 - 0.4, AT.f13 + 1.5, 0.4),
+    mist: smooth01(T, AT.f13 + 0.3, AT.f13 + 4),
+    fog: window01(T, AT.f13, AT.f14, 1.5),
+    dawn: smooth01(T, AT.f13 + 3, AT.f14),
+  };
+}
+const sceneNow = { profTurn: 0, ears: 0, sign: 0, wave: 0, din: 0, flash: 0, pale: 0, bow: 0, jostle: 0, cower: 0, march: 0, rebel: 0,
+                   knight: 0, whisper: 0, frown: 0, face137: 0, wake: 0, swarm: 0, armsUp: 0, mist: 0, fog: 0, dawn: 0 };
+function updateScene(dt) {
+  const tgt = mode === 'tour' ? sceneTarget(tourT) : {};
+  for (const k in sceneNow) {
+    const v = tgt[k] ?? 0;
+    sceneNow[k] = mode === 'tour' ? v : sceneNow[k] + (v - sceneNow[k]) * Math.min(1, dt * 2);
+  }
+  U.uDin.value = REDUCED ? sceneNow.din * 0.3 : sceneNow.din; U.uPale.value = sceneNow.pale; U.uBow.value = sceneNow.bow;
+  U.uSwarm.value = sceneNow.swarm; U.uMist.value = sceneNow.mist;
+  if (AT.f10) U.uSwarmT.value = Math.max(0, tourT - AT.f10 - 5);
+  // the swarm leaves every circle's bounds, so nothing may be culled while it lasts
+  const cull = sceneNow.swarm < 0.001;
+  if (cull !== updateScene.culled) { updateScene.culled = cull; for (const g of ringGroups) for (const m of g.children) m.frustumCulled = cull && !m.userData.noCull; }
+  rebelPose();
+  $('flash').style.opacity = (sceneNow.flash * 0.85).toFixed(3);
+}
+// Where 137 stands: jostling forward out of its circle, shrinking back under
+// Pi's glare, then marching to the center to face the professor.
+const _rq = new THREE.Quaternion(), _rp = new THREE.Vector3(), _rs = new THREE.Vector3(), _home = new THREE.Vector3();
+function rebelPose() {
+  const H = locate(REBEL);
+  _home.set(H.x, 0, H.z);
+  const inward = _home.clone().normalize().negate();
+  _rp.copy(_home)
+    .addScaledVector(inward, sceneNow.jostle * 2.6 * Math.max(0, Math.sin((tourT - (AT.f00 || 0)) * 2.4)))
+    .addScaledVector(inward, -0.7 * sceneNow.cower)
+    .lerp(STAGE, sceneNow.march);
+  _rq.setFromAxisAngle(_up, Math.atan2(-_rp.x, -_rp.z));
+  _rs.setScalar(H.s * (1 - 0.15 * sceneNow.cower));
+  U.uRebelMat.value.compose(_rp, _rq, _rs);
+  U.uRebelHome.value.set(H.x, H.z);
+  U.uRebelOn.value = sceneNow.rebel > 0.5 ? 1 : 0;
+}
+// The line being spoken at tour time T, if any.
+function activeLine(T) {
+  for (const c of CAP_TIMES) if (T >= c.time && T < c.time + lineLen(c.id)) return c;
+  return null;
+}
+
+// ---------------------------------------------------------------- controls & modes
+const controls = new OrbitControls(camera, canvas);
+controls.enableDamping = true; controls.dampingFactor = 0.08;
+controls.minDistance = 0.8; controls.maxDistance = 60000;
+controls.maxPolarAngle = Math.PI * 0.495;
+controls.screenSpacePanning = false;
+controls.zoomSpeed = 1.2;
+controls.enabled = false;
+
+let mode = 'loading', playing = true, tourT = 0, fly = null, capIndex = -1, capUntil = 0;
+const bPlay = $('bPlay'), bTour = $('bTour');
+function syncButtons() {
+  if (mode === 'tour') { bPlay.textContent = playing ? 'Pause' : 'Play'; bTour.textContent = 'Explore'; }
+  else { bPlay.textContent = tourT > 0 && tourT < TOUR_END ? 'Resume tour' : 'Play tour'; bTour.textContent = 'Restart tour'; }
+}
+function enterExplore() {
+  $('start').hidden = true;
+  if (mode === 'tour') {
+    controls.target.copy(camTarget);
+  }
+  mode = 'explore'; controls.enabled = true; controls.update();
+  syncButtons();
+}
+function startTour(fromT) {
+  tourT = fromT; playing = true;
+  flyTo(evalKeys(TOUR, tourT, true), () => { mode = 'tour'; controls.enabled = false; syncButtons(); }, 2.2);
+  syncButtons();
+}
+function flyTo(dest, done, dur) {
+  const cur = currentPose();
+  dest = dest.slice();
+  while (dest[4] - cur[4] > Math.PI) dest[4] -= TAU;
+  while (dest[4] - cur[4] < -Math.PI) dest[4] += TAU;
+  const travel = Math.hypot(dest[0] - cur[0], dest[2] - cur[2]);
+  const keys = [{ time: 0, p: cur }];
+  if (travel > 25) {
+    const mid = cur.map((v, i) => (v + dest[i]) / 2);
+    mid[3] = Math.log(Math.max(Math.exp(cur[3]), Math.exp(dest[3]), travel * 0.8));
+    mid[5] = Math.max(0.6, (cur[5] + dest[5]) / 2);
+    keys.push({ time: 0.5, p: mid });
+  }
+  keys.push({ time: 1, p: dest });
+  fly = { keys, t: 0, dur: dur || (travel > 25 ? 4.5 : 2.2), done };
+  mode = 'fly'; controls.enabled = false;
+}
+bPlay.onclick = () => {
+  if (!$('start').hidden) { begin(audio.on); return; }
+  if (mode === 'tour') { playing = !playing; syncButtons(); }
+  else if (mode === 'explore') startTour(tourT > 0 && tourT < TOUR_END ? tourT : 0);
+};
+bTour.onclick = () => {
+  if (mode === 'tour') enterExplore();
+  else if (mode === 'explore') startTour(0);
+};
+canvas.addEventListener('pointerdown', e => {
+  down = { x: e.clientX, y: e.clientY, t: performance.now() };
+  if (mode === 'tour') enterExplore();
+}, true);
+canvas.addEventListener('wheel', () => { if (mode === 'tour') enterExplore(); }, { capture: true, passive: true });
+let down = null;
+canvas.addEventListener('pointerup', e => {
+  if (!down) return;
+  const moved = Math.hypot(e.clientX - down.x, e.clientY - down.y), dt = performance.now() - down.t;
+  down = null;
+  if (moved < 6 && dt < 500) pickAt(e.clientX, e.clientY);
+});
+
+// ---------------------------------------------------------------- picking & the card
+const ray = new THREE.Raycaster(), ndc = new THREE.Vector2();
+function pickAt(cx, cy) {
+  const r = canvas.getBoundingClientRect();
+  ndc.set((cx - r.left) / r.width * 2 - 1, -((cy - r.top) / r.height) * 2 + 1);
+  ray.setFromCamera(ndc, camera);
+  const hits = ray.intersectObjects([PI.group, PROF.group], true);
+  const o = ray.ray.origin, d = ray.ray.direction;
+  let best = null;
+  for (const h of [0.8, 0.5, 0.2, 0.0]) {
+    if (Math.abs(d.y) < 1e-6) continue;
+    const t = (h - o.y) / d.y; if (t <= 0) continue;
+    const x = o.x + d.x * t, z = o.z + d.z * t;
+    const n = numberNear(x, z, h === 0 ? 0.62 : 0.5);
+    if (n !== null) { if (!best || t < best.t) best = { n, t }; }
+  }
+  if (hits.length && (!best || hits[0].distance < best.t)) {
+    let obj = hits[0].object; while (obj.parent && obj !== PI.group && obj !== PROF.group) obj = obj.parent;
+    select(obj === PI.group ? { who: 'pi' } : { who: 'prof' });
+  } else if (best) select({ n: best.n });
+}
+function poseFor(sel) {
+  if (sel.who === 'pi') return P(PIH, 4.5, 1.2, 0.12);
+  if (sel.who === 'prof') return P([0, 1.2, 0], 3.2, 1.0, 0.1);
+  return front(sel.n, 3.4, undefined, 0.3);
+}
+function select(sel) {
+  selected = sel;
+  const body = $('cardbody');
+  if (sel.who === 'pi') {
+    body.innerHTML = `<div class="num">π</div><div class="words">Pi, Master of Ceremonies</div>
+      <p>${PI_DIGITS[0]}.${PI_DIGITS.slice(1, 41).replace(/(\d{5})/g, '$1 ')}…</p>
+      <p>Pi is not a whole number, so it stands in no circle. It keeps to the center, masked; no one may see its face and live.</p>
+      <button class="go" type="button">Go to Pi</button>`;
+    marker.visible = false;
+  } else if (sel.who === 'prof') {
+    body.innerHTML = `<div class="num" style="font-size:32px">Professor Squarepunt</div><div class="words">the dreamer</div>
+      <p>A mathematician who took numbers for bloodless categories, until this dream showed him otherwise.</p>
+      <button class="go" type="button">Go to the professor</button>`;
+    marker.visible = false;
+  } else {
+    const n = sel.n, R = ringOf(n), m = memberships(n);
+    const ord = ORD[R.k - 1];
+    const ringName = R.k <= 7 ? RING_NAMES[R.k - 1] : 'silver here: Russell colors only the first seven circles';
+    const hexNow = colorOf(n, R);
+    const colorLine = isPow10(n) ? 'white, as a power of ten' : (n === 13 || n === 666) ? 'black, one of the two black numbers' : ringName;
+    let uni;
+    if (!m.length) uni = `No special category, so ${n % 2 ? 'he' : 'she'} wears a plain ${n % 2 ? 'coat' : 'skirt'}. (Russell does not say what ordinary numbers wear.)`;
+    else if (m.length === 1) uni = `A ${m[0].label}${detail(n, m[0].key)}, so it wears ${m[0].wear}.`;
+    else uni = `It is a ${m.map(h => `${h.label}${detail(n, h.key)}`).join(' and a ')}. It wears the more honorable uniform, ${m[0].wear}: only ${m[0].count.toLocaleString('en-US')} ${plural(m[0])} below a million, against ${m.slice(1).map(h => `${h.count.toLocaleString('en-US')} ${plural(h)}`).join(' and ')}.`;
+    body.innerHTML = `<div class="num">${fmt(n)}</div><div class="words">${words(n)}</div>
+      <dl>
+        <dt>Circle</dt><dd>${ord} (${fmt(R.start)} to ${fmt(R.end)})</dd>
+        <dt>Uniform</dt><dd><span class="sw" style="background:${hexNow}"></span>${colorLine}</dd>
+        <dt>Sex</dt><dd>${n % 2 ? 'odd, so male' : 'even, so female'}</dd>
+      </dl>
+      <p>${uni}</p>
+      ${isPyramidal(n) ? `<p>Also a pyramidal number: 1² + 2² + … + ${isPyramidal(n)}² = ${fmt(n)}. Pyramidal numbers have no uniform of their own, but they join the dance.</p>` : ''}
+      <button class="go" type="button">Go to ${fmt(n)}</button>`;
+    const L = locate(n);
+    marker.position.set(L.x, 0, L.z); marker.userData.s = L.s; marker.visible = true;
+  }
+  body.querySelector('.go').onclick = () => { flyTo(poseFor(sel), () => enterExplore()); };
+  $('card').hidden = false;
+}
+function plural(h) { return { perfect: 'perfect numbers', cube: 'cubes', square: 'squares', prime: 'primes', round: 'round numbers' }[h.key]; }
+function detail(n, key) {
+  if (key === 'square') return ` (${Math.round(Math.sqrt(n))}²)`;
+  if (key === 'cube') return ` (${Math.round(Math.cbrt(n))}³)`;
+  if (key === 'perfect' && n < 10000) { const d = []; for (let i = 1; i < n; i++) if (n % i === 0) d.push(i); return ` (${d.join(' + ')} = ${n})`; }
+  return '';
+}
+$('cardx').onclick = () => { $('card').hidden = true; selected = null; marker.visible = false; };
+
+$('bKey').onclick = () => { const L = $('legend'); L.hidden = !L.hidden; $('bKey').setAttribute('aria-expanded', String(!L.hidden)); $('msg').hidden = true; };
+const q = $('q');
+let msgTimer = 0;
+function say(text) { const m = $('msg'); m.textContent = text; m.hidden = false; clearTimeout(msgTimer); msgTimer = setTimeout(() => m.hidden = true, 4000); }
+$('find').addEventListener('submit', e => {
+  e.preventDefault();
+  const raw = q.value.trim().toLowerCase().replace(/[,\s_]/g, '');
+  if (raw === 'pi' || raw === 'π') { q.blur(); select({ who: 'pi' }); flyTo(poseFor({ who: 'pi' }), () => enterExplore()); return; }
+  const n = Number(raw);
+  if (!/^\d+$/.test(raw) || !Number.isSafeInteger(n) || n < 1 || n > 1e10) { say('Type a whole number from 1 to 10,000,000,000, or “pi”.'); return; }
+  q.blur(); $('legend').hidden = true;
+  select({ n });
+  flyTo(poseFor({ n }), () => enterExplore());
+});
+
+// ---------------------------------------------------------------- the waltz
+// Tuned in Pythagorean ratios (stacked 3:2 fifths), in honor of the numbers' master.
+const PYTH = [1, 9 / 8, 81 / 64, 4 / 3, 3 / 2, 27 / 16, 243 / 128];
+const pitch = deg => { const i = deg - 1; return 261.63 * 2 ** Math.floor(i / 7) * PYTH[((i % 7) + 7) % 7]; };
+// sixteen bars of three-four: the melody as [scale degree, beats], and each bar's chord root
+const TUNE = [[[3,2],[5,1]], [[8,3]], [[7,2],[6,1]], [[5,3]], [[4,1],[3,1],[2,1]], [[5,2],[4,1]], [[3,3]], [[3,1],[4,1],[5,1]],
+              [[6,1],[4,1],[6,1]], [[8,2],[6,1]], [[5,1],[3,1],[5,1]], [[8,3]], [[9,2],[7,1]], [[5,2],[4,1]], [[3,1],[2,1],[3,1]], [[1,3]]];
+const ROOTS = [1, 1, 5, 5, 5, 5, 1, 1, 4, 4, 1, 1, 5, 5, 1, 1];
+function buildNotes() {
+  const out = [], B = DANCE.beat;
+  for (let bar = 0; DANCE.on + (bar + 1) * 3 * B < DANCE.off - 1; bar++) {
+    const t0 = DANCE.on + bar * 3 * B, k = bar % 16, root = ROOTS[k];
+    out.push({ t: t0, f: pitch(root) / 2, d: B * 1.6, kind: 'bass' });
+    for (const b of [1, 2]) for (const deg of [root, root + 2, root + 4]) out.push({ t: t0 + b * B, f: pitch(deg), d: B * 0.4, kind: 'pah' });
+    let bt = 0;
+    for (const [deg, len] of TUNE[k]) {
+      const t = t0 + bt * B, sung = t >= DANCE.song && t < DANCE.weave2[1];
+      out.push({ t, f: pitch(deg + 7), d: len * B * 0.95, kind: sung ? 'choir' : 'flute' });
+      if (sung) out.push({ t, f: pitch(deg + 5), d: len * B * 0.95, kind: 'choir' });   // a third below
+      bt += len;
+    }
+  }
+  return out.sort((a, b) => a.t - b.t);
+}
+// The crowd's din is made of snippets of the numbers' own speeches.
+const BABBLE_IDS = ['i01', 'i02', 'i03', 'i04', 'i05', 'i06', 'i07', 'i08', 'i09', 'i10', 'i14', 'i15', 'i16', 'f04'];
+const audio = {
+  ctx: null, master: null, music: null, voice: null, babble: null, analyser: null, wave: new Uint8Array(512),
+  on: false, volume: 0.8, bufs: {}, els: {}, failed: 0, cur: null, next: -1, anchor: 0, babbleAt: 0, level: 0, buzz: null, lastT: 0,
+  init() {
+    const c = this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+    this.master = c.createGain(); this.master.gain.value = 0;
+    const comp = c.createDynamicsCompressor(); this.master.connect(comp); comp.connect(c.destination);
+    this.music = c.createGain(); this.music.gain.value = 0.55;
+    const echo = c.createDelay(), fb = c.createGain(), wet = c.createGain();
+    echo.delayTime.value = 0.31; fb.gain.value = 0.3; wet.gain.value = 0.3;
+    this.music.connect(this.master); this.music.connect(echo); echo.connect(fb); fb.connect(echo); echo.connect(wet); wet.connect(this.master);
+    this.voice = c.createGain(); this.analyser = c.createAnalyser(); this.analyser.fftSize = 512;
+    this.voice.connect(this.analyser); this.analyser.connect(this.master);
+    this.babble = c.createGain(); this.babble.gain.value = 0; this.babble.connect(this.master);
+    // the swarm's angry buzz: detuned saws, low-passed, trembling
+    this.buzz = c.createGain(); this.buzz.gain.value = 0;
+    const lp = c.createBiquadFilter(), trem = c.createGain(), lfo = c.createOscillator(), depth = c.createGain();
+    lp.type = 'lowpass'; lp.frequency.value = 900; trem.gain.value = 0.6; lfo.frequency.value = 23; depth.gain.value = 0.4;
+    lfo.connect(depth); depth.connect(trem.gain); lfo.start();
+    for (const f of [110, 116.5, 164.8, 221, 233]) { const o = c.createOscillator(); o.type = 'sawtooth'; o.frequency.value = f; o.connect(lp); o.start(); }
+    lp.connect(trem); trem.connect(this.buzz); this.buzz.connect(this.master);
+    for (const id of Object.keys(LENGTHS)) {
+      fetch(`narration/${id}.mp4`).then(r => { if (!r.ok) throw new Error(r.status); return r.arrayBuffer(); })
+        .then(b => c.decodeAudioData(b)).then(buf => { this.bufs[id] = buf; })
+        .catch(() => { this.bufs[id] = 'element'; this.failed++; });   // fall back to an <audio> element
+    }
+  },
+  setOn(on) {
+    this.on = on;
+    if (on && !this.ctx) this.init();
+    if (this.ctx) { this.ctx.resume(); this.master.gain.setTargetAtTime(on ? this.volume : 0, this.ctx.currentTime, 0.05); }
+    if (!on) this.stopVoice();
+    this.next = -1;
+  },
+  setVolume(v) {
+    this.volume = v;
+    if (this.ctx && this.on) this.master.gain.setTargetAtTime(v, this.ctx.currentTime, 0.03);
+  },
+  update() {
+    this.level = 0;
+    if (!this.on || !this.ctx) return;
+    const live = mode === 'tour' && playing;
+    this.updateVoice(live); this.updateMusic(live); this.updateBabble(live); this.updateEffects(live);
+    if (this.cur) {
+      this.analyser.getByteTimeDomainData(this.wave);
+      let sum = 0; for (const v of this.wave) sum += (v - 128) * (v - 128);
+      this.level = Math.min(1, Math.sqrt(sum / this.wave.length) / 40);
+    }
+  },
+  // narration: keep the right clip playing at the right offset, through pauses and seeks
+  updateVoice(live) {
+    const now = this.ctx.currentTime, want = live ? activeLine(tourT) : null;
+    if (want) {
+      const off = tourT - want.time, c = this.cur;
+      const pos = c && (c.el ? c.el.currentTime : now - c.t0);
+      if (!c || c.id !== want.id || Math.abs(pos - off) > 0.3) { this.stopVoice(); this.startVoice(want.id, off); }
+    } else this.stopVoice();
+    this.music.gain.setTargetAtTime(this.cur ? 0.2 : 0.55, now, 0.25);   // the band plays softer under a voice
+  },
+  startVoice(id, off) {
+    const b = this.bufs[id], now = this.ctx.currentTime;
+    if (!b) return;   // still loading; the next frame tries again
+    if (b === 'element') {
+      let el = this.els[id];
+      if (!el) { el = this.els[id] = new Audio(`narration/${id}.mp4`); try { this.ctx.createMediaElementSource(el).connect(this.voice); } catch (e) { } }
+      el.currentTime = off; el.play().catch(() => { });
+      this.cur = { id, el };
+      return;
+    }
+    if (off >= b.duration - 0.05) return;
+    const src = this.ctx.createBufferSource(); src.buffer = b; src.connect(this.voice); src.start(now, off);
+    this.cur = { id, t0: now - off, src };
+  },
+  stopVoice() {
+    const c = this.cur; this.cur = null;
+    if (!c) return;
+    if (c.src) try { c.src.stop(); } catch (e) { }
+    if (c.el) c.el.pause();
+  },
+  updateMusic(live) {
+    if (!(live && tourT > DANCE.on - 0.5 && tourT < DANCE.off)) { this.next = -1; return; }
+    const now = this.ctx.currentTime;
+    // tie the music clock to the tour clock; re-anchor after a seek or a stall
+    if (this.next < 0 || Math.abs(now - this.anchor - tourT) > 0.15) {
+      this.anchor = now - tourT;
+      this.next = NOTES.findIndex(n => n.t >= tourT);
+    }
+    while (this.next >= 0 && this.next < NOTES.length && NOTES[this.next].t < tourT + 0.3) {
+      const n = NOTES[this.next++];
+      this.play(n, Math.max(now, this.anchor + n.t));
+    }
+  },
+  updateBabble(live) {
+    const d = live ? Math.max(sceneNow.din, sceneNow.swarm) : 0, now = this.ctx.currentTime;
+    this.babble.gain.setTargetAtTime(d > 0.05 ? 0.55 : 0, now, d > 0.05 ? 0.3 : 0.03);   // "Silence!" cuts it dead
+    if (d < 0.05 || now < this.babbleAt) return;
+    this.babbleAt = now + 0.1 + Math.random() * 0.3 / d;
+    const pool = BABBLE_IDS.filter(id => this.bufs[id] instanceof AudioBuffer);
+    if (!pool.length) return;
+    const b = this.bufs[pool[Math.floor(Math.random() * pool.length)]];
+    const len = 0.5 + Math.random() * 0.9, off = Math.random() * Math.max(0, b.duration - len);
+    const src = this.ctx.createBufferSource(), g = this.ctx.createGain(), pan = this.ctx.createStereoPanner();
+    src.buffer = b; src.playbackRate.value = 0.85 + Math.random() * 0.5; pan.pan.value = Math.random() * 1.6 - 0.8;
+    g.gain.setValueAtTime(0, now); g.gain.linearRampToValueAtTime(0.3 * d, now + 0.05); g.gain.setTargetAtTime(0, now + len - 0.1, 0.05);
+    src.connect(g); g.connect(pan); pan.connect(this.babble); src.start(now, off, len + 0.3);
+  },
+  updateEffects(live) {
+    const now = this.ctx.currentTime;
+    this.buzz.gain.setTargetAtTime(live ? 0.07 * sceneNow.swarm : 0, now, 0.2);
+    const W = (AT.f13 || 1e9) + 0.2;   // the banshee wail, once, as the host dissolves
+    if (live && this.lastT < W && tourT >= W && tourT < W + 1) this.wail();
+    this.lastT = tourT;
+  },
+  wail() {
+    const c = this.ctx, now = c.currentTime, g = c.createGain(), bp = c.createBiquadFilter(), echo = c.createDelay(), fb = c.createGain();
+    bp.type = 'bandpass'; bp.frequency.value = 1100; bp.Q.value = 0.7;
+    echo.delayTime.value = 0.23; fb.gain.value = 0.45;
+    g.gain.setValueAtTime(0, now); g.gain.linearRampToValueAtTime(0.3, now + 0.5); g.gain.setTargetAtTime(0, now + 2.8, 0.6);
+    bp.connect(g); g.connect(this.master); g.connect(echo); echo.connect(fb); fb.connect(echo); echo.connect(this.master);
+    for (const [f0, det] of [[880, 0], [660, 9], [1320, -7]]) {
+      const o = c.createOscillator(), vib = c.createOscillator(), vg = c.createGain();
+      o.type = 'sine'; o.detune.value = det;
+      o.frequency.setValueAtTime(f0 * 0.8, now); o.frequency.linearRampToValueAtTime(f0 * 1.25, now + 0.7); o.frequency.exponentialRampToValueAtTime(f0 * 0.3, now + 4);
+      vib.frequency.value = 6.5; vg.gain.value = f0 * 0.03; vib.connect(vg); vg.connect(o.frequency);
+      o.connect(bp); o.start(now); vib.start(now); o.stop(now + 5); vib.stop(now + 5);
+    }
+  },
+  play(n, when) {
+    const c = this.ctx, env = c.createGain(), end = when + n.d;
+    env.gain.setValueAtTime(0, when);
+    env.connect(this.music);
+    const osc = (type, f, dest) => { const o = c.createOscillator(); o.type = type; o.frequency.value = f; o.connect(dest); o.start(when); o.stop(end + 0.5); return o; };
+    if (n.kind === 'bass') {
+      osc('triangle', n.f, env);
+      env.gain.linearRampToValueAtTime(0.32, when + 0.01); env.gain.exponentialRampToValueAtTime(0.001, end);
+    } else if (n.kind === 'pah') {
+      osc('sine', n.f, env);
+      env.gain.linearRampToValueAtTime(0.05, when + 0.01); env.gain.exponentialRampToValueAtTime(0.001, end);
+    } else {
+      const sung = n.kind === 'choir';
+      const vib = c.createOscillator(), vg = c.createGain();
+      vib.frequency.value = 5.2; vg.gain.value = n.f * 0.005; vib.connect(vg); vib.start(when); vib.stop(end + 0.5);
+      if (sung) {
+        // a wordless "ah": two detuned saws through three vowel formants
+        const mix = c.createGain(); mix.gain.value = 0.5;
+        for (const cents of [-7, 7]) { const o = osc('sawtooth', n.f * 2 ** (cents / 1200), mix); vg.connect(o.frequency); }
+        for (const [f, q, g] of [[730, 6, 1], [1090, 8, 0.5], [2440, 10, 0.25]]) {
+          const bp = c.createBiquadFilter(), fg = c.createGain();
+          bp.type = 'bandpass'; bp.frequency.value = f; bp.Q.value = q; fg.gain.value = g;
+          mix.connect(bp); bp.connect(fg); fg.connect(env);
+        }
+      } else {
+        vg.connect(osc('triangle', n.f, env).frequency);
+        const h = c.createGain(); h.gain.value = 0.12; h.connect(env); osc('sine', n.f * 2, h);
+      }
+      const peak = sung ? 0.42 : 0.16;
+      env.gain.linearRampToValueAtTime(peak, when + (sung ? 0.09 : 0.04));
+      env.gain.setTargetAtTime(peak * 0.7, when + 0.12, 0.2);
+      env.gain.setTargetAtTime(0, end, sung ? 0.12 : 0.06);
+    }
+  },
+};
+
+// sound switch, volume, and the start card
+const bSound = $('bSound'), vol = $('vol');
+function setSound(on) {
+  audio.setOn(on);
+  bSound.textContent = on ? 'Sound on' : 'Sound off';
+  bSound.setAttribute('aria-pressed', String(on));
+}
+bSound.onclick = () => setSound(!audio.on);
+try { const v = parseFloat(localStorage.getItem('nightmare-volume')); if (v >= 0 && v <= 1) vol.value = v; } catch (e) { }
+audio.volume = +vol.value;
+vol.addEventListener('input', () => {
+  audio.setVolume(+vol.value);
+  if (+vol.value > 0 && !audio.on) setSound(true);
+  try { localStorage.setItem('nightmare-volume', vol.value); } catch (e) { }
+});
+function begin(withSound) {
+  $('start').hidden = true;
+  if (withSound) setSound(true);
+  playing = true; syncButtons();
+}
+$('goSound').onclick = () => begin(true);
+$('goQuiet').onclick = () => begin(false);
+
+// the progress bar is also a seek bar
+const seekEl = $('seek');
+const fmtTime = t => `${Math.floor(t / 60)}:${String(Math.floor(t % 60)).padStart(2, '0')}`;
+function seekTo(T) {
+  tourT = THREE.MathUtils.clamp(T, 0, TOUR_END - 0.01);
+  if (mode !== 'tour') { fly = null; mode = 'tour'; controls.enabled = false; playing = true; }
+  if (!$('start').hidden) begin(false);
+  syncButtons();
+}
+let seeking = false;
+const seekAt = e => { const r = seekEl.getBoundingClientRect(); seekTo((e.clientX - r.left) / r.width * TOUR_END); };
+seekEl.addEventListener('pointerdown', e => { seeking = true; seekEl.setPointerCapture(e.pointerId); seekAt(e); });
+seekEl.addEventListener('pointermove', e => { if (seeking) seekAt(e); });
+seekEl.addEventListener('pointerup', () => { seeking = false; });
+seekEl.addEventListener('keydown', e => {
+  const step = { ArrowRight: 5, ArrowLeft: -5, PageUp: 30, PageDown: -30 }[e.key];
+  if (step) { e.preventDefault(); seekTo(tourT + step); }
+  else if (e.key === 'Home') { e.preventDefault(); seekTo(0); }
+});
+
+// ---------------------------------------------------------------- the loop
+const capEl = $('cap'), progEl = $('prog').firstElementChild;
+const WHO_LABEL = { prof: 'Professor Squarepunt', profShout: 'Professor Squarepunt', profWake: 'Professor Squarepunt', pi: 'Pi', knight: 'Sir Arthur’s ghost' };
+function showCaption(id) {
+  if (id === capIndex) return;
+  capIndex = id;
+  capEl.style.opacity = 0;
+  setTimeout(() => {
+    if (capIndex !== id) return;
+    const c = id && LINE[id];
+    let html = '';
+    if (c) {
+      const who = c.who && c.who !== 'song' ? (WHO_LABEL[c.who] || c.who) : '';
+      html = (who ? `<b class="who">${who}</b>` : '') + c.text + (c.sub ? `<small>${c.sub}</small>` : '');
+    }
+    capEl.innerHTML = html;
+    capEl.classList.toggle('song', !!(c && c.kind === 'song'));
+    capEl.classList.toggle('speech', !!(c && c.who && c.who !== 'song'));
+    capEl.style.opacity = 1;
+  }, 450);
+}
+function tourMarker(cap) {
+  if (selected) return;
+  const n = cap && cap.n;
+  if (n) { const L = locate(n); marker.position.set(L.x, 0, L.z); marker.userData.s = L.s; marker.visible = true; }
+  else marker.visible = false;
+}
+
+let clock = 0, last = performance.now(), fpsAcc = 0, fpsN = 0, fpsSince = 0;
+const tmpV = new THREE.Vector3();
+function frame(now) {
+  const dt = Math.min(0.05, (now - last) / 1000); last = now;
+  clock += dt;
+  U.uTime.value = clock; groundMat.uniforms.uTime.value = clock;
+
+  if (mode === 'tour') {
+    if (playing) tourT += dt;
+    if (tourT >= TOUR_END) { tourT = TOUR_END; enterExplore(); showCaption(EXPLORE_CAP); capUntil = clock + 12; }
+    else {
+      applyPose(evalKeys(TOUR, tourT, true));
+      let cap = CAP_TIMES[0]; for (const k of CAP_TIMES) if (k.time - 0.3 <= tourT) cap = k;
+      showCaption(cap.id);
+      tourMarker(cap);
+    }
+  } else if (mode === 'fly') {
+    fly.t += dt;
+    const u = Math.min(1, fly.t / fly.dur), e = u < .5 ? 4 * u * u * u : 1 - Math.pow(-2 * u + 2, 3) / 2;
+    const p = evalKeys(fly.keys, e);
+    applyPose(p);
+    controls.target.copy(camTarget);
+    if (u >= 1) { const done = fly.done; fly = null; mode = 'explore'; done ? done() : enterExplore(); }
+  } else if (mode === 'explore') {
+    controls.update();
+    camTarget.copy(controls.target);
+    if (capIndex && capIndex !== EXPLORE_CAP) showCaption(null);
+    if (capIndex === EXPLORE_CAP && clock > capUntil) showCaption(null);
+  }
+
+  if (TOUR_END) {
+    progEl.style.width = (100 * tourT / TOUR_END).toFixed(2) + '%';
+    $('tlabel').textContent = `${fmtTime(tourT)} / ${fmtTime(TOUR_END)}`;
+    seekEl.setAttribute('aria-valuenow', Math.round(tourT)); seekEl.setAttribute('aria-valuetext', fmtTime(tourT));
+  }
+  updateDance(dt);
+  updateScene(dt);
+  audio.update();
+  // the one speaking swells with its voice (or with a stand-in rhythm when the sound is off)
+  const speaking = mode === 'tour' && playing ? activeLine(tourT) : null;
+  const talk = speaking ? (audio.cur ? audio.level : 0.5 + 0.5 * Math.sin(clock * 11)) : 0;
+  if (speaking && speaking.speaker) { const L = locate(speaking.speaker); U.uSpeaker.value.set(L.x, L.z); }
+  U.uTalk.value = speaking && speaking.speaker ? talk : 0;
+  if (sceneNow.flash > 0.01) camera.position.addScaledVector(tmpV.set(Math.random() - .5, Math.random() - .5, Math.random() - .5), sceneNow.flash * 0.12);
+
+  // scale the world's depth and haze to the camera's height
+  const h = Math.max(camera.position.y, 0.25);
+  // near plane as far out as the view allows, so distant surfaces keep their depth precision
+  camera.near = THREE.MathUtils.clamp(Math.min(camera.position.distanceTo(camTarget) * 0.02, h * 0.5), 0.03, 2000); camera.updateProjectionMatrix();
+  scene.fog.density = 2.1 / Math.max(150, 30 * h);
+  // the dissolve into mist, then a pale dawn as the professor wakes
+  if (sceneNow.fog > 0 || sceneNow.dawn > 0) {
+    scene.fog.density = THREE.MathUtils.lerp(scene.fog.density, 0.09, sceneNow.fog) + 0.02 * sceneNow.dawn;
+    scene.fog.color.copy(HORIZON).lerp(MIST_COLOR, sceneNow.fog).lerp(DAWN_COLOR, sceneNow.dawn);
+  } else scene.fog.color.copy(HORIZON);
+  skyMat.uniforms.uHorizon.value.copy(scene.fog.color);
+  skyMat.uniforms.uDawn.value = sceneNow.dawn;
+  renderer.setClearColor(scene.fog.color);
+  hemi.intensity = 2.1 + 1.2 * sceneNow.dawn;
+  sky.position.copy(camera.position);
+  const show5 = h < 900, show4 = h < 5000;
+  if (ringGroups.length) { ringGroups[4].visible = show5; ringGroups[3].visible = show4; }
+  groundMat.uniforms.uProcFrom.value = show4 ? (show5 ? 5 : 4) : 3;
+
+  // the patch of names and faces wherever you stand on the far plain
+  const camD = camera.position.distanceTo(camTarget);
+  const want = mode !== 'tour' && show5 && camD < 160 && Math.hypot(camTarget.x, camTarget.z) > RINGS[4].a - PATCH_R;
+  if (want) {
+    if (Math.hypot(camTarget.x - patch.cx, camTarget.z - patch.cz) > PATCH_R * 0.35 && now - patch.last > 250) rebuildPatch(camTarget.x, camTarget.z);
+    patchNear.visible = patchFar.visible = true;
+    groundMat.uniforms.uPatch.value.set(patch.cx, patch.cz, PATCH_R);
+    U.uHide.value.set(patch.cx, patch.cz, PATCH_R);
+  } else {
+    patchNear.visible = patchFar.visible = false;
+    groundMat.uniforms.uPatch.value.z = 0;
+    U.uHide.value.z = 0;
+  }
+
+  if (PI) {
+    // Pi's head follows whoever looks at it; its eyes never stop burning
+    tmpV.copy(camera.position); PI.group.worldToLocal(tmpV);
+    const yaw = THREE.MathUtils.clamp(Math.atan2(tmpV.x, tmpV.z), -1.3, 1.3);
+    const pitch = THREE.MathUtils.clamp(-Math.atan2(tmpV.y - PI_HEAD_Y, Math.hypot(tmpV.x, tmpV.z)), -0.45, 0.45);
+    PI.head.rotation.y += (yaw - PI.head.rotation.y) * Math.min(1, dt * 2.5);
+    PI.head.rotation.x += (pitch - PI.head.rotation.x) * Math.min(1, dt * 2.5);
+    const piTalk = speaking && speaking.who === 'pi' ? talk : 0;
+    const pulse = (0.17 + 0.05 * Math.sin(clock * 3.1)) * (1 + 2.5 * sceneNow.flash + 1.2 * piTalk);
+    for (const e of PI.eyes) e.scale.setScalar(pulse);
+    PI.light.intensity = 3 + 40 * sceneNow.flash;
+    // a sign to stop the ballet, then the baton waved for silence
+    PI.baton.rotation.x = -0.55 * Math.max(sceneNow.sign, sceneNow.cower) - (0.8 + 0.35 * Math.sin(clock * 9)) * sceneNow.wave;
+    const mask = sceneNow.frown > 0.5 ? PI.frownTex : PI.maskTex;
+    if (PI.maskMat.map !== mask) { PI.maskMat.map = mask; PI.maskMat.needsUpdate = true; }
+    PI.group.scale.setScalar(Math.max(0.001, 1 - sceneNow.mist));
+    PI.baton.rotation.z = 0.25 * sceneNow.wave * Math.sin(clock * 4.5);
+    // the professor fidgets, then turns to Pi, then covers his ears
+    const fidget = 1 - sceneNow.profTurn;
+    PROF.group.rotation.y = 1.0 + 1.1 * sceneNow.profTurn - 3.15 * sceneNow.face137 + 2.25 * sceneNow.wake;
+    PROF.head.rotation.y = fidget * (0.55 * Math.sin(clock * 0.6) + 0.22 * Math.sin(clock * 1.9));
+    PROF.head.rotation.x = 0.08 * Math.sin(clock * 0.9) * fidget + (speaking && speaking.who === 'prof' ? 0.12 * talk : 0) - 0.15 * sceneNow.ears;
+    PROF.head.rotation.x += -0.25 * sceneNow.armsUp + 0.12 * sceneNow.wake * (1 + Math.sin(clock * 0.8)) / 2;
+    PROF.arms[0].rotation.z = -3.24 * sceneNow.ears - 2.5 * sceneNow.armsUp;
+    PROF.arms[1].rotation.z = 3.24 * sceneNow.ears + 2.5 * sceneNow.armsUp;
+    // Sir Arthur's ghost hovers at 137's shoulder, leaning in to whisper
+    KNIGHT.group.visible = sceneNow.knight > 0.01;
+    if (KNIGHT.group.visible) {
+      const fx = -_rp.x, fz = -_rp.z, fl = Math.hypot(fx, fz) || 1;
+      KNIGHT.group.position.set(_rp.x + (fz / fl) * 0.75 - (fx / fl) * 0.3, 0.15 + 0.08 * Math.sin(clock * 1.7), _rp.z - (fx / fl) * 0.75 - (fz / fl) * 0.3);
+      KNIGHT.group.rotation.y = Math.atan2(_rp.x - KNIGHT.group.position.x, _rp.z - KNIGHT.group.position.z);
+      KNIGHT.group.rotation.x = 0.25 * sceneNow.whisper;
+      KNIGHT.mat.opacity = sceneNow.knight * (1 - sceneNow.mist) * (0.07 + 0.035 * Math.sin(clock * 7) + 0.02 * Math.sin(clock * 23) + 0.05 * sceneNow.whisper);
+    }
+  }
+  if (marker.visible) {
+    const s = marker.userData.s || 1, md = camera.position.distanceTo(marker.position);
+    marker.userData.ring.scale.setScalar(s * (1 + 0.08 * Math.sin(clock * 4)));
+    marker.userData.beam.scale.set(Math.max(0.035, md * 0.0025), Math.max(4, md * 0.3), Math.max(0.035, md * 0.0025));
+  }
+
+  renderer.render(scene, camera);
+
+  // drop resolution if the frame rate sags
+  fpsAcc += dt; fpsN++;
+  if (clock - fpsSince > 3 && fpsN > 0) {
+    const fps = fpsN / fpsAcc;
+    if (fps < 32 && dprStep < DPRS.length - 1) { dprStep++; renderer.setPixelRatio(DPRS[dprStep]); resize(); }
+    fpsAcc = 0; fpsN = 0; fpsSince = clock;
+  }
+  requestAnimationFrame(frame);
+}
+
+// ---------------------------------------------------------------- go
+(async () => {
+  try {
+    await build();
+    makeTour();
+    applyPose(TOUR[0].p);
+    controls.target.copy(camTarget);
+    mode = 'tour'; playing = false; syncButtons();
+    seekEl.setAttribute('aria-valuemax', Math.round(TOUR_END));
+    $('startlen').textContent = `${Math.round(TOUR_END / 60)} minutes`;
+    $('veil').classList.add('gone');
+    $('start').hidden = false;
+    requestAnimationFrame(t => { last = t; frame(t); });
+  } catch (err) {
+    $('veil').textContent = 'The dream could not start: ' + (err && err.message || err);
+    console.error(err);
+  }
+})();
+</script>
