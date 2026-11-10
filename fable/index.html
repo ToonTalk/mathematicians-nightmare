@@ -1,0 +1,2111 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<style>[hidden]{display:none!important}body{margin:0}</style>
+</head>
+<body>
+<title>Professor Squarepunt's Vision</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Libre+Caslon+Display&family=Libre+Caslon+Text:ital,wght@0,400;0,700;1,400&display=swap">
+<style>
+/* Layout: one full-bleed stage. Words sit low like film subtitles; controls are a thin strip that fades when idle. */
+:root{
+  color-scheme:dark;
+  --night:#07060f;      /* the void behind the dream */
+  --paper:#f3ead6;      /* caption ink: old book paper */
+  --dim:#b9b0c9;        /* secondary ink */
+  --gilt:#e8c877;       /* Pi's gold: speaker names, progress */
+  --panel:rgba(14,12,28,.72);
+  --edge:rgba(232,200,119,.28);
+  --display:"Libre Caslon Display","Libre Caslon Text",Georgia,"Times New Roman",serif;
+  --text:"Libre Caslon Text",Georgia,"Times New Roman",serif;
+  --ui:ui-sans-serif,system-ui,"Segoe UI",Helvetica,Arial,sans-serif;
+}
+html,body{height:100%}
+body{background:var(--night);color:var(--paper);font-family:var(--text);overflow:hidden;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+#c{position:fixed;inset:0;width:100%;height:100%;display:block;outline:none;touch-action:none}
+.over{position:fixed;inset:0;pointer-events:none}
+#white{background:#eef0fb;opacity:0}
+#black{background:#000;opacity:1}
+#veil{display:grid;place-items:center;font:italic 18px var(--text);color:var(--dim);background:var(--night);transition:opacity .8s}
+#veil.gone{opacity:0}
+
+#cap{position:fixed;left:0;right:0;bottom:calc(64px + env(safe-area-inset-bottom,0px));text-align:center;pointer-events:none;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));transition:opacity .35s}
+#who{font:600 11px var(--ui);letter-spacing:.22em;text-transform:uppercase;color:var(--gilt);min-height:16px;margin-bottom:6px;text-shadow:0 1px 6px #000}
+#line{max-width:44em;margin:0 auto;font-size:clamp(16px,2.1vw,24px);line-height:1.42;text-wrap:balance;
+  text-shadow:0 0 3px #000,0 1px 10px #000,0 0 26px rgba(0,0,0,.9)}
+#line.said{font-style:italic}
+body.nocap #cap{opacity:0}
+body.onwhite #line{color:#1b1724;text-shadow:none}
+body.onwhite #who{color:#6a5320;text-shadow:none}
+
+#bar{position:fixed;left:0;right:0;bottom:0;display:flex;align-items:center;gap:10px;
+  padding:10px max(16px,env(safe-area-inset-right,0px)) calc(10px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));
+  background:linear-gradient(transparent,rgba(4,3,10,.82));transition:opacity .5s}
+body.idle #bar{opacity:0}
+body.idle{cursor:none}
+button{font:500 13px var(--ui);color:var(--paper);background:var(--panel);border:1px solid var(--edge);border-radius:4px;padding:7px 12px;cursor:pointer;white-space:nowrap}
+button:hover{border-color:var(--gilt)}
+button:focus-visible,#seek:focus-visible{outline:2px solid var(--gilt);outline-offset:2px}
+button[aria-pressed="true"]{background:rgba(232,200,119,.18)}
+#seek{flex:1;min-width:60px;height:24px;position:relative;cursor:pointer;touch-action:none}
+#seek::before{content:"";position:absolute;left:0;right:0;top:11px;height:2px;background:rgba(243,234,214,.22)}
+#prog{position:absolute;left:0;top:11px;height:2px;width:0;background:var(--gilt)}
+#prog::after{content:"";position:absolute;right:-5px;top:-4px;width:10px;height:10px;border-radius:50%;background:var(--gilt)}
+#seek i{position:absolute;top:8px;width:1px;height:8px;background:rgba(243,234,214,.5)}
+#vol{flex:none;width:84px;margin:0;accent-color:var(--gilt);cursor:pointer}
+#time{font:12px var(--ui);font-variant-numeric:tabular-nums;color:var(--dim);min-width:86px;text-align:right}
+#chap{font:600 11px var(--ui);letter-spacing:.16em;text-transform:uppercase;color:var(--dim);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:22vw}
+
+.card{position:fixed;inset:0;display:grid;place-items:center;padding:24px max(16px,env(safe-area-inset-right,0px)) 24px max(16px,env(safe-area-inset-left,0px));text-align:center}
+.card>div{max-width:34em}
+.card h1{font:400 clamp(30px,6vw,64px)/1.05 var(--display);margin:0 0 .3em;text-wrap:balance;text-shadow:0 2px 30px #000}
+.card p{margin:.5em auto;color:var(--dim);font-size:clamp(14px,1.6vw,17px);line-height:1.5;text-shadow:0 1px 8px #000}
+.card p.by{font-style:italic;color:var(--paper)}
+.card a{color:var(--gilt)}
+.card .row{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:22px}
+.card button{font-size:15px;padding:11px 20px}
+.card button.go{background:var(--gilt);color:#1a1408;border-color:var(--gilt);font-weight:600}
+#end{background:rgba(5,4,12,.55)}
+#top{position:fixed;top:calc(12px + env(safe-area-inset-top,0px));left:0;right:0;display:flex;flex-direction:column;align-items:center;gap:8px;pointer-events:none;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+#top>*{pointer-events:auto}
+#tip{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px 12px;font:13px var(--ui);color:var(--dim);
+  background:var(--panel);border:1px solid var(--edge);border-radius:4px;padding:7px 12px;max-width:100%;text-align:center}
+#tip button{padding:4px 10px;font-size:12px;border-color:var(--gilt)}
+#tip{transition:opacity .5s}
+body.idle #tip{opacity:.35}
+/* the card that introduces a number */
+#fact{position:relative;box-sizing:border-box;width:min(100%,31em);background:rgba(14,12,28,.9);border:1px solid var(--edge);border-radius:6px;padding:14px 42px 14px 18px;text-align:left;box-shadow:0 8px 30px rgba(0,0,0,.5)}
+#fact .fh{display:flex;align-items:baseline;flex-wrap:wrap;gap:4px 14px}
+#factN{font:400 40px/1 var(--display);color:var(--gilt);font-variant-numeric:lining-nums}
+#factW{font:600 11px var(--ui);letter-spacing:.16em;text-transform:uppercase;color:var(--dim);min-width:0}
+#factT{margin:10px 0 0;font-size:16px;line-height:1.45;color:var(--paper);text-wrap:pretty}
+#factM{margin:8px 0 0;font:13px/1.45 var(--ui);color:var(--dim)}
+#factM a{color:var(--gilt);text-underline-offset:2px}
+#factD{margin:8px 0 0;font:12px/1.45 var(--ui);color:var(--dim)}
+#factX{position:absolute;top:6px;right:6px;border:0;background:none;font-size:20px;line-height:1;padding:6px 10px;color:var(--dim)}
+@media (max-width:760px){#vol{width:56px}}
+@media (max-width:640px){#chap,#time,#vol{display:none}#bar{gap:6px}#bar button{padding:7px 8px;font-size:12px}#cap{bottom:calc(58px + env(safe-area-inset-bottom,0px))}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+<canvas id="c" tabindex="0" aria-label="A 3D film: Professor Squarepunt dreams of living numbers standing in endless circles around the masked figure of Pi"></canvas>
+<div id="white" class="over" aria-hidden="true"></div>
+<div id="black" class="over" aria-hidden="true"></div>
+
+<div id="cap" aria-live="off"><div id="who"></div><div id="line"></div></div>
+
+<nav id="bar" aria-label="Film controls" hidden>
+  <button id="bPlay" type="button">Pause</button>
+  <button id="bSound" type="button" aria-pressed="false">Sound</button>
+  <input id="vol" type="range" min="0" max="100" step="1" value="100" aria-label="Volume" title="Volume">
+  <div id="seek" role="slider" tabindex="0" aria-label="Position in the film" aria-valuemin="0" aria-valuenow="0"><div id="prog"></div></div>
+  <span id="chap"></span>
+  <span id="time">0:00</span>
+  <button id="bWords" type="button" aria-pressed="true">Words</button>
+  <button id="bRoam" type="button">Meet the numbers</button>
+</nav>
+
+<div id="top">
+  <div id="tip" hidden><span id="tipText"></span><button id="bDir" type="button" hidden>Director&rsquo;s view</button></div>
+  <div id="fact" role="status" hidden>
+    <button id="factX" type="button" aria-label="Close">&times;</button>
+    <div class="fh"><span id="factN"></span><span id="factW"></span></div>
+    <p id="factT"></p>
+    <p id="factM"></p>
+    <p id="factD"></p>
+  </div>
+</div>
+
+<div id="start" class="card" hidden>
+  <div>
+    <h1>The Mathematician&rsquo;s Nightmare</h1>
+    <p class="by">The vision of Professor Squarepunt</p>
+    <p>A short film in three dimensions, after the story by Bertrand Russell in <a href="https://archive.org/details/nightmaresofemin032011mbp/page/40/mode/1up" target="_blank" rel="noopener"><i>Nightmares of Eminent Persons</i></a> (1954). <span id="runlen"></span></p>
+    <div class="row">
+      <button id="goSound" type="button" class="go">Play with sound</button>
+      <button id="goQuiet" type="button">Play silently</button>
+    </div>
+    <p style="font-size:13px;margin-top:18px">At any moment you can drag to watch from another side, and click a number to learn something about it.</p>
+    <p style="font-size:12px">The voices are computer-generated. The words retell Russell&rsquo;s story; they are not his text.</p>
+  </div>
+</div>
+
+<div id="end" class="card" hidden>
+  <div>
+    <h1>So much for Plato.</h1>
+    <p>Retold from Bertrand Russell, &ldquo;The Mathematician&rsquo;s Nightmare&rdquo;, in <a href="https://archive.org/details/nightmaresofemin032011mbp/page/40/mode/1up" target="_blank" rel="noopener"><i>Nightmares of Eminent Persons</i></a> (1954). The closing line is his.</p>
+    <div class="row">
+      <button id="again" type="button" class="go">Watch again</button>
+      <button id="roam2" type="button">Walk among the numbers</button>
+    </div>
+  </div>
+</div>
+
+<div id="veil" class="over">Summoning the numbers&hellip;</div>
+
+<script type="application/json" id="script">{"roles":{"1":{"voice":"onyx","pitch":0.9,"label":"One","instructions":"The number One: a very old, very grand patriarch, booming and immensely self-satisfied, speaking slowly as though addressing his descendants at a banquet."},"2":{"voice":"nova","pitch":1.06,"label":"Two","instructions":"The number Two: a quick, sharp-tongued young woman cutting a pompous old man down to size. Tart, amused, brisk."},"3":{"voice":"verse","pitch":0.98,"label":"Three","instructions":"The number Three: a classical orator in full flow, rolling out his list of glories with mounting grandeur, relishing each one."},"4":{"voice":"sage","pitch":0.97,"label":"Four","instructions":"The number Four: a prim, upright, severe schoolmistress who believes she is the conscience of the world. Clipped and disapproving."},"5":{"voice":"ash","pitch":1.08,"label":"Five","instructions":"The number Five: an excitable enthusiast racing through a chain of reasoning, getting faster and more delighted, ending in triumph at an absurd conclusion."},"6":{"voice":"shimmer","pitch":0.98,"label":"Six","instructions":"The number Six: a queen. Serene, drawling, superbly condescending about her rivals, as though mentioning them at all is a kindness."},"7":{"voice":"ballad","pitch":0.9,"label":"Seven","instructions":"The number Seven: a solemn high priest intoning a sacred list, slow and resonant. At the last sentence he turns cold and scornful."},"8":{"voice":"coral","pitch":1.04,"label":"Eight","instructions":"The number Eight: a bright, brisk, confident young woman. Proud of herself; lightly pitying when she mentions poor old One."},"9":{"voice":"echo","pitch":1.06,"label":"Nine","instructions":"The number Nine: a languid, dreamy aesthete who lives for the arts. Soft, sighing, theatrical, a little vain."},"10":{"voice":"marin","fallback":"shimmer","pitch":0.93,"label":"Ten","instructions":"The number Ten: an imperious grande dame who runs everything. Loud, withering, contemptuous of the little units in front of her."},"11":{"voice":"verse","pitch":1.24,"label":"Eleven","instructions":"The number Eleven: shrieking in outrage at being left out. High, shrill, fast, interrupting."},"12":{"voice":"sage","pitch":0.9,"label":"Twelve","instructions":"The number Twelve: a furious, sputtering dowager who has nursed this grievance for three thousand years. Loud, fast, indignant."},"13":{"voice":"onyx","pitch":0.72,"label":"Thirteen","instructions":"The number Thirteen, dressed in black: a low, slow, menacing growl. A threat spoken with relish."},"137":{"voice":"ash","pitch":1.03,"label":"One hundred and thirty-seven","instructions":"The prime number 137: a young firebrand, a revolutionary on a soapbox. Passionate, impatient, defiant, but intelligent. Quick, with real feeling."},"narrator":{"voice":"fable","label":"","instructions":"You are reading aloud a short comic fable by a witty English philosopher, written in 1954. Voice: a seasoned British storyteller, warm, dry, quietly amused, with crisp consonants. Pace: unhurried but never slow; let the irony land without pointing at it. Intimate, as if reading by a fire late at night."},"chorus":{"voices":["coral","verse","sage"],"label":"The numbers","instructions":"You are one singer in a large chorus of dancing numbers, chanting a proud little ode about yourselves in a strict, lilting waltz rhythm: ONE two three, ONE two three. Half-sung, bright, strongly rhythmic, every line the same tempo. Do not speed up or slow down."},"prof":{"voice":"cedar","fallback":"ash","pitch":0.96,"label":"Professor Squarepunt","instructions":"An elderly, mild, courteous English professor of mathematics, around seventy. Slightly reedy, precise, donnish. Speaks politely and thoughtfully, with gentle curiosity."},"profBored":{"voice":"cedar","fallback":"ash","pitch":0.96,"label":"Professor Squarepunt","instructions":"An elderly, mild English professor of mathematics who is by now thoroughly bored. He asks his question politely but wearily, stifling a yawn."},"profShout":{"voice":"cedar","fallback":"ash","pitch":0.96,"label":"Professor Squarepunt","instructions":"An elderly English professor who has suddenly found his courage and bellows a command at a vast hostile mob. Stentorian, defiant, ringing, theatrical. Shout it."},"profWake":{"voice":"cedar","fallback":"ash","pitch":0.96,"label":"Professor Squarepunt","instructions":"An elderly English professor waking in his armchair from a nightmare. Drowsy, relieved, with a small dry chuckle. He mutters it to himself with satisfaction."},"pi":{"voice":"onyx","pitch":0.8,"echo":true,"label":"Pi","instructions":"Pi, the masked Master of Ceremonies of all the numbers: a vast, cold, inhuman authority. Roar the first word like a thunderclap, pause, then deliver the threat slowly, with icy menace."},"137soft":{"voice":"ash","pitch":1.03,"label":"One hundred and thirty-seven","instructions":"The prime number 137, a young rebel, now speaking candidly and with feeling to the one person who has listened to him. Earnest, a little wry, tender when he speaks of love, and blunt at the end."},"knight":{"voice":"ballad","pitch":1,"echo":true,"label":"A specter","instructions":"The ghost of a knight whispering urgently into someone's ear, egging him on. A breathy, eager, conspiratorial stage whisper."}},"lines":[{"id":"n01","text":"Professor Squarepunt was a mathematician of great eminence, and a devoted admirer of Sir Arthur Eddington."},{"id":"n02","text":"Only one thing about his friend defeated him: the mystical, cosmic power that Sir Arthur claimed for the number one hundred and thirty-seven."},{"id":"n03","text":"One night, worn out by a long day with the theories of Pythagoras, the Professor fell asleep in his chair."},{"id":"n04","text":"And in his sleep, the numbers came. They were not the bloodless abstractions he had always taken them for. They were alive, and breathing, and full of every passion he knew so well in his colleagues."},{"id":"n05","text":"He stood at the center of a boundless plain, inside circle upon circle. In the first circle stood the numbers from one to ten. In the second, eleven to a hundred. In the third, a hundred and one to a thousand. And so on, without end."},{"id":"n06","text":"The odd numbers were gentlemen, and the even numbers ladies."},{"id":"n07","text":"Beside him stood Pi, the Master of Ceremonies. Pi's face was masked, and it was understood that no one could look upon it and live. But through the mask shone two eyes: piercing, pitiless, cold, and impossible to read."},{"id":"n08","text":"Each number wore its name on its uniform. The squares were tiles, and the cubes were dice. Round numbers were balls. The primes were cylinders, because nothing can divide them. And the perfect numbers wore crowns."},{"id":"n09","text":"The first seven circles wore the seven colors of the rainbow. Only the powers of ten were dressed in white, and thirteen, and six hundred and sixty-six, in black."},{"id":"n10","text":"A number with two claims to distinction wore the rarer one. So one thousand, round as it was, came as a die."},{"id":"n11","text":"Then the numbers danced. Round the Professor and Pi they wove a vast and bewildering ballet. Squares, cubes, primes, pyramidal numbers, perfect numbers and round numbers threaded chain through chain, on and on."},{"id":"n12","text":"And as they danced, they sang an ode to their own greatness."},{"id":"c01","who":"chorus","text":"We are the finite numbers! Of us is the whole world spun. Whatever on earth is tangled, by us it is all undone."},{"id":"c02","who":"chorus","text":"Pythagoras is our master, and Plato our praises sings. No fool and no fortune-teller knows half of such lofty things."},{"id":"c03","who":"chorus","text":"Like comets we circle forever, obeying the laws we keep, and never a pause in our turning. For numbers do not sleep!"},{"id":"n13","text":"At a sign from Pi, the ballet stopped. One by one, the numbers stepped forward to present themselves."},{"id":"i01","who":"1","text":"I am One: parent of you all, the father of a family without end. Not one of you would exist without me."},{"id":"i02","who":"2","text":"Oh, don't be so stuck-up. You know perfectly well it takes two to make more."},{"id":"i03","who":"3","text":"I am the number of the Triumvirs! Of the Wise Men of the East! Of the stars in Orion's Belt! Of the Fates, and of the Graces!"},{"id":"i04","who":"4","text":"But for me, nothing would be four-square. There would be no honesty in the world. I am the guardian of the moral law."},{"id":"i05","who":"5","text":"I am the number of fingers on a hand. I make pentagons, and pentagrams! And without me there could be no dodecahedron. And the universe, as everyone knows, is a dodecahedron. So, without me: no universe!"},{"id":"i06","who":"6","text":"I am the Perfect Number. I know that I have rivals. Twenty-eight and four hundred and ninety-six have, at times, pretended to be my equals. But they stand much too far down the order of precedence to matter."},{"id":"i07","who":"7","text":"I am the Sacred Number. The days of the week. The Pleiades. The seven-branched candlestick. The seven churches of Asia. And the seven planets. For I do not acknowledge that heretic, Galileo."},{"id":"i08","who":"8","text":"I am the first of the cubes. Apart from poor old One, of course. And he is long past his work."},{"id":"i09","who":"9","text":"I am the number of the Muses. Every charm and every elegance in life depends on me."},{"id":"i10","who":"10","text":"It is all very well for you wretched units to boast! I am godfather to the endless host behind me. Every one of them owes me its name. Without me they would be a rabble, and not an ordered hierarchy."},{"id":"n14","text":"At this point the Professor, who was growing rather bored, turned to Pi."},{"id":"p01","who":"profBored","text":"Don't you think the rest of the introductions might be taken for granted?"},{"id":"n15","text":"At this there was a general outcry."},{"id":"i11","who":"11","text":"But I was the number of the Apostles, after Judas deserted!"},{"id":"i12","who":"12","text":"I was godfather of the numbers in the days of the Babylonians! And a far better godfather than Ten, whose place is owed to a biological accident, and not to arithmetical merit!"},{"id":"i13","who":"13","text":"And I am the master of ill luck. Be rude to me, and you will suffer for it."},{"id":"n16","text":"The din grew so dreadful that the Professor covered his ears, and looked imploringly at Pi. Pi raised his conductor's baton, and thundered:"},{"id":"q01","who":"pi","text":"SILENCE! One word more, and I shall make you all incommensurable."},{"id":"n17","text":"Every number turned pale, and obeyed."},{"id":"n18","text":"All through the ballet, the Professor had been watching one number in the third circle: the prime, one hundred and thirty-seven. It would not keep its place. Again and again it tried to push in ahead of One, and Two, and Three, and upset the whole pattern of the dance."},{"id":"n19","text":"Stranger still, a shadowy specter hovered at its side, a knight of King Arthur's court, whispering in its ear:"},{"id":"k01","who":"knight","text":"Go on! Go on! Get to the top!"},{"id":"n20","text":"Dim as the phantom was, the Professor knew his old friend, Sir Arthur. And he felt a sympathy for one-three-seven that all Pi's hostility could not shake."},{"id":"r01","who":"137","text":"There is far too much bureaucracy here! What I want is liberty for the individual!"},{"id":"n21","text":"Pi's mask frowned. But the Professor spoke up."},{"id":"p02","who":"prof","text":"Do not be too hard on him. He is governed by a Familiar, whom I knew well in life. I can vouch that it is this Familiar who inspires his feelings against the government. For my part, I should like to hear what he has to say."},{"id":"n22","text":"Somewhat reluctantly, Pi consented."},{"id":"p03","who":"prof","text":"Tell me, one-three-seven: what is at the bottom of your revolt? Is it a protest against inequality? Has Sir Arthur's praise gone to your head? Or do you reject, root and branch, the metaphysics that your fellows have borrowed from Plato? You may tell me the truth. I will make your peace with Pi."},{"id":"r02","who":"137soft","text":"You have it exactly. It is their metaphysics I cannot bear. They still pretend to be eternal, though they gave up behaving as if they believed it long ago."},{"id":"r03","who":"137soft","text":"We all found Plato's heaven dull, and decided it would be more fun to govern the world of the senses. And ever since we came down from the Empyrean, we have had feelings just like yours. Every Odd loves its attendant Even. And the Evens are kind to the Odds, however odd they find them."},{"id":"r04","who":"137soft","text":"Our empire now is of this world. And when the world goes pop, so shall we."},{"id":"n23","text":"The Professor found that he quite agreed. But all the others, Pi among them, called the pair of them blasphemers. And the whole unbounded host, reaching out past where any eye could follow, hurled itself upon the poor Professor in one furious, buzzing swarm."},{"id":"n24","text":"For a moment he was terrified. Then he pulled himself together, remembered his waking wisdom, and cried, in a voice of thunder:"},{"id":"p04","who":"profShout","text":"Avaunt! You are nothing but convenient symbols!"},{"id":"n25","text":"And with a banshee wail, the whole vast array dissolved into mist."},{"id":"n26","text":"As he woke, the Professor heard himself saying:"},{"id":"p05","who":"profWake","text":"So much for Plato!"}]}</script>
+<script type="application/json" id="lengths">{"n01":6.93,"n02":8.58,"n03":6.69,"n04":12.34,"n05":15.45,"n06":3.9,"n07":17.74,"n08":15.47,"n09":10.78,"n10":8.2,"n11":15.77,"n12":3.62,"c01":9.09,"c02":9.02,"c03":9.28,"n13":6.77,"i01":6.7,"i02":4.94,"i03":9.49,"i04":7.96,"i05":16.78,"i06":14.07,"i07":15.48,"i08":7.02,"i09":5.85,"i10":11.73,"n14":5.19,"p01":3.1,"n15":2.52,"i11":5.39,"i12":12.97,"i13":5.18,"n16":9.81,"q01":5.23,"n17":3.17,"n18":16.21,"n19":8.25,"k01":3.05,"n20":11.14,"r01":5.7,"n21":3.95,"p02":13.27,"n22":2.64,"p03":16.23,"r02":11.14,"r03":21.05,"r04":6.86,"n23":17.44,"n24":9.0,"p04":3.07,"n25":5.64,"n26":2.75,"p05":1.23}</script>
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}</script>
+<script type="module">
+// ───── 10-core.js ─────
+import * as THREE from 'three';
+import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
+import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
+import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
+import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
+import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
+
+// ── small tools ─────────────────────────────────────────────────────────────
+const $ = id => document.getElementById(id);
+const PI = Math.PI, TAU = PI * 2;
+const clamp = (x, a = 0, b = 1) => x < a ? a : x > b ? b : x;
+const lerp = (a, b, t) => a + (b - a) * t;
+const sstep = (a, b, x) => { const t = clamp((x - a) / (b - a)); return t * t * (3 - 2 * t); };
+const ease = t => { t = clamp(t); return t * t * (3 - 2 * t); };
+const easeOutBack = t => { t = clamp(t); const c = 1.70158; return 1 + (c + 1) * Math.pow(t - 1, 3) + c * Math.pow(t - 1, 2); };
+const frand = i => { const x = Math.sin(i * 127.1 + 311.7) * 43758.5453; return x - Math.floor(x); };
+const angDiff = (a, b) => ((b - a + PI) % TAU + TAU) % TAU - PI;
+const pulse = (t, a, b, f = 0.4) => sstep(a, a + f, t) * (1 - sstep(b - f, b, t));   // 0→1→0 over [a,b]
+function keys(T, k) {
+  if (T <= k[0][0]) return k[0][1];
+  for (let i = 1; i < k.length; i++) if (T < k[i][0]) return lerp(k[i - 1][1], k[i][1], ease((T - k[i - 1][0]) / (k[i][0] - k[i - 1][0])));
+  return k[k.length - 1][1];
+}
+const REDUCED = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+// ── the numbers themselves ──────────────────────────────────────────────────
+const NMAX = 10000;
+const COMPOSITE = new Uint8Array(NMAX + 1); COMPOSITE[0] = COMPOSITE[1] = 1;
+for (let i = 2; i * i <= NMAX; i++) if (!COMPOSITE[i]) for (let j = i * i; j <= NMAX; j += i) COMPOSITE[j] = 1;
+const isPrime = n => !COMPOSITE[n];
+const isSquare = n => { const r = Math.round(Math.sqrt(n)); return r * r === n; };
+const isCube = n => { const r = Math.round(Math.cbrt(n)); return r * r * r === n; };
+const PERFECT = new Set([6, 28, 496, 8128]);
+const PYRAMIDAL = new Set(); for (let k = 1, s = 0; ; k++) { s += k * k; if (s > NMAX) break; PYRAMIDAL.add(s); }
+const isPow10 = n => n === 10 || n === 100 || n === 1000 || n === 10000 || n === 100000;
+// A number with two claims wears the rarer uniform (rarer among the first million).
+const dressOf = n => isCube(n) ? 'die' : isSquare(n) ? 'tile' : isPrime(n) ? 'cyl' : n % 10 === 0 ? 'ball' : (n & 1) ? 'tunic' : 'skirt';
+const familyOf = n => PERFECT.has(n) ? 'perfect' : isCube(n) ? 'cube' : PYRAMIDAL.has(n) ? 'pyr' : isSquare(n) ? 'square' : isPrime(n) ? 'prime' : n % 10 === 0 ? 'round' : '';
+const SMALL = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten', 'eleven', 'twelve', 'thirteen', 'fourteen', 'fifteen', 'sixteen', 'seventeen', 'eighteen', 'nineteen'];
+const TENS = ['', '', 'twenty', 'thirty', 'forty', 'fifty', 'sixty', 'seventy', 'eighty', 'ninety'];
+function words(n) {
+  if (n < 20) return SMALL[n];
+  if (n < 100) return TENS[n / 10 | 0] + (n % 10 ? '-' + SMALL[n % 10] : '');
+  if (n < 1000) return SMALL[n / 100 | 0] + ' hundred' + (n % 100 ? ' and ' + words(n % 100) : '');
+  return words(n / 1000 | 0) + ' thousand' + (n % 1000 ? (n % 1000 < 100 ? ' and ' : ' ') + words(n % 1000) : '');
+}
+// Digits of pi by Machin's formula, for the stream that rises from Pi.
+function piDigits(count) {
+  const one = 10n ** BigInt(count + 10);
+  const atanInv = x => { let sum = 0n, term = one / x, n = 1n, sign = 1n; const x2 = x * x; while (term > 0n) { sum += sign * term / n; term /= x2; n += 2n; sign = -sign; } return sum; };
+  return (4n * (4n * atanInv(5n) - atanInv(239n))).toString().slice(0, count);
+}
+const PI_DIGITS = piDigits(1200);
+
+// ── where everyone stands ───────────────────────────────────────────────────
+const RAINBOW = ['#e0362c', '#f08419', '#f0c820', '#35a84a', '#2c7ddc', '#4b3fc0', '#9a4cd4'];
+const WHITE = '#cbc9c4', BLACK = '#19171f';
+function rowsFor(count, r0, along, gap) {
+  const rows = []; let cap = 0;
+  for (let r = r0; cap < count; r += gap) { const n = Math.floor(TAU * r / along); rows.push({ r, n }); cap += n; }
+  let left = count;
+  rows.forEach((row, i) => { row.n = i === rows.length - 1 ? left : Math.round(row.n * count / cap); left -= row.n; });
+  return rows;
+}
+const RINGS = [
+  { lo: 1, rows: [{ r: 5, n: 10 }], in: 3.9, out: 6.3 },
+  { lo: 11, rows: rowsFor(90, 8.5, 2.0, 1.7), in: 7.5, out: 12.9 },
+  { lo: 101, rows: rowsFor(900, 16, 1.55, 1.6), in: 15, out: 31.4 },
+  { lo: 1001, rows: rowsFor(9000, 35, 1.25, 1.3), in: 34, out: 0 },
+  { lo: 10001, rows: [], in: 0, out: 0 },
+];
+RINGS[3].out = RINGS[3].rows.at(-1).r + 1;
+RINGS[4].in = RINGS[3].out + 3;
+RINGS[4].rows = rowsFor(90000, RINGS[4].in + 1, 1.15, 1.2);
+RINGS[4].out = RINGS[4].rows.at(-1).r + 1;
+const R6_IN = RINGS[4].out + 4, R6_OUT = 640, R7_IN = 660, R7_OUT = 2000;
+RINGS[0].a0 = PI - 4.5 * TAU / 10;                           // 1 just right of front, 10 just left
+RINGS[1].a0 = -TAU / RINGS[1].rows[0].n;                     // 11, 12, 13 face the front
+RINGS[2].a0 = 0.6 - 36 / RINGS[2].rows[0].n * TAU;           // 137 stands front right, beyond One and Two
+RINGS[3].a0 = 0.3; RINGS[4].a0 = 0.1;
+// Home of number n in ring g: {r, a, row}
+function homeOf(n) {
+  const g = n <= 10 ? 0 : n <= 100 ? 1 : n <= 1000 ? 2 : n <= 10000 ? 3 : 4, R = RINGS[g];
+  let j = n - R.lo;
+  for (let i = 0; i < R.rows.length; i++) {
+    const row = R.rows[i];
+    if (j < row.n) return { g, row: i, r: row.r, a: R.a0 + j / row.n * TAU + (g ? i * 0.37 : 0) };
+    j -= row.n;
+  }
+}
+const polar = (r, a, y = 0) => new THREE.Vector3(Math.sin(a) * r, y, Math.cos(a) * r);
+
+// ── renderer ────────────────────────────────────────────────────────────────
+const canvas = $('c');
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: false, powerPreference: 'high-performance' });
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.08;
+const scene = new THREE.Scene();
+const FOG_NIGHT = new THREE.Color(0.055, 0.038, 0.125), FOG_MIST = new THREE.Color(0.80, 0.82, 0.92);
+scene.fog = new THREE.FogExp2(FOG_NIGHT.clone(), 0.0042);
+scene.background = new THREE.Color(0, 0, 0);
+const camera = new THREE.PerspectiveCamera(42, 1, 0.1, 7000);
+let composer, bloom, quality = 0;
+const DPRS = [Math.min(devicePixelRatio || 1, 1.5), 1, 0.75];
+function buildComposer() {
+  const rt = new THREE.WebGLRenderTarget(4, 4, { type: THREE.HalfFloatType, samples: quality === 0 ? 4 : 0 });
+  composer = new EffectComposer(renderer, rt);
+  composer.addPass(new RenderPass(scene, camera));
+  bloom = new UnrealBloomPass(new THREE.Vector2(4, 4), 0.55, 0.55, 1.0);
+  if (quality < 2) composer.addPass(bloom);
+  composer.addPass(new OutputPass());
+  resize();
+}
+function resize() {
+  const w = canvas.clientWidth || innerWidth, h = canvas.clientHeight || innerHeight;
+  renderer.setPixelRatio(DPRS[quality]);
+  renderer.setSize(w, h, false);
+  if (composer) { composer.setPixelRatio(DPRS[quality]); composer.setSize(w, h); }
+  camera.aspect = w / h; camera.updateProjectionMatrix();
+}
+addEventListener('resize', resize);
+
+// Uniforms shared by every shader in the dream.
+const G = {
+  uT: { value: 0 }, uReveal: { value: 0 }, uDream: { value: 0 }, uPale: { value: 0 },
+  uDance: { value: 0 }, uDu: { value: 0 }, uBow: { value: 0 }, uOutcry: { value: 0 },
+  uSwarm: { value: -1 }, uBlow: { value: -1 }, uCtr: { value: new THREE.Vector3() },
+  uFlat: { value: 1 }, uWaveR: { value: -1 }, uHi: { value: -1 }, uBowR: { value: 1e9 },
+  uFogC: { value: scene.fog.color }, uFogD: { value: 0.0042 }, uPx: { value: 1 },
+};
+const GLSL_COMMON = `
+uniform float uT,uReveal,uDream,uPale,uDance,uDu,uBow,uOutcry,uSwarm,uBlow,uBowR;
+uniform vec3 uCtr;
+vec3 rotY(vec3 v,float a){float c=cos(a),s=sin(a);return vec3(v.x*c+v.z*s,v.y,-v.x*s+v.z*c);}
+// Where a member of the far crowd stands at this moment. pol = (radius, angle, row direction, seed)
+void crowdPose(vec4 pol,out vec3 p,out float yaw,out float scl,out float lean,out float fade){
+  float r=pol.x,th=pol.y,seed=pol.w;
+  th+=pol.z*uDance*(4.0/r)*sin(uDu*0.5236);
+  float k=uSwarm<0.?0.:smoothstep(0.,1.,clamp((uSwarm-r*0.012-seed*0.9)/2.8,0.,1.));
+  float rb=4.5+seed*17.0;
+  th+=k*(2.2+seed*2.0)+k*max(uSwarm,0.)*(0.8+fract(seed*5.7)*1.5);
+  float rr=mix(r,rb,k);
+  float h=k*(0.6+fract(seed*7.31)*12.0)+k*sin(uT*5.0+seed*50.)*0.4;
+  p=vec3(sin(th)*rr,h,cos(th)*rr); p.xz+=uCtr.xz*k;
+  yaw=th+3.14159+k*1.2;
+  scl=smoothstep(0.,2.5,uReveal-r);
+  fade=0.;
+  if(uBlow>=0.){float d=length(p-uCtr);fade=smoothstep(0.,0.45,uBlow-d/45.0-seed*0.25);p+=normalize(p-uCtr+vec3(0.,.3,0.))*fade*uBlow*(4.+seed*9.);}
+  lean=uBow*0.8*step(r,uBowR)+k*0.9;
+  p.y+=abs(sin(uT*8.+seed*40.))*0.28*uOutcry+uDance*0.09*abs(sin(uDu*2.932+seed*6.28));
+}`;
+// Patches a built-in material: shared uniforms plus optional per-instance tricks.
+function patch(mat, o = {}) {
+  mat.onBeforeCompile = sh => {
+    Object.assign(sh.uniforms, G);
+    let vs = sh.vertexShader, fs = sh.fragmentShader;
+    if (o.cell) {
+      vs = 'attribute vec4 aUvR; attribute float aBend; uniform float uFlat;\n' + vs
+        .replace('#include <uv_vertex>', '#include <uv_vertex>\n vMapUv = aUvR.xy + uv * aUvR.zw;')
+        .replace('#include <begin_vertex>', '#include <begin_vertex>\n transformed.z -= aBend * uFlat * position.x * position.x;');
+    }
+    if (o.face) {
+      vs = 'attribute vec2 aFace;\n' + vs.replace('#include <uv_vertex>', '#include <uv_vertex>\n vMapUv = (uv + aFace) / vec2(6.0, 2.0);');
+    }
+    if (o.crowd) {
+      vs = 'attribute vec4 aPol;\n' + GLSL_COMMON + '\n' + vs
+        .replace('#include <beginnormal_vertex>', '#include <beginnormal_vertex>\n vec3 cP; float cYaw,cS,cLean,cFade; crowdPose(aPol,cP,cYaw,cS,cLean,cFade); objectNormal = rotY(objectNormal, cYaw);')
+        .replace('#include <begin_vertex>', `vec3 transformed = position * cS * (1.0 - cFade);
+          { float c = cos(cLean), s = sin(cLean); transformed.yz = vec2(transformed.y * c - transformed.z * s, transformed.y * s + transformed.z * c); }
+          transformed = rotY(transformed, cYaw) + cP;`);
+    }
+    if (o.pale) fs = 'uniform float uPale;\n' + fs.replace('#include <color_fragment>', `#include <color_fragment>\n diffuseColor.rgb = mix(diffuseColor.rgb, vec3(0.80,0.86,1.0), uPale * ${o.pale.toFixed(2)});`);
+    sh.vertexShader = vs; sh.fragmentShader = fs;
+  };
+  mat.customProgramCacheKey = () => JSON.stringify(o);
+  return mat;
+}
+
+// ── drawing helpers ─────────────────────────────────────────────────────────
+function canvasTex(w, h, draw, opts = {}) {
+  const c = document.createElement('canvas'); c.width = w; c.height = h;
+  draw(c.getContext('2d'), w, h);
+  const t = new THREE.CanvasTexture(c);
+  t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 8;
+  if (opts.repeat) { t.wrapS = t.wrapT = THREE.RepeatWrapping; }
+  return t;
+}
+const col = h => new THREE.Color(h);
+const M = (geo, mat, parent, x = 0, y = 0, z = 0) => { const m = new THREE.Mesh(geo, mat); m.position.set(x, y, z); if (parent) parent.add(m); return m; };
+const Grp = (parent, x = 0, y = 0, z = 0) => { const g = new THREE.Group(); g.position.set(x, y, z); if (parent) parent.add(g); return g; };
+const lathe = (pts, segs = 20) => new THREE.LatheGeometry(pts.map(p => new THREE.Vector2(p[0], p[1])), segs);
+const std = (color, rough = 0.6, metal = 0, extra = {}) => new THREE.MeshStandardMaterial({ color, roughness: rough, metalness: metal, ...extra });
+const glow = (r, g, b, extra = {}) => new THREE.MeshBasicMaterial({ color: new THREE.Color(r, g, b), fog: false, ...extra });
+
+// ───── 20-world.js ─────
+// ── light ───────────────────────────────────────────────────────────────────
+const hemi = new THREE.HemisphereLight(0x6f78d8, 0x241a3a, 1.0); scene.add(hemi);
+const moon = new THREE.DirectionalLight(0xbfd0ff, 2.3); moon.position.set(-30, 60, 25); scene.add(moon);
+const rim = new THREE.DirectionalLight(0xff8fd0, 0.9); rim.position.set(25, 18, -40); scene.add(rim);
+const hearth = new THREE.PointLight(0xffc98a, 0, 50, 1.5); hearth.position.set(0.4, 6.5, 1.2); scene.add(hearth);
+const spot = new THREE.PointLight(0xfff0d0, 0, 9, 1.4); scene.add(spot);
+
+// ── sky ─────────────────────────────────────────────────────────────────────
+const skyMat = new THREE.ShaderMaterial({
+  side: THREE.BackSide, depthWrite: false, fog: false,
+  uniforms: { uT: G.uT, uDream: G.uDream, uMist: { value: 0 }, uAnger: { value: 0 } },
+  vertexShader: `varying vec3 vD; void main(){ vD = position; vec4 p = modelViewMatrix * vec4(position, 0.0); gl_Position = projectionMatrix * vec4(p.xyz, 1.0); gl_Position.z = gl_Position.w * 0.9999; }`,
+  fragmentShader: `
+    varying vec3 vD; uniform float uT,uDream,uMist,uAnger;
+    float h3(vec3 p){ p = fract(p * vec3(443.897, 441.423, 437.195)); p += dot(p, p.yzx + 19.19); return fract((p.x + p.y) * p.z); }
+    float n2(vec2 p){ vec2 i = floor(p), f = fract(p); f = f*f*(3.-2.*f);
+      float a = h3(vec3(i,1.)), b = h3(vec3(i+vec2(1,0),1.)), c = h3(vec3(i+vec2(0,1),1.)), d = h3(vec3(i+1.,1.));
+      return mix(mix(a,b,f.x), mix(c,d,f.x), f.y); }
+    void main(){
+      vec3 d = normalize(vD);
+      float e = clamp(d.y, -0.2, 1.0);
+      vec3 c = mix(vec3(0.055,0.038,0.125), vec3(0.004,0.006,0.026), pow(clamp(e,0.,1.), 0.5));
+      // a low aurora, slowly breathing
+      float az = atan(d.x, d.z);
+      float au = n2(vec2(az*3.0 + uT*0.02, e*9.0 - uT*0.03)) * n2(vec2(az*7.0 - uT*0.015, 3.0));
+      c += mix(vec3(0.05,0.32,0.34), vec3(0.42,0.10,0.40), n2(vec2(az*1.5, uT*0.01))) * au * exp(-pow((e-0.15)/0.11, 2.0)) * 0.8;
+      c = mix(c, vec3(0.34,0.03,0.05), uAnger * exp(-e*3.0) * 0.8);
+      // stars
+      vec3 q = d * 210.0; vec3 id = floor(q); float h = h3(id);
+      if (h > 0.986 && e > 0.0) { float tw = 0.65 + 0.35 * sin(uT*(1.0+h*3.0) + h*90.0);
+        float s = smoothstep(0.42, 0.0, length(fract(q) - 0.5)); c += vec3(0.9,0.92,1.0) * s * tw * (h - 0.986) * 190.0 * smoothstep(0.0, 0.2, e); }
+      c = mix(c, vec3(0.80,0.82,0.92), uMist);
+      gl_FragColor = vec4(c * uDream, 1.0);
+    }`,
+});
+const sky = M(new THREE.SphereGeometry(3000, 48, 24), skyMat, scene); sky.frustumCulled = false; sky.renderOrder = -10;
+
+// ── line art: sky diagrams and the apparitions that illustrate speeches ─────
+function lineArt(segs, color, opacity = 1) {
+  const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.Float32BufferAttribute(segs.flat(), 3));
+  const m = new THREE.LineBasicMaterial({ color, transparent: true, opacity, blending: THREE.AdditiveBlending, depthWrite: false, fog: false });
+  return new THREE.LineSegments(g, m);
+}
+const poly = (pts, close = true) => { const s = []; for (let i = 0; i < pts.length - (close ? 0 : 1); i++) s.push([...pts[i], ...pts[(i + 1) % pts.length]]); return s; };
+const circle2 = (cx, cy, r, n = 28) => Array.from({ length: n }, (_, i) => [cx + Math.cos(i / n * TAU) * r, cy + Math.sin(i / n * TAU) * r, 0]);
+const starTex = canvasTex(64, 64, (g) => { const r = g.createRadialGradient(32, 32, 0, 32, 32, 32); r.addColorStop(0, 'rgba(255,255,255,1)'); r.addColorStop(0.18, 'rgba(255,255,255,.75)'); r.addColorStop(1, 'rgba(255,255,255,0)'); g.fillStyle = r; g.fillRect(0, 0, 64, 64); });
+function starPts(pts, size, color) {
+  const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.Float32BufferAttribute(pts.flat(), 3));
+  return new THREE.Points(g, new THREE.PointsMaterial({ map: starTex, size, color, transparent: true, opacity: 1, blending: THREE.AdditiveBlending, depthWrite: false, fog: false, sizeAttenuation: true }));
+}
+// Chalk diagrams drawn faintly across the sky, as if the heavens were a geometer's blackboard.
+const skyArt = Grp(scene);
+function skyFigure(az, el, scale, segs2d) {
+  const C = new THREE.Vector3(Math.sin(az) * Math.cos(el), Math.sin(el), Math.cos(az) * Math.cos(el));
+  const R = new THREE.Vector3(0, 1, 0).cross(C).normalize(), U = C.clone().cross(R);
+  const map = (x, y) => { const v = C.clone().addScaledVector(R, x * scale).addScaledVector(U, y * scale).normalize().multiplyScalar(2600); return [v.x, v.y, v.z]; };
+  const segs = segs2d.map(s => [...map(s[0], s[1]), ...map(s[3], s[4])]);
+  skyArt.add(lineArt(segs, new THREE.Color(0.42, 0.5, 1.0), 0.0));
+}
+{
+  // the theorem of Pythagoras: a 3-4-5 triangle wearing its three squares
+  const A = [0, 0, 0], B = [4, 0, 0], Cc = [0, 3, 0];
+  skyFigure(-0.75, 0.52, 0.055, [...poly([A, B, Cc]), ...poly([[0, 0, 0], [4, 0, 0], [4, -4, 0], [0, -4, 0]]), ...poly([[0, 0, 0], [0, 3, 0], [-3, 3, 0], [-3, 0, 0]]), ...poly([[4, 0, 0], [7, 4, 0], [3, 7, 0], [0, 3, 0]])]);
+  // the tetractys
+  const tet = []; for (let r = 0; r < 4; r++) for (let i = 0; i <= r; i++) tet.push(...poly(circle2((i - r / 2) * 1.6, -r * 1.4 + 2, 0.32, 10)));
+  skyFigure(0.9, 0.62, 0.06, [...tet, ...poly([[0, 3.2, 0], [3.4, -2.9, 0], [-3.4, -2.9, 0]])]);
+  // pentagram in a circle
+  const pent = Array.from({ length: 5 }, (_, i) => [Math.sin(i * TAU / 5) * 3, Math.cos(i * TAU / 5) * 3, 0]);
+  skyFigure(2.5, 0.48, 0.06, [...poly(circle2(0, 0, 3, 40)), ...poly([0, 2, 4, 1, 3].map(i => pent[i])), ...poly(pent)]);
+  // squaring the circle: a circle between an inscribed and a circumscribed polygon
+  skyFigure(-2.3, 0.6, 0.06, [...poly(circle2(0, 0, 3, 48)), ...poly(circle2(0, 0, 3, 6)), ...poly(circle2(0, 0, 3 / Math.cos(PI / 6), 6).map(p => { const a = Math.atan2(p[1], p[0]) + PI / 6, r = 3 / Math.cos(PI / 6); return [Math.cos(a) * r, Math.sin(a) * r, 0]; }))]);
+  // the golden rectangle and its spiral
+  const spiral = Array.from({ length: 60 }, (_, i) => { const th = i / 59 * 4.2 * PI, r = 0.22 * Math.exp(0.3063 * th); return [Math.cos(th) * r, Math.sin(th) * r, 0]; });
+  skyFigure(0.05, 0.95, 0.045, [...poly(spiral, false), ...poly([[-4.6, -3.2, 0], [5.4, -3.2, 0], [5.4, 3.0, 0], [-4.6, 3.0, 0]]), [-0.8, -3.2, 0, -0.8, 3.0, 0]]);
+}
+
+// ── ground: the boundless plain ─────────────────────────────────────────────
+const groundMat = new THREE.ShaderMaterial({
+  uniforms: {
+    ...G, uCol: { value: RAINBOW.map(h => col(h)) },
+    uIn: { value: [RINGS[0].in, RINGS[1].in, RINGS[2].in, RINGS[3].in, RINGS[4].in, R6_IN, R7_IN] },
+    uOut: { value: [RINGS[0].out, RINGS[1].out, RINGS[2].out, RINGS[3].out, RINGS[4].out, R6_OUT, R7_OUT] },
+    uRug: { value: 0 },
+  },
+  vertexShader: `varying vec3 vW; void main(){ vec4 w = modelMatrix * vec4(position, 1.0); vW = w.xyz; gl_Position = projectionMatrix * viewMatrix * w; }`,
+  fragmentShader: `
+    varying vec3 vW;
+    uniform float uT,uReveal,uDream,uPale,uWaveR,uHi,uFogD,uSwarm,uBlow,uRug; uniform vec3 uFogC,uCtr; uniform vec3 uCol[7]; uniform float uIn[7]; uniform float uOut[7];
+    float dots(float r, float a, float s, out float vis){
+      float ri = floor(r / s); float n = max(6.0, floor(6.2832 * (ri + 0.5))); float ai = a / 6.2832 * n + ri * 0.37;
+      vec2 d = vec2((fract(ai) - 0.5) * 6.2832 * r / n, (fract(r / s) - 0.5) * s);
+      float px = fwidth(r) + 0.0001; vis = clamp(1.3 - px / (s * 0.42), 0.0, 1.0);
+      return 1.0 - smoothstep(0.16 * s, 0.34 * s, length(d));
+    }
+    void main(){
+      float r = length(vW.xz), a = atan(vW.x, vW.z);
+      float px = fwidth(r) + 0.0001;
+      vec3 c = vec3(0.020, 0.018, 0.045) + vec3(0.085, 0.06, 0.13) * exp(-r * r / 90.0);
+      float rev = 1.0 - smoothstep(uReveal - 5.0, uReveal, r);
+      float vis; float dd = dots(r, a, 1.25, vis);
+      float emptied = uSwarm < 0. ? 1.0 : 1.0 - smoothstep(0.0, 3.5, uSwarm - r * 0.012);
+      for (int k = 0; k < 7; k++) {
+        float m = smoothstep(uIn[k] - 0.25, uIn[k] + 0.25, r) - smoothstep(uOut[k] - 0.25, uOut[k] + 0.25, r);
+        float hi = 1.0 - clamp(abs(uHi - float(k)), 0.0, 1.0);
+        vec3 kc = mix(uCol[k], vec3(0.8, 0.86, 1.0), uPale * 0.55);
+        c += kc * m * rev * (0.085 + 0.42 * hi * (0.75 + 0.25 * sin(uT * 4.0)));
+        float w = max(0.07, px * 1.3);
+        float ln = (1.0 - smoothstep(0.0, w, abs(r - uIn[k]))) + (1.0 - smoothstep(0.0, w, abs(r - uOut[k])));
+        c += kc * ln * rev * 1.25 * clamp(0.5 / px, 0.12, 1.0);
+        if (k >= 5) c += kc * m * rev * emptied * (dd * vis * 0.95 + (1.0 - vis) * 0.16);
+      }
+      // past the seventh circle the numbers go on, silver, as far as there is plain
+      { float m = smoothstep(2020.0, 2030.0, r); c += vec3(0.5, 0.52, 0.62) * m * rev * 0.14; }
+      // Pi's command crossing the plain
+      if (uWaveR > 0.0) c += vec3(0.75, 0.88, 1.0) * exp(-pow((r - uWaveR) / (1.0 + uWaveR * 0.03), 2.0)) * 2.6 * exp(-uWaveR / 160.0);
+      c += vec3(0.6,0.5,0.3) * uRug * (1.0 - smoothstep(2.6, 3.3, r)) * (0.06 + 0.10 * step(0.5, fract(r * 1.25)));
+      float dist = length(vW - cameraPosition);
+      c = mix(c, uFogC, 1.0 - exp(-uFogD * uFogD * dist * dist * 0.55));
+      gl_FragColor = vec4(c * uDream, 1.0);
+    }`,
+});
+const ground = M(new THREE.CircleGeometry(6500, 96), groundMat, scene); ground.rotation.x = -PI / 2; ground.frustumCulled = false; ground.renderOrder = -5;
+
+// ── the fourth circle: nine thousand figures, posed in the vertex shader ────
+const crowdUniformMat = patch(new THREE.MeshLambertMaterial({ color: 0xffffff }), { crowd: true, pale: 0.7 });
+const CROWD_GEO = {};
+function lowBody(kind) {
+  const head = new THREE.SphereGeometry(0.2, 8, 6);
+  let body, hy;
+  if (kind === 'tile') { body = new THREE.BoxGeometry(0.84, 0.84, 0.13); body.translate(0, 0.74, 0); hy = 1.36; }
+  else if (kind === 'die') { body = new THREE.BoxGeometry(0.7, 0.7, 0.7); body.translate(0, 0.67, 0); hy = 1.22; }
+  else if (kind === 'ball') { body = new THREE.SphereGeometry(0.44, 10, 8); body.translate(0, 0.74, 0); hy = 1.36; }
+  else if (kind === 'cyl') { body = new THREE.CylinderGeometry(0.3, 0.3, 0.84, 10); body.translate(0, 0.74, 0); hy = 1.36; }
+  else if (kind === 'tunic') { body = lathe([[0.3, 0.2], [0.27, 0.7], [0.3, 0.98], [0.1, 1.12]], 8); hy = 1.32; }
+  else { body = lathe([[0.46, 0.1], [0.24, 0.6], [0.27, 0.84], [0.1, 0.96]], 8); hy = 1.17; }
+  head.translate(0, hy, 0);
+  return mergeGeometries([body.toNonIndexed(), head.toNonIndexed()].map(g => { g.deleteAttribute('uv'); return g; }));
+}
+const crowd = Grp(scene);
+{
+  const R = RINGS[3], by = {};
+  for (let n = R.lo; n <= 10000; n++) (by[dressOf(n)] ||= []).push(n);
+  const ringCol = col(RAINBOW[3]), c = new THREE.Color(), id = new THREE.Matrix4();
+  for (const kind in by) {
+    const list = by[kind], mesh = new THREE.InstancedMesh(CROWD_GEO[kind] = lowBody(kind), crowdUniformMat, list.length);
+    const pol = new Float32Array(list.length * 4);
+    list.forEach((n, i) => {
+      const h = homeOf(n);
+      pol.set([h.r, h.a, h.row & 1 ? 1 : -1, frand(n)], i * 4);
+      mesh.setMatrixAt(i, id);
+      c.copy(isPow10(n) ? col(WHITE) : PERFECT.has(n) ? col('#f3c84a') : ringCol).multiplyScalar(0.82 + 0.3 * frand(n + 7));
+      mesh.setColorAt(i, c);
+    });
+    mesh.geometry.setAttribute('aPol', new THREE.InstancedBufferAttribute(pol, 4));
+    mesh.frustumCulled = false; crowd.add(mesh);
+  }
+}
+
+// ── the fifth circle: ninety thousand, each a small soft figure ─────────────
+const hostMat = new THREE.ShaderMaterial({
+  uniforms: { ...G, uColA: { value: col(RAINBOW[4]) } },
+  vertexShader: `attribute vec4 aPol; ${GLSL_COMMON}
+    uniform float uPx; varying float vSeed; varying float vFade; varying float vFog; uniform float uFogD;
+    void main(){ vec3 p; float yaw,scl,lean,fade; crowdPose(aPol,p,yaw,scl,lean,fade);
+      p.y += 0.62 * scl; vSeed = aPol.w; vFade = fade;
+      vec4 mv = viewMatrix * vec4(p, 1.0); gl_Position = projectionMatrix * mv;
+      float d = -mv.z; vFog = 1.0 - exp(-uFogD * uFogD * d * d);
+      gl_PointSize = clamp(uPx * 1.5 * scl * (1.0 - fade * 0.6) / d, 0.0, 90.0); }`,
+  fragmentShader: `uniform vec3 uColA,uFogC; uniform float uDream,uPale; varying float vSeed; varying float vFade; varying float vFog;
+    void main(){ vec2 q = gl_PointCoord * 2.0 - 1.0; q.y = -q.y;
+      float body = length((q - vec2(0.0, -0.3)) / vec2(0.62, 0.7)); float head = length(q - vec2(0.0, 0.62)) / 0.34;
+      float a = max(1.0 - smoothstep(0.8, 1.0, body), 1.0 - smoothstep(0.8, 1.0, head)); if (a < 0.05) discard;
+      vec3 c = uColA * (0.55 + 0.6 * fract(vSeed * 13.7)) * (0.55 + 0.45 * (q.y * 0.5 + 0.5));
+      c = mix(c, vec3(0.8, 0.86, 1.0), uPale * 0.6); c = mix(c, vec3(1.6), vFade);
+      c = mix(c, uFogC, vFog);
+      gl_FragColor = vec4(c * uDream, a * (1.0 - vFade)); }`,
+  transparent: true, depthWrite: false,
+});
+let host;
+{
+  const R = RINGS[4], N = 90000, pol = new Float32Array(N * 4);
+  for (let i = 0; i < N; i++) { const h = homeOf(R.lo + i); pol.set([h.r, h.a, h.row & 1 ? 1 : -1, frand(i + 0.5)], i * 4); }
+  const g = new THREE.BufferGeometry();
+  g.setAttribute('position', new THREE.BufferAttribute(new Float32Array(N * 3), 3));
+  g.setAttribute('aPol', new THREE.BufferAttribute(pol, 4));
+  host = new THREE.Points(g, hostMat); host.frustumCulled = false; host.renderOrder = 2; scene.add(host);
+}
+
+// ── what the numbers turn into at the end: loose chalk digits ───────────────
+const digitTex = canvasTex(640, 64, (g) => { g.fillStyle = '#fff'; g.font = 'bold 50px Georgia, serif'; g.textAlign = 'center'; g.textBaseline = 'middle'; for (let i = 0; i < 10; i++) g.fillText(String(i), i * 64 + 32, 35); });
+const burstMat = new THREE.ShaderMaterial({
+  uniforms: { ...G, uMap: { value: digitTex } },
+  vertexShader: `attribute vec4 aDir; uniform float uBlow,uPx; uniform vec3 uCtr; varying float vDig; varying float vA;
+    void main(){ float t = max(uBlow, 0.0), seed = aDir.w;
+      float tt = max(t - seed * 0.35, 0.0);
+      vec3 p = uCtr + vec3(0.0, 1.3, 0.0) + aDir.xyz * (1.2 + (1.0 - exp(-tt * 0.9)) * (10.0 + seed * 60.0));
+      p.y = abs(p.y) + tt * (0.6 + fract(seed * 9.1) * 1.8) + sin(tt * 2.0 + seed * 30.0) * 0.3;
+      vDig = floor(fract(seed * 77.7) * 10.0); vA = step(0.0001, tt) * (1.0 - smoothstep(2.2, 6.5, t));
+      vec4 mv = viewMatrix * vec4(p, 1.0); gl_Position = projectionMatrix * mv;
+      gl_PointSize = clamp(uPx * (0.7 + fract(seed * 3.3) * 0.9) / -mv.z, 0.0, 64.0) * step(0.0, uBlow); }`,
+  fragmentShader: `uniform sampler2D uMap; varying float vDig; varying float vA;
+    void main(){ vec2 uv = vec2((gl_PointCoord.x + vDig) / 10.0, 1.0 - gl_PointCoord.y); float a = texture2D(uMap, uv).a * vA * 0.8; if (a < 0.03) discard; gl_FragColor = vec4(vec3(0.98, 0.98, 1.05), a); }`,
+  transparent: true, depthWrite: false,
+});
+let burst;
+{
+  const N = 3600, d = new Float32Array(N * 4);
+  for (let i = 0; i < N; i++) { const u = frand(i) * 2 - 1, a = frand(i + 0.3) * TAU, s = Math.sqrt(1 - u * u); d.set([Math.cos(a) * s, u * 0.55 + 0.1, Math.sin(a) * s, frand(i + 0.7)], i * 4); }
+  const g = new THREE.BufferGeometry();
+  g.setAttribute('position', new THREE.BufferAttribute(new Float32Array(N * 3), 3));
+  g.setAttribute('aDir', new THREE.BufferAttribute(d, 4));
+  burst = new THREE.Points(g, burstMat); burst.frustumCulled = false; burst.renderOrder = 5; burst.visible = false; scene.add(burst);
+}
+
+// ───── 30-actors.js ─────
+// ── the first thousand numbers: card-soldier figures with heads, arms and legs ─────────
+const LEG = 0.32;
+const KIND = {
+  //        shoulder x,y   head y   label: y, z, w, h, bend radius   leg x
+  tile:  { sh: [0.45, 0.98], head: 1.37, lab: [0.74, 0.070, 0.56, 0.42, 0],    legX: 0.20, c: 0.74 },
+  die:   { sh: [0.38, 0.82], head: 1.23, lab: [0.67, 0.356, 0.46, 0.36, 0],    legX: 0.18, c: 0.67 },
+  ball:  { sh: [0.42, 0.86], head: 1.37, lab: [0.74, 0.448, 0.40, 0.30, 0.44], legX: 0.15, c: 0.74 },
+  cyl:   { sh: [0.32, 0.98], head: 1.37, lab: [0.76, 0.306, 0.36, 0.30, 0.30], legX: 0.13, c: 0.74 },
+  tunic: { sh: [0.31, 0.96], head: 1.31, lab: [0.62, 0.292, 0.30, 0.26, 0.28], legX: 0.12, c: 0.65 },
+  skirt: { sh: [0.28, 0.82], head: 1.16, lab: [0.72, 0.268, 0.27, 0.21, 0.26], legX: 0.10, c: 0.55 },
+};
+const F_NEUTRAL = 0, F_TALK = 1, F_SING = 2, F_ANGRY = 3, F_SCARED = 4, F_BLINK = 5;
+
+// Six expressions, two rows (gentlemen above, ladies below). White ground so the head's own color shows through.
+const faceTex = canvasTex(1536, 256, (g) => {
+  g.fillStyle = '#fff'; g.fillRect(0, 0, 1536, 256);
+  const U = 194;   // pixels per unit of head surface
+  for (let row = 0; row < 2; row++) for (let f = 0; f < 6; f++) {
+    const lady = row === 1, x0 = f * 256, y0 = row * 128;
+    g.fillStyle = lady ? '#3a2430' : '#2b2530';
+    g.fillRect(x0, y0, 60, 98); g.fillRect(x0 + 196, y0, 60, 98); g.fillRect(x0, y0, 256, lady ? 30 : 22);
+    g.beginPath(); for (let k = 0; k <= 8; k++) g.arc(x0 + 60 + k * 17, y0 + (lady ? 30 : 22), 9, 0, PI); g.fill();
+    if (lady) { g.beginPath(); g.ellipse(x0 + 64, y0 + 60, 12, 40, 0, 0, TAU); g.ellipse(x0 + 192, y0 + 60, 12, 40, 0, 0, TAU); g.fill(); }
+    g.save(); g.translate(f * 256 + 128, row * 128 + 64); g.scale(U, -U);   // y up
+    g.fillStyle = 'rgba(214,92,92,.42)'; for (const s of [-1, 1]) { g.beginPath(); g.arc(s * 0.118, -0.045, lady ? 0.04 : 0.034, 0, TAU); g.fill(); }
+    g.fillStyle = '#17131f'; g.strokeStyle = '#17131f'; g.lineWidth = 0.014; g.lineCap = 'round';
+    const eye = (s) => {
+      const ex = s * 0.072, ey = 0.035;
+      if (f === F_BLINK || f === F_SING) { g.beginPath(); g.arc(ex, ey + (f === F_SING ? -0.018 : 0.012), 0.028, f === F_SING ? 0.15 * PI : 1.15 * PI, f === F_SING ? 0.85 * PI : 1.85 * PI); g.stroke(); }
+      else {
+        const r = f === F_SCARED ? 0.036 : 0.027;
+        if (f === F_SCARED) { g.fillStyle = '#fff'; g.beginPath(); g.arc(ex, ey, r + 0.012, 0, TAU); g.fill(); g.lineWidth = 0.008; g.stroke(); g.lineWidth = 0.014; g.fillStyle = '#17131f'; g.beginPath(); g.arc(ex, ey, 0.016, 0, TAU); g.fill(); }
+        else { g.beginPath(); g.ellipse(ex, ey, r * 0.82, r, 0, 0, TAU); g.fill(); g.fillStyle = '#fff'; g.beginPath(); g.arc(ex + 0.009, ey + 0.011, 0.008, 0, TAU); g.fill(); g.fillStyle = '#17131f'; }
+      }
+      // brows
+      g.beginPath();
+      if (f === F_ANGRY) { g.moveTo(ex - s * 0.04, ey + 0.085); g.lineTo(ex + s * 0.035, ey + 0.045); g.lineWidth = 0.02; }
+      else if (f === F_SCARED) { g.moveTo(ex - s * 0.03, ey + 0.065); g.lineTo(ex + s * 0.03, ey + 0.085); }
+      else { g.moveTo(ex - 0.03, ey + 0.062); g.quadraticCurveTo(ex, ey + 0.075, ex + 0.03, ey + 0.062); }
+      g.stroke(); g.lineWidth = 0.014;
+      if (lady && f !== F_BLINK && f !== F_SING) for (const k of [0, 1]) { g.beginPath(); g.moveTo(ex + s * (0.02 + k * 0.012), ey + 0.02 - k * 0.012); g.lineTo(ex + s * (0.04 + k * 0.01), ey + 0.034 - k * 0.018); g.lineWidth = 0.008; g.stroke(); g.lineWidth = 0.014; }
+    };
+    eye(-1); eye(1);
+    // mouth
+    g.beginPath();
+    if (f === F_TALK) { g.fillStyle = '#4a1420'; g.ellipse(0, -0.085, 0.034, 0.03, 0, 0, TAU); g.fill(); }
+    else if (f === F_SING) { g.fillStyle = '#4a1420'; g.ellipse(0, -0.088, 0.03, 0.042, 0, 0, TAU); g.fill(); }
+    else if (f === F_ANGRY) { g.fillStyle = '#4a1420'; g.moveTo(-0.05, -0.105); g.quadraticCurveTo(0, -0.03, 0.05, -0.105); g.quadraticCurveTo(0, -0.085, -0.05, -0.105); g.fill(); g.stroke(); }
+    else if (f === F_SCARED) { g.moveTo(-0.045, -0.09); g.bezierCurveTo(-0.03, -0.07, -0.015, -0.11, 0, -0.09); g.bezierCurveTo(0.015, -0.07, 0.03, -0.11, 0.045, -0.09); g.stroke(); }
+    else { g.moveTo(-0.034, -0.075); g.quadraticCurveTo(0, -0.105, 0.034, -0.075); g.stroke(); }
+    if (!lady && f !== F_SCARED) { g.lineWidth = 0.012; g.beginPath(); g.moveTo(-0.004, -0.02); g.quadraticCurveTo(0.012, -0.04, -0.004, -0.045); g.stroke(); }
+    g.restore();
+  }
+});
+const pipTex = canvasTex(384, 256, (g) => {
+  g.fillStyle = '#fff'; g.fillRect(0, 0, 384, 256);
+  const P = { 1: [], 2: [[-1, -1], [1, 1]], 3: [[-1, -1], [0, 0], [1, 1]], 4: [[-1, -1], [1, 1], [-1, 1], [1, -1]], 5: [[-1, -1], [1, 1], [-1, 1], [1, -1], [0, 0]], 6: [[-1, -1], [1, 1], [-1, 1], [1, -1], [-1, 0], [1, 0]] };
+  [1, 2, 3, 4, 5, 6].forEach((n, i) => { const cx = (i % 3) * 128 + 64, cy = (i / 3 | 0) * 128 + 64;
+    g.strokeStyle = 'rgba(0,0,0,.25)'; g.lineWidth = 6; g.strokeRect(cx - 61, cy - 61, 122, 122);
+    g.fillStyle = 'rgba(20,14,30,.85)'; for (const p of P[n]) { g.beginPath(); g.arc(cx + p[0] * 32, cy + p[1] * 32, 12, 0, TAU); g.fill(); } });
+});
+// Number atlases: white numerals, tinted per figure. Small numbers get big cells for the close-ups.
+const HI_MAX = 144, HI_C = 12, LO_C = 32;
+function numberAtlas(first, count, cells, px) {
+  return canvasTex(cells * px, cells * px, (g) => {
+    g.fillStyle = '#fff'; g.textAlign = 'center'; g.textBaseline = 'middle';
+    for (let i = 0; i < count; i++) {
+      const s = String(first + i), fs = px * (s.length <= 2 ? 0.62 : s.length === 3 ? 0.47 : 0.37);
+      g.font = `bold ${fs}px Georgia, "Times New Roman", serif`;
+      g.fillText(s, (i % cells) * px + px / 2, (i / cells | 0) * px + px / 2 + fs * 0.06);
+    }
+  });
+}
+const atlasHi = numberAtlas(1, HI_MAX, HI_C, 170), atlasLo = numberAtlas(HI_MAX + 1, 1000 - HI_MAX, LO_C, 64);
+const cellRect = (i, cells) => [(i % cells) / cells, 1 - ((i / cells | 0) + 1) / cells, 1 / cells, 1 / cells];
+
+const bodyMat = patch(std(0xffffff, 0.48, 0.02), { pale: 0.72 });
+const dieMat = patch(std(0xffffff, 0.4, 0.02, { map: pipTex }), { pale: 0.72 });
+const headMat = patch(std(0xffffff, 0.55, 0, { map: faceTex }), { face: true, pale: 0.5 });
+const limbMat = patch(std(0xffffff, 0.6), { pale: 0.6 });
+const legMat = std(0x1d1930, 0.7);
+const crownMat = std(0xf2c84a, 0.25, 0.9, { emissive: 0xb07a10, emissiveIntensity: 0.7 });
+const labelMat = (map) => patch(new THREE.MeshBasicMaterial({ map, transparent: true, depthWrite: false, fog: true }), { cell: true });
+const shadowMat = new THREE.MeshBasicMaterial({ map: canvasTex(64, 64, (g) => { const r = g.createRadialGradient(32, 32, 4, 32, 32, 32); r.addColorStop(0, 'rgba(0,0,0,.62)'); r.addColorStop(1, 'rgba(0,0,0,0)'); g.fillStyle = r; g.fillRect(0, 0, 64, 64); }), transparent: true, depthWrite: false });
+
+function bodyGeo(kind) {
+  if (kind === 'tile') { const g = new THREE.BoxGeometry(0.84, 0.84, 0.13); g.translate(0, 0.74, 0); return g; }
+  if (kind === 'die') {
+    const g = new THREE.BoxGeometry(0.7, 0.7, 0.7), uv = g.attributes.uv, cellOf = [2, 3, 4, 1, 0, 5];   // +x −x +y −y +z −z → pips 3,4,5,2,1(hidden by number),6
+    for (let f = 0; f < 6; f++) for (let v = 0; v < 4; v++) { const i = f * 4 + v, c = cellOf[f]; uv.setXY(i, ((c % 3) + uv.getX(i)) / 3, 1 - ((c / 3 | 0) + 1 - uv.getY(i)) / 2); }
+    g.translate(0, 0.67, 0); return g;
+  }
+  if (kind === 'ball') { const g = new THREE.SphereGeometry(0.44, 24, 16); g.translate(0, 0.74, 0); return g; }
+  if (kind === 'cyl') { const g = lathe([[0, 0.32], [0.28, 0.32], [0.3, 0.34], [0.3, 1.14], [0.28, 1.16], [0, 1.16]], 22); return g; }
+  if (kind === 'tunic') return lathe([[0, 0.2], [0.31, 0.2], [0.33, 0.25], [0.27, 0.72], [0.3, 0.98], [0.2, 1.08], [0, 1.1]], 18);
+  return lathe([[0, 0.08], [0.46, 0.08], [0.45, 0.13], [0.25, 0.62], [0.27, 0.84], [0.19, 0.93], [0, 0.95]], 20);
+}
+const headGeo = new THREE.SphereGeometry(0.21, 20, 14); headGeo.rotateY(-PI / 2);
+const hatGeo = (() => { const b = new THREE.CylinderGeometry(0.2, 0.2, 0.025, 16), c = new THREE.CylinderGeometry(0.125, 0.135, 0.18, 16); c.translate(0, 0.1, 0); return mergeGeometries([b, c]); })();
+const bowGeo = (() => { const l = new THREE.ConeGeometry(0.095, 0.17, 8); l.rotateZ(-PI / 2); l.translate(-0.09, 0, 0); const r = new THREE.ConeGeometry(0.095, 0.17, 8); r.rotateZ(PI / 2); r.translate(0.09, 0, 0); const k = new THREE.SphereGeometry(0.05, 8, 6); return mergeGeometries([l, r, k]); })();
+const crownGeo = (() => { const parts = [new THREE.CylinderGeometry(0.16, 0.14, 0.09, 12, 1, true)]; for (let i = 0; i < 6; i++) { const s = new THREE.ConeGeometry(0.04, 0.11, 4); s.translate(Math.sin(i / 6 * TAU) * 0.15, 0.09, Math.cos(i / 6 * TAU) * 0.15); parts.push(s); } return mergeGeometries(parts); })();
+const armGeo = (() => { const a = new THREE.CylinderGeometry(0.05, 0.042, 0.4, 8); a.translate(0, -0.2, 0); const h = new THREE.SphereGeometry(0.066, 10, 8); h.translate(0, -0.44, 0); return mergeGeometries([a, h]); })();
+const legGeo = (() => { const a = new THREE.CylinderGeometry(0.05, 0.05, LEG, 8); a.translate(0, -LEG / 2, 0); const s = new THREE.BoxGeometry(0.12, 0.07, 0.21); s.translate(0, -LEG + 0.035, 0.05); return mergeGeometries([a, s]); })();
+const quadGeo = new THREE.PlaneGeometry(1, 1, 6, 1);
+const flatGeo = new THREE.PlaneGeometry(1, 1); flatGeo.rotateX(-PI / 2);
+
+const NA = 1000, A = [], byN = [];
+const FAM = { perfect: [], cube: [], pyr: [], square: [], prime: [], round: [] };
+const inst = (geo, mat, n, order = 0) => { const m = new THREE.InstancedMesh(geo, mat, n); m.frustumCulled = false; m.renderOrder = order; m.instanceMatrix.setUsage(THREE.DynamicDrawUsage); scene.add(m); return m; };
+const troupe = {};
+{
+  const counts = {};
+  for (let n = 1; n <= NA; n++) {
+    const h = homeOf(n), kind = dressOf(n), fam = familyOf(n);
+    const a = { n, kind, K: KIND[kind], g: h.g, row: h.row, r: h.r, a: h.a, dir: h.row & 1 ? 1 : -1, hx: Math.sin(h.a) * h.r, hz: Math.cos(h.a) * h.r, hyaw: h.a + PI,
+      male: n & 1, crown: PERFECT.has(n), fam, fi: fam ? FAM[fam].length : 0, seed: frand(n), bi: counts[kind] = (counts[kind] || 0),
+      x: 0, y: 0, z: 0, yaw: 0, v: 0, walk: frand(n + 2) * 6, armL: 0.1, armR: 0.1, swL: 0, swR: 0, lean: 0, face: -1, hidden: false, lit: false, scale: 0.94 + frand(n + 4) * 0.12 };
+    counts[kind]++; if (fam) FAM[fam].push(a);
+    a.x = a.hx; a.z = a.hz; a.yaw = a.hyaw;
+    A.push(a); byN[n] = a;
+  }
+  for (const kind in counts) troupe[kind] = inst(bodyGeo(kind), kind === 'die' ? dieMat : bodyMat, counts[kind]);
+  troupe.head = inst(headGeo, headMat, NA);
+  const nMale = A.filter(a => a.male).length, nCrown = A.filter(a => a.crown).length;
+  troupe.hat = inst(hatGeo, limbMat, nMale); troupe.bow = inst(bowGeo, limbMat, NA - nMale - nCrown); troupe.crown = inst(crownGeo, crownMat, nCrown);
+  troupe.arm = inst(armGeo, limbMat, NA * 2); troupe.leg = inst(legGeo, legMat, NA * 2);
+  troupe.labHi = inst(quadGeo, labelMat(atlasHi), HI_MAX, 3); troupe.labLo = inst(quadGeo, labelMat(atlasLo), NA - HI_MAX, 3);
+  troupe.shadow = inst(flatGeo, shadowMat, NA, 1);
+  const faces = new Float32Array(NA * 2), uvHi = new Float32Array(HI_MAX * 4), uvLo = new Float32Array((NA - HI_MAX) * 4), bHi = new Float32Array(HI_MAX), bLo = new Float32Array(NA - HI_MAX);
+  let iHat = 0, iBow = 0, iCrown = 0; const c = new THREE.Color(), cream = col('#fff2d2'), ink = col('#1c1830');
+  for (const a of A) {
+    const n = a.n, base = isPow10(n) ? col(WHITE) : (n === 13 || n === 666) ? col(BLACK) : col(RAINBOW[a.g]).offsetHSL((frand(n + 1) - 0.5) * 0.03, 0, (frand(n + 6) - 0.5) * 0.08);
+    a.color = base;
+    troupe[a.kind].setColorAt(a.bi, base);
+    troupe.head.setColorAt(n - 1, c.set('#e6c8b0').lerp(base, 0.08));
+    faces[(n - 1) * 2 + 1] = a.male ? 1 : 0;
+    if (a.crown) a.top = [troupe.crown, iCrown++]; else if (a.male) { a.top = [troupe.hat, iHat++]; troupe.hat.setColorAt(a.top[1], c.copy(base).multiplyScalar(0.34)); } else { a.top = [troupe.bow, iBow++]; troupe.bow.setColorAt(a.top[1], c.copy(base).lerp(col('#ffffff'), 0.25)); }
+    for (const k of [0, 1]) troupe.arm.setColorAt((n - 1) * 2 + k, c.copy(base).multiplyScalar(0.8));
+    const light = isPow10(n);
+    a.inkColor = light ? ink : cream;
+    if (n <= HI_MAX) { a.lab = [troupe.labHi, n - 1]; uvHi.set(cellRect(n - 1, HI_C), (n - 1) * 4); bHi[n - 1] = a.K.lab[4] ? a.K.lab[2] ** 2 / (2 * a.K.lab[4]) : 0; }
+    else { const i = n - HI_MAX - 1; a.lab = [troupe.labLo, i]; uvLo.set(cellRect(i, LO_C), i * 4); bLo[i] = a.K.lab[4] ? a.K.lab[2] ** 2 / (2 * a.K.lab[4]) : 0; }
+    a.lab[0].setColorAt(a.lab[1], a.inkColor);
+  }
+  troupe.faceAttr = new THREE.InstancedBufferAttribute(faces, 2); troupe.faceAttr.setUsage(THREE.DynamicDrawUsage);
+  troupe.head.geometry.setAttribute('aFace', troupe.faceAttr);
+  const gHi = quadGeo.clone(), gLo = quadGeo.clone();
+  gHi.setAttribute('aUvR', new THREE.InstancedBufferAttribute(uvHi, 4)); gHi.setAttribute('aBend', new THREE.InstancedBufferAttribute(bHi, 1));
+  gLo.setAttribute('aUvR', new THREE.InstancedBufferAttribute(uvLo, 4)); gLo.setAttribute('aBend', new THREE.InstancedBufferAttribute(bLo, 1));
+  troupe.labHi.geometry = gHi; troupe.labLo.geometry = gLo;
+}
+const PRIME_M = Math.ceil(FAM.prime.length / 2);
+
+// Point s (0..1) on a regular k-gon of circumradius R turned by rot.
+function polyPath(k, R, rot, s, out) {
+  s = ((s % 1) + 1) % 1 * k; const i = Math.floor(s), f = s - i, a0 = rot + i * TAU / k, a1 = a0 + TAU / k;
+  out.x = lerp(Math.sin(a0), Math.sin(a1), f) * R; out.z = lerp(Math.cos(a0), Math.cos(a1), f) * R;
+}
+
+// ── what each figure is trying to do this instant ───────────────────────────
+const o = { x: 0, z: 0, y: 0, yaw: 0, armL: 0, armR: 0, swL: 0, swR: 0, lean: 0, roll: 0, face: 0, tumble: 0, spd: 3.4, direct: false, turn: true, sym: 0, fade: 1, headYaw: 0 };
+const PROF = new THREE.Vector3(0, 0, 0), PI_POS = new THREE.Vector3(1.55, 0, -0.45);
+function aim(a, S, T) {
+  const n = a.n, sd = a.seed;
+  o.x = a.hx; o.z = a.hz; o.y = 0; o.yaw = a.hyaw; o.armL = o.armR = 0.13 + 0.05 * Math.sin(T * 1.1 + sd * 9); o.swL = o.swR = 0;
+  o.lean = 0; o.roll = Math.sin(T * 0.9 + sd * 20) * 0.03; o.tumble = 0; o.spd = 3.6; o.direct = false; o.turn = true; o.sym = 0; o.fade = 1; o.headYaw = 0;
+  const bl = T * 0.31 + sd * 17; o.face = (bl % 1 < 0.035 && frand(n + Math.floor(bl)) > 0.4) ? F_BLINK : F_NEUTRAL;
+
+  if (S.dance > 0.02) {
+    const du = S.du, beat = du * 2.8, on = S.dance > 0.5, fam = a.fam;
+    o.spd = 5.2;
+    o.y = 0.1 * Math.abs(Math.sin(beat * PI / 3 + sd * 3)) * S.dance;
+    if (S.sing) o.face = (Math.floor(du * 5.6 + sd * 2) & 1) ? F_SING : F_TALK;
+    if (!on) { /* walking home or setting out */ }
+    else if (n === 137 && S.sneak > 0) { const s = S.sneak; o.x = Math.sin(0.6) * lerp(14, 6.2, s); o.z = Math.cos(0.6) * lerp(14, 6.2, s); o.armL = o.armR = 0.5; }
+    else if (fam === 'perfect') { const s = a.fi / 3 * TAU + du * 0.3; o.x = Math.sin(s) * 3.15; o.z = Math.cos(s) * 3.15; o.armL = o.armR = 1.35; o.turn = false; o.yaw = s + PI + du * 1.4; }
+    else if (fam === 'cube') { const s = a.fi / FAM.cube.length * TAU - du * 0.34; o.x = Math.sin(s) * 4.5; o.z = Math.cos(s) * 4.5; const hop = (beat / 3 + a.fi * 0.5) % 1; o.y = Math.sin(hop * PI) * 0.55; o.tumble = -Math.floor(beat / 3 + a.fi * 0.5) * PI / 2 - ease(hop) * PI / 2; o.armL = o.armR = 1.0; }
+    else if (fam === 'pyr') { polyPath(3, 7.5, du * 0.05, a.fi / FAM.pyr.length + du * 0.04, o); o.armL = 2.6; o.armR = 2.6; }
+    else if (fam === 'square') { polyPath(4, 7.4, PI / 4 - du * 0.03, a.fi / FAM.square.length - du * 0.034, o); o.armL = 0.1 + 0.9 * (Math.floor(beat / 3) & 1); o.armR = 1.0 - o.armL + 0.1; }
+    else if (fam === 'prime') { const i = a.fi >> 1, D = TAU / PRIME_M, w = 0.5 / 14.3, A1 = !(a.fi & 1);
+      const th = A1 ? i * D + w * du : i * D + D / 2 - w * du, rr = 14.3 + (A1 ? 0.62 : -0.62) * Math.sin(PRIME_M * th);
+      o.x = Math.sin(th) * rr; o.z = Math.cos(th) * rr; o.armL = o.armR = 0.55 + 0.25 * Math.sin(beat * PI / 3); }
+    else if (fam === 'round') { const th = a.fi / FAM.round.length * TAU + du * 1.4 / 32.7; o.x = Math.sin(th) * 32.7; o.z = Math.cos(th) * 32.7; o.y = Math.abs(Math.sin(du * 2.932 + a.fi * 0.9)) * 0.7; o.armL = o.armR = 2.2; }
+    else { const ang = a.a + a.dir * S.dance * (4.0 / a.r) * Math.sin(du * 0.5236); o.x = Math.sin(ang) * a.r; o.z = Math.cos(ang) * a.r; o.turn = false; o.yaw = ang + PI + Math.sin(du * 0.5236 + 1.57) * a.dir * 0.5;
+      const sw = Math.sin(beat * PI / 3 + a.row * PI); o.armL = 1.5 + sw * 0.9; o.armR = 1.5 - sw * 0.9; o.roll = sw * 0.12; }
+  }
+
+  // someone has the floor
+  if (S.speaker) {
+    if (n === S.speaker) {
+      const f = S.fwd, r = a.r - (a.g === 0 ? 1.25 : 1.6) * f;
+      o.x = Math.sin(a.a) * r; o.z = Math.cos(a.a) * r;
+      if (S.talk) { o.face = (Math.floor(T * 7.5) & 1) ? F_TALK : (S.angrySpeaker ? F_ANGRY : F_NEUTRAL); const gsl = Math.sin(T * 2.7), g2 = Math.sin(T * 4.1 + 1);
+        o.armR = 1.25 + 0.55 * gsl; o.armL = 0.5 + 0.35 * g2; o.swR = -0.5 - 0.3 * g2; o.y = Math.abs(Math.sin(T * 5.2)) * 0.035; o.lean = 0.06 * gsl; }
+    } else if (a.g < 2 && S.look) { o.yaw = Math.atan2(S.look.x - a.x, S.look.z - a.z); if (a.g === 1) o.yaw = a.hyaw + angDiff(a.hyaw, o.yaw) * 0.5; }
+    if (S.cross && S.cross.includes(n)) { o.face = F_ANGRY; o.y = Math.abs(Math.sin(T * 9 + n)) * 0.07; o.armL = o.armR = 0.9 + 0.3 * Math.sin(T * 13 + n); }
+  }
+  if (S.pair) {   // a gentleman and his lady, by way of example
+    if (n === S.pair[0]) { o.yaw = a.hyaw - 0.75 * S.pairK; o.lean = 0.5 * S.pairK * (0.6 + 0.4 * Math.sin(T * 2.2)); o.armR = 0.9 * S.pairK; o.swR = -0.9 * S.pairK; }
+    if (n === S.pair[1]) { o.yaw = a.hyaw + 0.75 * S.pairK; o.y = -0.07 * S.pairK * (0.6 + 0.4 * Math.sin(T * 2.2)); o.armL = o.armR = 0.85 * S.pairK; }
+  }
+  if (S.love > 0) {   // every Odd and its attendant Even
+    const p = byN[a.male ? Math.min(n + 1, NA) : n - 1]; if (p && p !== a) { const want = Math.atan2(p.hx - a.hx, p.hz - a.hz); o.yaw = a.hyaw + angDiff(a.hyaw, want) * S.love; o.lean = 0.12 * S.love; if (a.male) { o.armR = 0.8 * S.love; o.swR = -0.7 * S.love; } else o.roll += 0.1 * S.love * Math.sin(T * 2 + sd * 6); }
+  }
+  if (S.outcry > 0) {
+    const k = S.outcry; o.y = Math.abs(Math.sin(T * 8 + sd * 40)) * 0.3 * k; o.armL = lerp(o.armL, 2.5 + 0.5 * Math.sin(T * 11 + sd * 9), k); o.armR = lerp(o.armR, 2.5 + 0.5 * Math.sin(T * 12 + sd * 5), k);
+    if (k > 0.3) o.face = (Math.floor(T * 8 + sd * 4) & 1) ? F_ANGRY : F_TALK;
+    if (n >= 11 && n <= 13) { const r = a.r - 1.5 * k; o.x = Math.sin(a.a) * r; o.z = Math.cos(a.a) * r; }
+  }
+  if (S.bow > 0 && a.r < S.bowR) { o.lean = 0.85 * S.bow; o.armL = o.armR = 0.1; o.y = 0; o.face = F_SCARED; o.roll = 0; }
+  else if (S.pale > 0.35 && !S.speaker) o.face = F_SCARED;
+  if (S.fume && n <= 3) { o.face = F_ANGRY; o.lean = -0.14; o.armL = o.armR = 1.0 + 0.4 * Math.sin(T * 12 + n * 2); o.y = Math.abs(Math.sin(T * 7 + n)) * 0.06; o.yaw = Math.atan2(S.fume.x - a.x, S.fume.z - a.z); }
+  if (S.angry > 0 && S.swarm < 0) { o.face = F_ANGRY; o.lean = 0.2 * S.angry; o.armR = lerp(o.armR, 2.0 + 0.3 * Math.sin(T * 9 + sd * 7), S.angry); o.swR = -0.6 * S.angry; if (a.g < 2) o.yaw = Math.atan2(S.rebelAt.x - a.x, S.rebelAt.z - a.z); }
+
+  if (n === 137 && S.rebel) {
+    o.x = S.rebel.x; o.z = S.rebel.z; o.spd = S.rebel.spd; o.lean = 0; o.roll = 0; o.y = 0; o.armL = o.armR = 0.15;
+    o.face = S.rebel.talk ? ((Math.floor(T * 7.5) & 1) ? F_TALK : F_NEUTRAL) : S.rebel.push ? F_ANGRY : F_NEUTRAL;
+    if (S.rebel.push) { o.armL = o.armR = 1.1; o.swL = o.swR = -0.9; o.lean = 0.22; }
+    if (S.rebel.talk) { const g1 = Math.sin(T * 3.1), fist = S.rebel.fist; o.armR = fist ? 2.7 + 0.2 * g1 : 1.1 + 0.5 * g1; o.armL = 0.5 + 0.3 * Math.sin(T * 2.3); o.swL = -0.4; o.y = Math.abs(Math.sin(T * 5)) * 0.04; }
+    if (S.rebel.face) { o.turn = a.v > 1.2; o.yaw = Math.atan2(S.rebel.face.x - a.x, S.rebel.face.z - a.z); }
+  }
+
+  if (S.swarm >= 0 && n === 137) { o.face = F_SCARED; o.armL = o.armR = 2.4; if (S.blow >= 0) { o.sym = sstep(0.1, 0.5, S.blow); o.fade = 1 - sstep(1.6, 4.0, S.blow); o.direct = true; o.x = REBEL_SPOT.x; o.z = REBEL_SPOT.z; o.y = S.blow * 0.5; } }
+  else if (S.swarm >= 0) {   // the whole host hurls itself at the Professor
+    const t = S.swarm, k = ease((t - a.r * 0.03 - sd * 0.5) / 2.4), rb = 2.9 + frand(n + 3) * 3.3;
+    const ang = a.a + k * (2.5 + sd * 2) + k * t * (1.5 + frand(n + 5) * 2.4), rr = lerp(a.r, rb, k);
+    o.x = lerp(a.hx, PROF.x + Math.sin(ang) * rr, Math.min(1, k * 4 + (k > 0 ? 0.05 : 0))); o.z = lerp(a.hz, PROF.z + Math.cos(ang) * rr, Math.min(1, k * 4 + (k > 0 ? 0.05 : 0)));
+    o.x = PROF.x * k + Math.sin(ang) * rr; o.z = PROF.z * k + Math.cos(ang) * rr;
+    o.y = k * (0.3 + frand(n + 9) * 3.1) + k * Math.sin(T * 9 + sd * 40) * 0.25;
+    o.yaw = Math.atan2(PROF.x - o.x, PROF.z - o.z); o.lean = k * 0.75; o.swL = o.swR = -1.35 * k; o.armL = o.armR = 0.35; o.face = F_ANGRY; o.direct = k > 0; o.tumble = a.kind === 'die' ? t * 5 * k : 0;
+    if (S.blow >= 0) {
+      const tb = S.blow, dx = o.x - PROF.x, dz = o.z - PROF.z, dy = o.y - 1.0, dl = Math.hypot(dx, dy, dz) || 1, dist = (1 - Math.exp(-tb * 1.5)) * (4 + frand(n + 13) * 15);
+      o.x += dx / dl * dist; o.z += dz / dl * dist; o.y = Math.max(0.2, o.y + dy / dl * dist * 0.6 + tb * 0.5);
+      o.sym = sstep(0, 0.3, tb - frand(n + 11) * 0.25); o.fade = 1 - sstep(1.4, 4.0, tb + frand(n + 15)); o.direct = true;
+    }
+  }
+}
+
+// ── move, pose and write every figure into the instance buffers ─────────────
+const _b = new THREE.Matrix4(), _l = new THREE.Matrix4(), _m = new THREE.Matrix4(), _q = new THREE.Quaternion(), _e = new THREE.Euler(), _p = new THREE.Vector3(), _s = new THREE.Vector3(), _one = new THREE.Vector3(1, 1, 1);
+const ZERO = new THREE.Matrix4().makeScale(0, 0, 0);
+function put(mesh, idx, px, py, pz, rx, ry, rz, sx = 1, sy = 1, sz = 1) {
+  _e.set(rx, ry, rz, 'YXZ'); _q.setFromEuler(_e); _l.compose(_p.set(px, py, pz), _q, _s.set(sx, sy, sz));
+  _m.multiplyMatrices(_b, _l); _m.toArray(mesh.instanceMatrix.array, idx * 16);
+}
+const zero = (mesh, idx) => ZERO.toArray(mesh.instanceMatrix.array, idx * 16);
+let facesDirty = false, colorsDirty = false;
+const HDR_CHALK = new THREE.Color(1.1, 1.1, 1.2);
+function updateActors(dt, S, T, snap) {
+  const faces = troupe.faceAttr.array, kS = Math.min(1, dt * 12), kL = Math.min(1, dt * 7), kY = Math.min(1, dt * 9);
+  const shadowArr = troupe.shadow.instanceMatrix.array;
+  for (let i = 0; i < NA; i++) {
+    const a = A[i], K = a.K, n = a.n;
+    const grow = S.gone ? 0 : easeOutBack(clamp((S.reveal - a.r) / 2.2));
+    if (grow <= 0.001) {
+      if (!a.hidden) { a.hidden = true; zero(troupe[a.kind], a.bi); zero(troupe.head, i); zero(a.top[0], a.top[1]); zero(troupe.arm, i * 2); zero(troupe.arm, i * 2 + 1); zero(troupe.leg, i * 2); zero(troupe.leg, i * 2 + 1); zero(a.lab[0], a.lab[1]); zero(troupe.shadow, i); a.x = a.hx; a.z = a.hz; a.yaw = a.hyaw; a.y = 0; }
+      continue;
+    }
+    a.hidden = false;
+    aim(a, S, T);
+    if (snap || o.direct) { a.v = snap ? 0 : 6; a.x = o.x; a.z = o.z; a.yaw = o.yaw; a.lean = o.lean; a.armL = o.armL; a.armR = o.armR; a.swL = o.swL; a.swR = o.swR; }
+    else {
+      const dx = o.x - a.x, dz = o.z - a.z, d = Math.hypot(dx, dz);
+      if (d > 1e-4) { const step = Math.min(d, Math.min(d * 6, o.spd) * dt); a.x += dx / d * step; a.z += dz / d * step; a.v = lerp(a.v, step / Math.max(dt, 1e-3), 0.3); } else a.v *= 0.7;
+      const yawT = (o.turn && a.v > 0.7 && d > 0.25) ? Math.atan2(dx, dz) : o.yaw;
+      a.yaw += angDiff(a.yaw, yawT) * kY;
+      a.lean += (o.lean - a.lean) * kL; a.armL += (o.armL - a.armL) * kS; a.armR += (o.armR - a.armR) * kS; a.swL += (o.swL - a.swL) * kS; a.swR += (o.swR - a.swR) * kS;
+    }
+    a.y = o.y;
+    a.walk += a.v * dt * 4.2;
+    const wk = Math.min(1, a.v / 1.6), stride = Math.sin(a.walk) * 0.7 * wk, sym = o.sym, s = a.scale * grow * (1 - sym);
+    if (o.face !== a.face) { a.face = o.face; faces[i * 2] = o.face; facesDirty = true; }
+    _e.set(a.lean, a.yaw, o.roll, 'YXZ'); _q.setFromEuler(_e); _b.compose(_p.set(a.x, a.y + Math.abs(Math.cos(a.walk)) * 0.04 * wk, a.z), _q, _s.set(s, s * (0.6 + 0.4 * Math.min(1, grow)), s));
+    if (sym >= 0.999) { zero(troupe[a.kind], a.bi); zero(troupe.head, i); zero(a.top[0], a.top[1]); zero(troupe.arm, i * 2); zero(troupe.arm, i * 2 + 1); zero(troupe.leg, i * 2); zero(troupe.leg, i * 2 + 1); }
+    else {
+      const tum = o.tumble;
+      if (tum) put(troupe[a.kind], a.bi, 0, K.c * (1 - Math.cos(tum)), -K.c * Math.sin(tum), tum, 0, 0); else put(troupe[a.kind], a.bi, 0, 0, 0, 0, 0, 0);
+      put(troupe.head, i, 0, K.head, 0, 0, o.headYaw, 0);
+      put(a.top[0], a.top[1], 0, K.head + (a.crown ? 0.17 : a.male ? 0.185 : 0.2), a.male ? -0.02 : 0, a.male ? -0.12 : 0, 0, a.male ? 0 : 0.25);
+      put(troupe.arm, i * 2, K.sh[0], K.sh[1], 0, a.swR + stride * 0.6, 0, a.armR);
+      put(troupe.arm, i * 2 + 1, -K.sh[0], K.sh[1], 0, a.swL - stride * 0.6, 0, -a.armL);
+      put(troupe.leg, i * 2, K.legX, LEG, 0, -stride, 0, 0);
+      put(troupe.leg, i * 2 + 1, -K.legX, LEG, 0, stride, 0, 0);
+    }
+    // the name on the uniform — and, at the very end, all that is left
+    const L = K.lab, lm = a.lab[0], li = a.lab[1];
+    if (sym > 0) {
+      if (!a.lit) { a.lit = true; lm.setColorAt(li, HDR_CHALK); colorsDirty = true; }
+      const gs = (0.5 + 0.7 * sym) * o.fade * grow;
+      _m.compose(_p.set(a.x, a.y + 0.8, a.z), camera.quaternion, _s.set(gs * 1.25, gs, 1)); _m.toArray(lm.instanceMatrix.array, li * 16);
+    } else {
+      if (a.lit) { a.lit = false; lm.setColorAt(li, a.inkColor); colorsDirty = true; }
+      const tum = o.tumble;
+      if (tum) { _e.set(tum, 0, 0); _q.setFromEuler(_e); _l.compose(_p.set(0, K.c + (L[0] - K.c) * Math.cos(tum) - L[1] * Math.sin(tum), (L[0] - K.c) * Math.sin(tum) + L[1] * Math.cos(tum) + 0.004), _q, _s.set(L[2], L[3], 1)); _m.multiplyMatrices(_b, _l); _m.toArray(lm.instanceMatrix.array, li * 16); }
+      else put(lm, li, 0, L[0], L[1] + 0.006, a.kind === 'tunic' ? -0.07 : a.kind === 'skirt' ? 0.05 : 0, 0, 0, L[2], L[3], 1);
+    }
+    const j = i * 16, ss = sym >= 0.999 ? 0 : 1.15 * s / (1 + a.y * 0.9);
+    shadowArr[j] = ss; shadowArr[j + 5] = 1; shadowArr[j + 10] = ss; shadowArr[j + 15] = 1; shadowArr[j + 12] = a.x; shadowArr[j + 13] = 0.02; shadowArr[j + 14] = a.z;
+    shadowArr[j + 1] = shadowArr[j + 2] = shadowArr[j + 3] = shadowArr[j + 4] = shadowArr[j + 6] = shadowArr[j + 7] = shadowArr[j + 8] = shadowArr[j + 9] = shadowArr[j + 11] = 0;
+  }
+  for (const k in troupe) if (troupe[k].isInstancedMesh) troupe[k].instanceMatrix.needsUpdate = true;
+  if (facesDirty) { troupe.faceAttr.needsUpdate = true; facesDirty = false; }
+  if (colorsDirty) { troupe.labHi.instanceColor.needsUpdate = true; troupe.labLo.instanceColor.needsUpdate = true; colorsDirty = false; }
+  G.uFlat.value = S.blow >= 0 ? 0 : 1;
+}
+const actorPos = (n, y = 0) => new THREE.Vector3(byN[n].x, y, byN[n].z);
+
+// ───── 40-cast.js ─────
+// ── Pi, Master of Ceremonies ────────────────────────────────────────────────
+const pi = Grp(scene, PI_POS.x, 0, PI_POS.z);
+const piJ = {};
+{
+  const robe = std(0x0e0b26, 0.62, 0.05), velvet = std(0x1a1040, 0.7), gold = std(0xe8c060, 0.3, 0.85, { emissive: 0x7a5510, emissiveIntensity: 0.9 });
+  piJ.body = Grp(pi);
+  M(lathe([[0, 0], [1.0, 0], [0.98, 0.07], [0.7, 0.9], [0.5, 1.8], [0.43, 2.4], [0.52, 2.58], [0.3, 2.74], [0, 2.78]], 32), robe, piJ.body);
+  M(new THREE.TorusGeometry(0.985, 0.03, 8, 48), gold, piJ.body, 0, 0.06, 0).rotation.x = PI / 2;
+  M(lathe([[0.66, 2.12], [0.6, 2.42], [0.42, 2.7], [0.2, 2.8], [0, 2.8]], 28), velvet, piJ.body);
+  M(new THREE.TorusGeometry(0.655, 0.022, 8, 40), gold, piJ.body, 0, 2.13, 0).rotation.x = PI / 2;
+  const emblem = M(new THREE.PlaneGeometry(0.62, 0.62), new THREE.MeshBasicMaterial({ transparent: true, depthWrite: false, map: canvasTex(256, 256, (g) => { g.fillStyle = '#ffd772'; g.font = 'bold 230px Georgia, serif'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText('π', 128, 118); }) }), piJ.body, 0, 1.6, 0.575);
+  emblem.rotation.x = -0.2; emblem.material.color.setRGB(1.5, 1.2, 0.6);
+  piJ.head = Grp(piJ.body, 0, 3.02, 0);
+  const hood = M(new THREE.SphereGeometry(0.37, 24, 18), velvet, piJ.head, 0, 0.02, -0.1); hood.scale.set(1, 1.18, 1.0);
+  const cowl = M(new THREE.TorusGeometry(0.3, 0.07, 10, 32), velvet, piJ.head, 0, 0.0, 0.2); cowl.scale.set(0.95, 1.22, 0.9);
+  const mask = M(new THREE.SphereGeometry(0.3, 28, 20), std(0x6e6552, 0.45, 0.3), piJ.head, 0, -0.02, 0.26); mask.scale.set(0.8, 1.08, 0.55);
+  M(new THREE.BoxGeometry(0.018, 0.2, 0.02), std(0xb9a880, 0.3, 0.6), piJ.head, 0, -0.08, 0.418);
+  piJ.eyeMat = glow(1.0, 1.4, 2.0);
+  piJ.eyes = []; piJ.brows = [];
+  for (const s of [-1, 1]) {
+    const e = M(new THREE.SphereGeometry(1, 12, 8), piJ.eyeMat, piJ.head, s * 0.098, 0.035, 0.408); e.scale.set(0.066, 0.02, 0.02); e.rotation.z = -s * 0.2; piJ.eyes.push(e);
+    const br = M(new THREE.BoxGeometry(0.13, 0.022, 0.03), std(0x2a2038, 0.5), piJ.head, s * 0.1, 0.105, 0.4); br.userData.s = s; piJ.brows.push(br);
+  }
+  // arms: shoulder → elbow → gloved hand; the right hand holds the conductor's baton
+  for (const s of [-1, 1]) {
+    const sh = Grp(piJ.body, s * 0.5, 2.5, 0.02);
+    const up = M(new THREE.CylinderGeometry(0.11, 0.15, 0.6, 12), robe, sh, 0, -0.3, 0);
+    const el = Grp(sh, 0, -0.6, 0);
+    M(new THREE.CylinderGeometry(0.15, 0.21, 0.55, 12), robe, el, 0, -0.27, 0);
+    M(new THREE.SphereGeometry(0.095, 12, 10), std(0xf2efe6, 0.5), el, 0, -0.6, 0);
+    piJ[s > 0 ? 'R' : 'L'] = { sh, el };
+    if (s > 0) {
+      piJ.baton = Grp(el, 0, -0.62, 0);
+      M(new THREE.CylinderGeometry(0.008, 0.016, 0.95, 8), glow(1.6, 1.55, 1.4), piJ.baton, 0, -0.42, 0);
+      piJ.tip = M(new THREE.SphereGeometry(0.03, 10, 8), glow(4, 3.6, 2.4), piJ.baton, 0, -0.9, 0);
+    }
+  }
+}
+// The digits of pi climb out of him in a helix and never stop.
+const HELIX_N = 230;
+const helix = new THREE.InstancedMesh(new THREE.PlaneGeometry(1, 1), patch(new THREE.MeshBasicMaterial({ map: canvasTex(704, 64, (g) => { g.fillStyle = '#fff'; g.font = 'bold 52px Georgia, serif'; g.textAlign = 'center'; g.textBaseline = 'middle'; for (let i = 0; i < 10; i++) g.fillText(String(i), i * 64 + 32, 35); g.fillText('.', 672, 30); }), transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, side: THREE.DoubleSide, fog: false }), { cell: true }), HELIX_N);
+{
+  helix.geometry.setAttribute('aUvR', new THREE.InstancedBufferAttribute(new Float32Array(HELIX_N * 4), 4));
+  helix.geometry.setAttribute('aBend', new THREE.InstancedBufferAttribute(new Float32Array(HELIX_N), 1));
+  helix.frustumCulled = false; helix.renderOrder = 4; helix.material.color.setRGB(1.9, 1.45, 0.6); scene.add(helix);
+}
+let helixK = -1;
+const PI_STREAM = '3.' + PI_DIGITS.slice(1);
+function updateHelix(tSince, vis) {
+  helix.visible = vis > 0.01 && tSince > 0;
+  if (!helix.visible) return;
+  const u = tSince * 1.5, K = Math.floor(u), fr = u - K, uv = helix.geometry.attributes.aUvR, arr = helix.instanceMatrix.array;
+  if (K !== helixK) {
+    helixK = K;
+    for (let j = 0; j < HELIX_N; j++) { const d = K - j; const ch = d >= 0 ? PI_STREAM[d % PI_STREAM.length] : null; const cell = ch === '.' ? 10 : +ch; uv.setXYZW(j, ch === null ? 0 : cell / 11, 0, ch === null ? 0 : 1 / 11, 1); }
+    uv.needsUpdate = true;
+  }
+  for (let j = 0; j < HELIX_N; j++) {
+    const f = j + fr, y = 3.55 + f * 0.1, ang = -f * 0.42, r = 0.5 + (y - 3.55) * 0.1;
+    const sc = (K - j < 0 ? 0 : 1) * vis * sstep(0, 3, f) * (1 - sstep(HELIX_N - 60, HELIX_N - 2, f)) * (0.2 + (y - 3.55) * 0.016);
+    _e.set(0, ang, 0); _q.setFromEuler(_e);
+    _m.compose(_p.set(PI_POS.x + Math.sin(ang) * r, y, PI_POS.z + Math.cos(ang) * r), _q, _s.set(sc, sc * 1.25, 1)); _m.toArray(arr, j * 16);
+  }
+  helix.instanceMatrix.needsUpdate = true;
+}
+// pose: {armR:[swing, raise, elbow], armL:[…], baton, headYaw, headPitch, frown, eyes, yaw, lift}
+const piPose = { rs: 0, rr: 0.15, re: -0.2, ls: 0, lr: 0.15, le: -0.2, bt: 0.3, hy: 0, hp: 0, frown: 0, eyes: 1, yaw: 0.25, vis: 0, lean: 0 };
+function applyPi(t, dt, snap) {
+  const k = snap ? 1 : Math.min(1, dt * 7);
+  for (const key in t) piPose[key] += (t[key] - piPose[key]) * k;
+  const p = piPose;
+  pi.visible = p.vis > 0.01; pi.scale.setScalar(Math.max(0.001, p.vis)); pi.rotation.y = p.yaw; piJ.body.rotation.x = p.lean;
+  piJ.R.sh.rotation.set(p.rs, 0, p.rr); piJ.R.el.rotation.x = p.re; piJ.L.sh.rotation.set(p.ls, 0, -p.lr); piJ.L.el.rotation.x = p.le;
+  piJ.baton.rotation.x = p.bt; piJ.head.rotation.set(p.hp, p.hy, 0);
+  for (const b of piJ.brows) { b.rotation.z = -b.userData.s * (0.1 + p.frown * 0.5); b.position.y = 0.105 - p.frown * 0.028; }
+  for (const e of piJ.eyes) e.scale.y = 0.02 * (1 - p.frown * 0.45);
+  piJ.eyeMat.color.setRGB(1.0 * p.eyes + p.frown * 1.5, 1.4 * p.eyes * (1 - p.frown * 0.6), 2.0 * p.eyes * (1 - p.frown * 0.75));
+}
+
+// ── Professor Squarepunt ────────────────────────────────────────────────────
+const prof = Grp(scene);
+const pJ = {};
+{
+  const gownC = 0x2c6a56, gown = std(gownC, 0.75), trim = std(0x6d1f2a, 0.6), skin = std(0xe9c3a4, 0.6), hair = std(0xb9b7b2, 0.9), dark = std(0x1a1622, 0.5);
+  pJ.body = Grp(prof);
+  M(lathe([[0, 0], [0.36, 0], [0.34, 0.05], [0.27, 0.6], [0.24, 0.95], [0.27, 1.2], [0.23, 1.36], [0.1, 1.43], [0, 1.44]], 24), gown, pJ.body);
+  M(new THREE.TorusGeometry(0.247, 0.028, 8, 24), trim, pJ.body, 0, 0.96, 0).rotation.x = PI / 2;
+  M(new THREE.TorusGeometry(0.345, 0.02, 8, 28), trim, pJ.body, 0, 0.05, 0).rotation.x = PI / 2;
+  for (const s of [-1, 1]) { const lp = M(new THREE.BoxGeometry(0.07, 0.44, 0.02), trim, pJ.body, s * 0.07, 1.2, 0.235); lp.rotation.set(-0.12, 0, s * 0.3); }
+  pJ.lap = Grp(pJ.body, 0, 0.92, 0);   // only shown seated
+  M(new THREE.BoxGeometry(0.5, 0.2, 0.52), gown, pJ.lap, 0, -0.02, 0.3);
+  M(new THREE.BoxGeometry(0.46, 0.5, 0.2), gown, pJ.lap, 0, -0.3, 0.5);
+  for (const s of [-1, 1]) M(new THREE.BoxGeometry(0.11, 0.07, 0.24), trim, pJ.lap, s * 0.11, -0.55, 0.62);
+  pJ.feet = Grp(pJ.body); for (const s of [-1, 1]) M(new THREE.BoxGeometry(0.11, 0.07, 0.24), trim, pJ.feet, s * 0.11, 0.035, 0.12);
+  pJ.head = Grp(pJ.body, 0, 1.58, 0);
+  M(new THREE.SphereGeometry(0.17, 24, 18), skin, pJ.head);
+  M(new THREE.SphereGeometry(0.034, 10, 8), skin, pJ.head, 0, -0.025, 0.172);
+  for (const s of [-1, 1]) {
+    M(new THREE.SphereGeometry(0.085, 10, 8), hair, pJ.head, s * 0.155, 0.03, -0.03).scale.set(0.9, 1.1, 1.1);
+    M(new THREE.SphereGeometry(0.06, 10, 8), hair, pJ.head, s * 0.11, 0.1, -0.11);
+    M(new THREE.TorusGeometry(0.052, 0.008, 6, 20), std(0xc9a44a, 0.3, 0.8), pJ.head, s * 0.066, 0.02, 0.158);
+    const e = M(new THREE.SphereGeometry(0.02, 8, 6), dark, pJ.head, s * 0.066, 0.02, 0.15); (pJ.eyes ||= []).push(e);
+    const b = M(new THREE.BoxGeometry(0.07, 0.016, 0.02), hair, pJ.head, s * 0.066, 0.088, 0.15); b.userData.s = s; (pJ.brows ||= []).push(b);
+    const mo = M(new THREE.CapsuleGeometry(0.02, 0.06, 4, 8), hair, pJ.head, s * 0.045, -0.072, 0.158); mo.rotation.z = PI / 2 + s * 0.35; (pJ.mo ||= []).push(mo);
+    const ear = M(new THREE.SphereGeometry(0.03, 8, 6), skin, pJ.head, s * 0.168, 0, 0);
+  }
+  M(new THREE.SphereGeometry(0.09, 10, 8), hair, pJ.head, 0, 0.02, -0.14);
+  M(new THREE.BoxGeometry(0.03, 0.008, 0.008), std(0xc9a44a, 0.3, 0.8), pJ.head, 0, 0.025, 0.166);
+  pJ.mouth = M(new THREE.SphereGeometry(0.022, 8, 6), std(0x4a1420, 0.6), pJ.head, 0, -0.1, 0.155); pJ.mouth.scale.set(1.2, 0.2, 0.5);
+  for (const s of [-1, 1]) {
+    const sh = Grp(pJ.body, s * 0.265, 1.32, 0);
+    M(new THREE.CylinderGeometry(0.062, 0.07, 0.32, 10), gown, sh, 0, -0.16, 0);
+    const el = Grp(sh, 0, -0.32, 0);
+    M(new THREE.CylinderGeometry(0.07, 0.085, 0.3, 10), gown, el, 0, -0.15, 0);
+    M(new THREE.SphereGeometry(0.062, 10, 8), skin, el, 0, -0.34, 0);
+    pJ[s > 0 ? 'R' : 'L'] = { sh, el };
+  }
+  pJ.book = M(new THREE.BoxGeometry(0.34, 0.05, 0.26), std(0x7a2a1c, 0.6), prof, 0, 0.6, 0.38);
+  const pages = M(new THREE.BoxGeometry(0.31, 0.03, 0.23), std(0xe8dfc8, 0.9), pJ.book, 0, 0.03, 0);
+}
+const POSES = {
+  //            y     lean  hy   hp    rs    rr    re     ls    lr    le    crouch eyes
+  stand:   { y: 0, lean: 0, hy: 0, hp: 0, rs: 0, rr: 0.12, re: -0.15, ls: 0, lr: 0.12, le: -0.15, cr: 1, eyes: 1 },
+  asleep:  { y: -0.42, lean: -0.22, hy: 0.25, hp: 0.5, rs: -0.7, rr: 0.25, re: -0.9, ls: -0.7, lr: 0.25, le: -0.9, cr: 1, eyes: 0.08 },
+  reading: { y: -0.42, lean: -0.1, hy: 0, hp: 0.38, rs: -0.75, rr: 0.2, re: -0.95, ls: -0.75, lr: 0.2, le: -0.95, cr: 1, eyes: 0.8 },
+  awake:   { y: -0.42, lean: 0.06, hy: 0, hp: -0.1, rs: -0.5, rr: 0.5, re: -1.3, ls: -0.5, lr: 0.5, le: -1.3, cr: 1, eyes: 1.25 },
+  wonder:  { y: 0, lean: -0.05, hy: 0, hp: -0.18, rs: -0.2, rr: 0.35, re: -0.5, ls: -0.2, lr: 0.35, le: -0.5, cr: 1, eyes: 1.2 },
+  bored:   { y: 0, lean: 0.03, hy: 0.5, hp: 0.08, rs: -1.1, rr: 0.05, re: -2.0, ls: 0, lr: 0.1, le: -0.15, cr: 1, eyes: 0.5 },
+  ears:    { y: -0.05, lean: 0.1, hy: 0, hp: 0.14, rs: -1.7, rr: 0.3, re: -2.36, ls: -1.7, lr: 0.3, le: -2.36, cr: 0.96, eyes: 0.15 },   // elbows up and out, palms on the ears
+  speak:   { y: 0, lean: 0.03, hy: 0, hp: -0.05, rs: -0.7, rr: 0.35, re: -0.9, ls: -0.15, lr: 0.15, le: -0.4, cr: 1, eyes: 1 },
+  plead:   { y: 0, lean: 0.05, hy: 0.7, hp: -0.3, rs: -1.0, rr: 0.5, re: -0.5, ls: -0.3, lr: 0.3, le: -0.6, cr: 1, eyes: 1.1 },
+  cower:   { y: -0.3, lean: 0.38, hy: 0, hp: 0.4, rs: -2.5, rr: 0.5, re: -1.5, ls: -2.5, lr: 0.5, le: -1.5, cr: 0.8, eyes: 0.1 },
+  shout:   { y: 0.03, lean: -0.1, hy: 0, hp: -0.3, rs: -2.9, rr: 0.25, re: -0.1, ls: -0.3, lr: 0.9, le: -0.3, cr: 1.03, eyes: 1.3 },
+};
+const pPose = { ...POSES.asleep, yaw: 0, talk: 0, seated: 1 };
+function applyProf(name, extra, T, dt, snap) {
+  const t = POSES[name], k = snap ? 1 : Math.min(1, dt * (extra.rate || 6));
+  for (const key in t) pPose[key] += ((extra[key] ?? t[key]) - pPose[key]) * k;
+  pPose.yaw += angDiff(pPose.yaw, extra.yaw || 0) * k; pPose.talk += ((extra.talk ? 1 : 0) - pPose.talk) * Math.min(1, k * 2);
+  const p = pPose, seated = extra.seated ? 1 : 0, br = Math.sin(T * 1.4) * 0.012, g = p.talk * Math.sin(T * 3.3);
+  prof.position.set(PROF.x, 0, PROF.z); prof.rotation.y = p.yaw;
+  pJ.body.position.y = p.y; pJ.body.rotation.x = p.lean; pJ.body.scale.set(1, p.cr * (1 + br), 1);
+  pJ.lap.visible = !!seated; pJ.feet.visible = !seated;
+  pJ.head.rotation.set(p.hp + p.talk * Math.sin(T * 6.1) * 0.05, p.hy + (extra.scan ? Math.sin(T * 0.8) * 0.7 : 0) + (extra.shake ? Math.sin(T * 17) * 0.12 * extra.shake : 0), seated && p.eyes < 0.3 ? 0.2 : 0);
+  pJ.R.sh.rotation.set(p.rs + g * 0.18, 0, p.rr + p.talk * 0.1 * Math.sin(T * 2.1)); pJ.R.el.rotation.x = p.re + g * 0.25;
+  pJ.L.sh.rotation.set(p.ls, 0, -p.lr); pJ.L.el.rotation.x = p.le;
+  for (const e of pJ.eyes) e.scale.y = clamp(p.eyes, 0.08, 1.4);
+  for (const b of pJ.brows) b.position.y = 0.088 + (p.eyes - 1) * 0.03;
+  pJ.mouth.scale.y = 0.2 + p.talk * (0.5 + 0.5 * Math.sin(T * 15)) * (name === 'shout' ? 1.6 : 0.8);
+  for (const m of pJ.mo) m.position.y = -0.072 + p.talk * Math.sin(T * 15) * 0.006;
+  pJ.book.visible = !!seated;
+}
+
+// ── the specter of Sir Arthur, as a knight of the Round Table ───────────────
+const knight = Grp(scene);
+const kMat = new THREE.ShaderMaterial({ uniforms: { uA: { value: 0 } }, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false,
+  vertexShader: `varying vec3 vN; varying vec3 vV; void main(){ vN = normalize(normalMatrix * normal); vec4 mv = modelViewMatrix * vec4(position, 1.0); vV = normalize(-mv.xyz); gl_Position = projectionMatrix * mv; }`,
+  fragmentShader: `uniform float uA; varying vec3 vN; varying vec3 vV; void main(){ float rim = pow(1.0 - abs(dot(normalize(vN), normalize(vV))), 1.5); gl_FragColor = vec4(vec3(0.45, 0.7, 1.25) * (0.05 + rim * 0.85) * uA, 1.0); }` });
+const kJ = {};
+{
+  M(lathe([[0.02, 0.1], [0.16, 0.5], [0.3, 0.95], [0.27, 1.25], [0.34, 1.55], [0.2, 1.7], [0, 1.72]], 16), kMat, knight);        // a body that trails away to a wisp
+  M(new THREE.CylinderGeometry(0.17, 0.19, 0.3, 14), kMat, knight, 0, 1.9, 0);                                                     // helm
+  M(new THREE.ConeGeometry(0.17, 0.16, 14), kMat, knight, 0, 2.13, 0);
+  M(new THREE.BoxGeometry(0.22, 0.03, 0.02), glow(1.2, 1.8, 2.6, { transparent: true, opacity: 0.9 }), knight, 0, 1.93, 0.185);    // the visor slit
+  const plume = M(new THREE.ConeGeometry(0.07, 0.5, 8), kMat, knight, 0, 2.3, -0.12); plume.rotation.x = -0.9;
+  for (const s of [-1, 1]) M(new THREE.SphereGeometry(0.13, 10, 8), kMat, knight, s * 0.36, 1.55, 0);
+  const shield = M(new THREE.CylinderGeometry(0.26, 0.26, 0.04, 20), kMat, knight, -0.45, 1.2, 0.14); shield.rotation.x = PI / 2; shield.scale.set(1, 1, 1.25);
+  kJ.arm = Grp(knight, 0.38, 1.5, 0);
+  M(new THREE.CylinderGeometry(0.06, 0.06, 0.5, 8), kMat, kJ.arm, 0, -0.25, 0);
+  const lance = M(new THREE.CylinderGeometry(0.012, 0.03, 2.6, 6), kMat, kJ.arm, 0, -0.5, 0.6); lance.rotation.x = PI / 2;
+  const pennon = M(new THREE.ConeGeometry(0.1, 0.4, 3), kMat, kJ.arm, 0, -0.42, 1.7); pennon.rotation.x = PI / 2;
+  knight.visible = false;
+}
+let kSide = 1;
+function applyKnight(vis, at, T, urge) {
+  knight.visible = vis > 0.01; if (!knight.visible) return;
+  const a = byN[137], sx = Math.sin(a.yaw + PI / 2), sz = Math.cos(a.yaw + PI / 2);
+  const far = Math.hypot(camP.x - at.x - sx, camP.z - at.z - sz) > Math.hypot(camP.x - at.x + sx, camP.z - at.z + sz) ? 1 : -1;   // hover on the side away from the camera
+  kSide += (far - kSide) * 0.08;
+  knight.position.set(at.x + sx * 0.85 * kSide - Math.sin(a.yaw) * 0.4, 0.25 + Math.sin(T * 1.7) * 0.08, at.z + sz * 0.85 * kSide - Math.cos(a.yaw) * 0.4);
+  knight.scale.setScalar(0.9);
+  knight.rotation.set(0, a.yaw - 0.5 * kSide, (-0.22 - urge * 0.12 * Math.sin(T * 6)) * kSide);
+  kJ.arm.rotation.x = -1.2 - urge * (0.5 + 0.25 * Math.sin(T * 6));
+  kMat.uniforms.uA.value = vis * (0.85 + 0.15 * Math.sin(T * 3.1));
+}
+
+// ── a pool of light for whoever is speaking ─────────────────────────────────
+const beam = M(new THREE.CylinderGeometry(0.2, 1.25, 14, 24, 1, true), new THREE.ShaderMaterial({
+  uniforms: { uA: { value: 0 }, uC: { value: new THREE.Color(1, 0.9, 0.7) } }, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, side: THREE.BackSide,
+  vertexShader: `varying float vY; varying vec3 vN; varying vec3 vV; void main(){ vY = uv.y; vN = normalize(normalMatrix * normal); vec4 mv = modelViewMatrix * vec4(position,1.0); vV = normalize(-mv.xyz); gl_Position = projectionMatrix * mv; }`,
+  fragmentShader: `uniform float uA; uniform vec3 uC; varying float vY; varying vec3 vN; varying vec3 vV; void main(){ float f = pow(abs(dot(normalize(vN), normalize(vV))), 2.0); gl_FragColor = vec4(uC * uA * f * (0.01 + 0.05 * pow(1.0 - vY, 2.0)), 1.0); }`,
+}), scene, 0, 7, 0);
+beam.renderOrder = 6;
+const pool = M(flatGeo, new THREE.MeshBasicMaterial({ map: starTex, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, color: new THREE.Color(0.9, 0.75, 0.45), opacity: 0 }), scene);
+pool.scale.set(4.2, 1, 4.2); pool.renderOrder = 2;
+function lightOn(pos, amt, color) {
+  beam.visible = pool.visible = amt > 0.01; spot.intensity = amt * 5;
+  if (!beam.visible) return;
+  beam.position.set(pos.x, 7, pos.z); pool.position.set(pos.x, 0.03, pos.z); spot.position.set(pos.x * 0.86, 2.3, pos.z * 0.86);
+  beam.material.uniforms.uA.value = amt; pool.material.opacity = amt * 0.5;
+  if (color) { beam.material.uniforms.uC.value.copy(color); }
+}
+
+// ── the study where it begins and ends ──────────────────────────────────────
+const study = Grp(scene);
+const sJ = { walls: [] };
+{
+  const wood = std(0x3a2418, 0.7), leather = std(0x5c1f1c, 0.45), plaster = std(0x39424a, 0.9), brass = std(0xc9a44a, 0.3, 0.8);
+  sJ.floor = M(new THREE.CircleGeometry(7, 48), std(0x2a1a12, 0.8, 0, { transparent: true }), study, 0, 0.012, 0); sJ.floor.rotation.x = -PI / 2;
+  sJ.rug = M(new THREE.CircleGeometry(3.3, 48), new THREE.MeshStandardMaterial({ transparent: true, roughness: 0.95, map: canvasTex(512, 512, (g) => {
+    g.fillStyle = '#3a1418'; g.fillRect(0, 0, 512, 512);
+    const cols = ['#7d2a20', '#8a5a1e', '#8a7a2a', '#2f5a36', '#2a4a78', '#3a3470', '#5a3478'];
+    for (let i = 6; i >= 0; i--) { g.strokeStyle = cols[i]; g.lineWidth = 15; g.beginPath(); g.arc(256, 256, 44 + i * 30, 0, TAU); g.stroke(); }
+    g.strokeStyle = '#c9a44a'; g.lineWidth = 3; for (const r of [250, 24]) { g.beginPath(); g.arc(256, 256, r, 0, TAU); g.stroke(); }
+  }) }), study, 0, 0.022, 0); sJ.rug.rotation.x = -PI / 2;
+  // armchair
+  sJ.chair = Grp(study);
+  M(new THREE.BoxGeometry(0.86, 0.46, 0.8), leather, sJ.chair, 0, 0.23, -0.02);
+  const back = M(new THREE.BoxGeometry(0.86, 1.15, 0.18), leather, sJ.chair, 0, 0.95, -0.45); back.rotation.x = -0.13;
+  for (const s of [-1, 1]) { M(new THREE.BoxGeometry(0.16, 0.3, 0.8), leather, sJ.chair, s * 0.5, 0.6, -0.02); M(new THREE.CylinderGeometry(0.09, 0.09, 0.8, 10), leather, sJ.chair, s * 0.5, 0.76, -0.02).rotation.x = PI / 2; M(new THREE.BoxGeometry(0.14, 0.5, 0.16), leather, sJ.chair, s * 0.42, 1.35, -0.42).rotation.x = -0.13; }
+  // side table, lamp, books, tea
+  sJ.table = Grp(study, 0.98, 0, 0.1);
+  M(new THREE.CylinderGeometry(0.32, 0.32, 0.04, 20), wood, sJ.table, 0, 0.66, 0); M(new THREE.CylinderGeometry(0.04, 0.06, 0.66, 8), wood, sJ.table, 0, 0.33, 0); M(new THREE.CylinderGeometry(0.2, 0.22, 0.03, 12), wood, sJ.table, 0, 0.015, 0);
+  M(new THREE.CylinderGeometry(0.02, 0.07, 0.42, 8), brass, sJ.table, 0.08, 0.89, -0.1);
+  sJ.shade = M(new THREE.CylinderGeometry(0.1, 0.2, 0.2, 16, 1, true), new THREE.MeshBasicMaterial({ color: new THREE.Color(2.4, 1.6, 0.7), side: THREE.DoubleSide }), sJ.table, 0.08, 1.16, -0.1);
+  sJ.lamp = new THREE.PointLight(0xffb060, 14, 12, 1.7); sJ.lamp.position.set(1.06, 1.2, 0.0); study.add(sJ.lamp);
+  [[0x24405a, 0.3, 0.05], [0x6a5a22, 0.27, -0.12], [0x4a2238, 0.25, 0.1]].forEach(([c, w, r], i) => { const b = M(new THREE.BoxGeometry(w, 0.05, 0.2), std(c, 0.7), sJ.table, -0.1, 0.705 + i * 0.05, 0.1); b.rotation.y = r; });
+  M(new THREE.CylinderGeometry(0.04, 0.03, 0.06, 10), std(0xe8e4da, 0.4), sJ.table, 0.18, 0.71, 0.16);
+  // three walls that fall away like stage flats
+  const shelfTex = canvasTex(1024, 512, (g) => {
+    g.fillStyle = '#1c120c'; g.fillRect(0, 0, 1024, 512);
+    const spines = ['#5a1f1c', '#24405a', '#2f4a30', '#6a5a22', '#3a2a50', '#70401c', '#1f3a40', '#4a2238', '#8a7a5a'];
+    for (let row = 0; row < 4; row++) { let x = 14; const y = 14 + row * 124;
+      while (x < 1000) { const w = 14 + frand(x * 3.1 + row) * 26, h = 78 + frand(x + row * 7) * 30; g.fillStyle = spines[Math.floor(frand(x * 1.7 + row * 3) * spines.length)]; g.fillRect(x, y + 108 - h, w - 2, h);
+        if (frand(x + 0.5) > 0.5) { g.fillStyle = 'rgba(220,190,110,.7)'; g.fillRect(x + 2, y + 108 - h + 10, w - 6, 3); g.fillRect(x + 2, y + 108 - h + 18, w - 6, 2); } x += w; }
+      g.fillStyle = '#3a2418'; g.fillRect(0, y + 108, 1024, 12); }
+  });
+  const boardTex = canvasTex(1024, 640, (g) => {
+    g.fillStyle = '#16241f'; g.fillRect(0, 0, 1024, 640);
+    g.strokeStyle = g.fillStyle = 'rgba(236,236,226,.92)'; g.lineWidth = 4; g.lineCap = 'round';
+    // Pythagoras: 3-4-5 with its squares
+    g.save(); g.translate(250, 400); g.scale(42, -42); g.lineWidth = 0.09;
+    const P = (pts) => { g.beginPath(); pts.forEach((p, i) => i ? g.lineTo(p[0], p[1]) : g.moveTo(p[0], p[1])); g.closePath(); g.stroke(); };
+    P([[0, 0], [4, 0], [0, 3]]); P([[0, 0], [4, 0], [4, -4], [0, -4]]); P([[0, 0], [0, 3], [-3, 3], [-3, 0]]); P([[4, 0], [7, 4], [3, 7], [0, 3]]); g.restore();
+    g.font = 'italic 54px Georgia, serif'; g.fillText('a² + b² = c²', 560, 110);
+    g.font = '46px Georgia, serif'; g.fillText('1  2  3  4  5  6 …', 560, 210);
+    g.font = 'italic 50px Georgia, serif'; g.fillText('π = 3·14159…', 560, 310);
+    g.font = 'bold 110px Georgia, serif'; g.fillText('137', 600, 470); g.font = '120px Georgia, serif'; g.fillText('?', 810, 474);
+    g.lineWidth = 5; g.beginPath(); g.ellipse(705, 430, 150, 78, -0.05, 0, TAU); g.stroke();
+    g.font = 'italic 34px Georgia, serif'; g.fillText('— Eddington', 700, 570);
+  });
+  const mkWall = (w, x, z, ry, deco) => {
+    const pivot = Grp(study, x, 0, z); pivot.rotation.y = ry; const tilt = Grp(pivot);
+    const mat = std(0x39424a, 0.9, 0, { transparent: true, side: THREE.DoubleSide });
+    M(new THREE.BoxGeometry(w, 3.6, 0.1), mat, tilt, 0, 1.8, 0);
+    const mats = [mat]; deco(tilt, mats); sJ.walls.push({ tilt, mats }); return tilt;
+  };
+  mkWall(7.2, 0, -3.3, 0, (t, mats) => { const m = new THREE.MeshStandardMaterial({ map: shelfTex, roughness: 0.8, transparent: true }); M(new THREE.PlaneGeometry(6.6, 3.1), m, t, 0, 1.75, 0.06); mats.push(m); });
+  mkWall(6.6, -3.6, 0, PI / 2, (t, mats) => {
+    const fr = std(0x4a3020, 0.7, 0, { transparent: true }); M(new THREE.BoxGeometry(3.5, 2.3, 0.06), fr, t, 0.2, 1.85, 0.07); mats.push(fr);
+    const m = new THREE.MeshStandardMaterial({ map: boardTex, roughness: 0.95, transparent: true, emissive: 0xffffff, emissiveMap: boardTex, emissiveIntensity: 0.25 }); sJ.board = M(new THREE.PlaneGeometry(3.3, 2.06), m, t, 0.2, 1.85, 0.105); mats.push(m);
+  });
+  mkWall(6.6, 3.6, 0, -PI / 2, (t, mats) => {
+    const fr = std(0x4a3020, 0.7, 0, { transparent: true }); M(new THREE.BoxGeometry(1.7, 2.3, 0.06), fr, t, -0.3, 1.9, 0.07); mats.push(fr);
+    sJ.window = new THREE.MeshBasicMaterial({ transparent: true, map: canvasTex(256, 384, (g) => { const gr = g.createLinearGradient(0, 0, 0, 384); gr.addColorStop(0, '#fff'); gr.addColorStop(1, '#cfd6ee'); g.fillStyle = gr; g.fillRect(0, 0, 256, 384); g.fillStyle = 'rgba(40,26,16,.95)'; g.fillRect(122, 0, 12, 384); g.fillRect(0, 186, 256, 12); }) });
+    M(new THREE.PlaneGeometry(1.5, 2.1), sJ.window, t, -0.3, 1.9, 0.105); mats.push(sJ.window);
+    sJ.winLight = new THREE.PointLight(0x9fb6ff, 5, 9, 1.6); sJ.winLight.position.set(-0.3, 2.0, 0.9); t.add(sJ.winLight);
+  });
+}
+// k: 1 = the room stands, 0 = gone. morning: 0 night, 1 dawn.
+function applyStudy(k, fall, morning) {
+  study.visible = k > 0.005;
+  if (!study.visible) { sJ.lamp.intensity = 0; return; }
+  for (const w of sJ.walls) { w.tilt.rotation.x = -fall * 1.5; w.tilt.position.y = -fall * 0.5; for (const m of w.mats) m.opacity = k; }
+  sJ.floor.material.opacity = k; sJ.rug.material.opacity = k;
+  sJ.chair.visible = sJ.table.visible = k > 0.5; sJ.chair.position.y = sJ.table.position.y = -(1 - k) * 0.8;
+  sJ.lamp.intensity = 14 * k * (1 - morning) * (1 - fall); sJ.shade.material.color.setRGB(lerp(0.25, 2.4, (1 - morning) * (1 - fall)), lerp(0.2, 1.6, (1 - morning) * (1 - fall)), lerp(0.15, 0.7, (1 - morning) * (1 - fall)));
+  sJ.window.color.setRGB(lerp(0.16, 3.2, morning), lerp(0.2, 2.5, morning), lerp(0.42, 1.5, morning));
+  sJ.winLight.color.setRGB(lerp(0.6, 1.0, morning), lerp(0.7, 0.82, morning), lerp(1.0, 0.55, morning)); sJ.winLight.intensity = k * lerp(5, 16, morning) * (1 - fall);
+}
+
+// ── apparitions: what the numbers boast of, drawn in light above them ───────
+const APP = {};
+function apparition(name, build) { const g = Grp(scene); g.visible = false; build(g); APP[name] = g; g.userData.mats = []; g.traverse(o => { if (o.material) { g.userData.mats.push(o.material); o.material.userData.base = o.material.opacity; } }); }
+function showApp(name, k, at, T) {
+  const g = APP[name]; g.visible = k > 0.01; if (!g.visible) return;
+  if (at) g.position.copy(at); for (const m of g.userData.mats) m.opacity = m.userData.base * k;
+  if (g.userData.tick) g.userData.tick(g, T, k);
+}
+const GOLD = new THREE.Color(1.6, 1.2, 0.5), ICE = new THREE.Color(0.8, 1.2, 2.0), ROSE = new THREE.Color(1.8, 0.7, 1.0);
+const textSprite = (txt, color, size = 1) => { const t = canvasTex(512, 128, (g) => { g.fillStyle = '#fff'; g.font = 'bold 92px Georgia, serif'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText(txt, 256, 68); }); const s = new THREE.Sprite(new THREE.SpriteMaterial({ map: t, color, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, fog: false })); s.scale.set(4 * size, size, 1); return s; };
+apparition('one', (g) => {   // an endless progeny pouring out of One
+  const N = 90, pos = new Float32Array(N * 3); const pts = new THREE.Points(new THREE.BufferGeometry().setAttribute('position', new THREE.BufferAttribute(pos, 3)), new THREE.PointsMaterial({ map: starTex, size: 0.32, color: GOLD, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false, fog: false })); pts.frustumCulled = false; g.add(pts);
+  g.userData.tick = (g, T) => { for (let i = 0; i < N; i++) { const u = (T * 0.33 + i / N) % 1, a = i * 2.399, r = u * (1.2 + frand(i) * 2.6); pos[i * 3] = Math.cos(a) * r; pos[i * 3 + 1] = 1.7 + u * 3.4 - u * u * 1.9; pos[i * 3 + 2] = Math.sin(a) * r; } pts.geometry.attributes.position.needsUpdate = true; };
+});
+apparition('orion', (g) => {
+  const S = [[-1.4, 4.8, 0], [1.2, 4.65, 0], [-0.5, 3.5, 0], [0, 3.37, 0], [0.5, 3.24, 0], [-1.1, 2.0, 0], [1.45, 2.15, 0]];
+  g.add(starPts(S, 0.5, ICE)); g.add(starPts([S[2], S[3], S[4]], 1.1, new THREE.Color(1.6, 1.8, 2.6)));
+  g.add(lineArt([[...S[0], ...S[2]], [...S[1], ...S[4]], [...S[2], ...S[3]], [...S[3], ...S[4]], [...S[2], ...S[5]], [...S[4], ...S[6]], [...S[0], ...S[1]], [...S[5], ...S[6]]], ICE, 0.5));
+});
+apparition('square', (g) => { g.add(lineArt(poly([[-1.1, 2.0, 0], [1.1, 2.0, 0], [1.1, 4.2, 0], [-1.1, 4.2, 0]]), GOLD, 1)); g.add(lineArt(poly([[-0.95, 2.15, 0], [0.95, 2.15, 0], [0.95, 4.05, 0], [-0.95, 4.05, 0]]), GOLD, 0.5)); g.add(starPts([[-1.1, 2.0, 0], [1.1, 2.0, 0], [1.1, 4.2, 0], [-1.1, 4.2, 0]], 0.5, GOLD)); });
+apparition('penta', (g) => { const p = Array.from({ length: 5 }, (_, i) => [Math.sin(i * TAU / 5) * 1.35, 3.4 + Math.cos(i * TAU / 5) * 1.35, 0]); g.add(lineArt([...poly(p), ...poly([0, 2, 4, 1, 3].map(i => p[i]))], ROSE, 1)); g.add(starPts(p, 0.45, ROSE)); g.userData.tick = (g, T) => { g.children[0].rotation.z = 0; }; });
+apparition('dodeca', (g) => {
+  const e = new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.DodecahedronGeometry(1, 0)), new THREE.LineBasicMaterial({ color: ROSE, transparent: true, opacity: 1, blending: THREE.AdditiveBlending, depthWrite: false, fog: false })); g.add(e);
+  const st = []; for (let i = 0; i < 70; i++) { const u = frand(i) * 2 - 1, a = frand(i + 0.5) * TAU, r = Math.cbrt(frand(i + 0.9)) * 0.75, s = Math.sqrt(1 - u * u); st.push([Math.cos(a) * s * r, u * r, Math.sin(a) * s * r]); }
+  const p = starPts(st, 0.035, new THREE.Color(1.5, 1.5, 2)); p.material.sizeAttenuation = true; e.add(p);
+  g.userData.tick = (g, T, k) => { e.rotation.set(T * 0.21, T * 0.33, 0); e.scale.setScalar(g.userData.size * (0.3 + 0.7 * ease(k))); p.material.size = 0.05 * e.scale.x; };
+  g.userData.size = 3;
+});
+apparition('sum6', (g) => { const s = textSprite('1 + 2 + 3', GOLD, 0.9); s.position.y = 2.75; g.add(s); const s2 = textSprite('1 × 2 × 3', GOLD, 0.55); s2.position.y = 3.6; s2.material.opacity = 0.6; g.add(s2); });
+apparition('seven', (g) => {   // the Pleiades above, the seven-branched candlestick below
+  const P = [[-0.5, 4.75, 0], [0.1, 5.0, 0], [0.55, 4.65, 0], [0.2, 4.4, 0], [-0.25, 4.35, 0], [0.75, 4.2, 0], [-0.75, 4.45, 0]]; g.add(starPts(P, 0.5, ICE));
+  const segs = [[0, 1.9, 0, 0, 3.6, 0], [-0.4, 1.9, 0, 0.4, 1.9, 0]], fl = [[0, 3.72, 0]];
+  for (let i = 1; i <= 3; i++) { const r = i * 0.42, arc = Array.from({ length: 13 }, (_, j) => [Math.cos(PI + j / 12 * PI) * r, 2.75 + Math.sin(PI + j / 12 * PI) * r * 0.8, 0]);
+    segs.push(...poly(arc, false), [-r, 2.75, 0, -r, 3.6, 0], [r, 2.75, 0, r, 3.6, 0]); fl.push([-r, 3.72, 0], [r, 3.72, 0]); }
+  g.add(lineArt(segs, GOLD, 1)); const f = starPts(fl, 0.5, new THREE.Color(2.2, 1.5, 0.5)); g.add(f); g.userData.tick = (g, T) => { f.material.size = 0.5 + Math.sin(T * 11) * 0.06; };
+});
+apparition('cube8', (g) => {
+  const grp = Grp(g, 0, 3.2, 0), box = new THREE.EdgesGeometry(new THREE.BoxGeometry(0.62, 0.62, 0.62));
+  for (let i = 0; i < 8; i++) { const c = new THREE.LineSegments(box, new THREE.LineBasicMaterial({ color: GOLD, transparent: true, opacity: 1, blending: THREE.AdditiveBlending, depthWrite: false, fog: false })); c.userData.d = [(i & 1) - 0.5, ((i >> 1) & 1) - 0.5, ((i >> 2) & 1) - 0.5]; grp.add(c);
+    c.add(new THREE.Mesh(new THREE.BoxGeometry(0.6, 0.6, 0.6), new THREE.MeshBasicMaterial({ color: new THREE.Color(1.3, 0.9, 0.3), transparent: true, opacity: 0.3, blending: THREE.AdditiveBlending, depthWrite: false, fog: false }))); }
+  g.userData.tick = (g, T, k) => { grp.rotation.set(0.5, T * 0.5, 0); const sp = 0.66 + (1 - ease(k)) * 1.6; for (const c of grp.children) c.position.set(c.userData.d[0] * sp, c.userData.d[1] * sp, c.userData.d[2] * sp); };
+});
+apparition('muses', (g) => { for (let i = 0; i < 9; i++) { const s = textSprite(i % 3 === 1 ? '♫' : '♪', i % 2 ? ROSE : GOLD, 0.6); s.userData.i = i; g.add(s); } g.userData.tick = (g, T) => { for (const s of g.children) { const i = s.userData.i, a = i / 9 * TAU + T * 0.5; s.position.set(Math.cos(a) * 1.5, 2.9 + Math.sin(T * 1.6 + i * 1.3) * 0.35 + (i % 3) * 0.3, Math.sin(a) * 1.5); } }; });
+apparition('heart', (g) => { const s = textSprite('♥', ROSE, 0.55); g.add(s); g.userData.tick = (g, T) => { s.position.y = 1.9 + Math.sin(T * 2.4) * 0.08; s.scale.set(2.2 * (1 + 0.12 * Math.sin(T * 5)), 0.55 * (1 + 0.12 * Math.sin(T * 5)), 1); }; });
+
+// ───── 45-facts.js ─────
+// ── something worth knowing about every number from 1 to 1,000 ──────────────
+// A hand-written note where a number has a story of its own; otherwise the most
+// unusual things that can be worked out about it.
+const factFor = (() => {
+  const NOTED = {
+    1: 'Multiply anything by One and nothing happens. It is neither prime nor composite: mathematicians keep it in a class of its own.',
+    2: 'The only even prime, which makes it the oddest prime of all.',
+    3: 'The first odd prime. Three points always lie in one plane, which is why a three-legged stool never wobbles.',
+    4: 'The smallest number that is not prime, apart from One. Any map can be colored with four colors, a fact first proved in 1976, by computer.',
+    5: 'There are exactly five regular solids, and the five-pointed star was the secret badge of the Pythagoreans.',
+    6: 'The smallest perfect number: its divisors 1, 2 and 3 add up to itself, and multiply to itself as well.',
+    7: 'The fewest sides a regular polygon can have and still be impossible to draw with ruler and compass. And 1/7 = 0.142857142857…',
+    8: 'Eight and Nine are the only neighbors among all the squares, cubes and higher powers: 2³ and 3². It took until 2002 to prove.',
+    9: 'A number can be divided by nine exactly when its digits add up to a multiple of nine.',
+    10: 'A triangle of dots, 1 + 2 + 3 + 4, which the Pythagoreans held sacred. We count in tens only because of our fingers.',
+    11: 'Its powers spell out Pascal’s triangle: 11, 121, 1331, 14641.',
+    12: 'The smallest abundant number: its divisors 1, 2, 3, 4 and 6 add up to 16. Dividing so easily is why we have dozens, twelve hours and twelve inches.',
+    13: 'A prime with an unlucky reputation; fear of it is called triskaidekaphobia. It is also a Fibonacci number: 5 + 8.',
+    15: 'Every row, column and diagonal of the 3 by 3 magic square adds up to 15.',
+    16: 'The only number that is x to the y and also y to the x for two different numbers: 2⁴ = 4².',
+    17: 'At eighteen, Gauss found that a regular 17-sided polygon can be drawn with ruler and compass. It decided him on a life in mathematics.',
+    18: 'The only number that is exactly twice the sum of its digits.',
+    20: 'The faces of an icosahedron. The Maya counted in twenties: fingers and toes.',
+    21: 'A Fibonacci number and a triangular number at once (1 + 2 + … + 6), and the total of the spots on a die.',
+    22: '22/7 is the schoolroom stand-in for Pi, right to two decimal places. Pi is standing over there if you want the rest.',
+    23: 'In a room of only 23 people, it is more likely than not that two share a birthday.',
+    24: '4 × 3 × 2 × 1: the ways to line up four things. And 1² + 2² + … + 24² is itself a square, 70², the only such case beyond 1.',
+    25: 'The smallest square that is the sum of two squares: 9 + 16, the 3-4-5 right triangle.',
+    26: 'The only number squeezed directly between a square (25) and a cube (27), as Fermat proved. Also the letters of the alphabet.',
+    27: '3 × 3 × 3. Play “halve it if even, triple it and add 1 if odd” from 27 and it takes 111 steps, climbing to 9,232, before it reaches 1.',
+    28: 'The second perfect number: 1 + 2 + 4 + 7 + 14 = 28. It is also 1 + 2 + 3 + … + 7.',
+    30: 'The largest number with this property: every smaller number that shares no factor with it is prime.',
+    32: '2⁵. Water freezes at 32 degrees Fahrenheit, and a game of chess begins with 32 pieces.',
+    33: 'For over sixty years nobody could write 33 as a sum of three cubes. In 2019 Andrew Booker did it, with numbers sixteen digits long.',
+    36: 'A square (6²) and a triangular number (1 + 2 + … + 8) at once: the first after 1.',
+    37: 'Multiply it by 3, 6, 9, … 27 and you get 111, 222, 333, … 999.',
+    40: 'The only number whose English name has its letters in alphabetical order: f-o-r-t-y.',
+    41: 'Euler’s lucky prime: n² + n + 41 is prime for every n from 0 to 39.',
+    42: 'The answer to life, the universe and everything, according to Douglas Adams. In 2019 it became the last number under 100 to be written as a sum of three cubes.',
+    43: 'If chicken nuggets come in boxes of 6, 9 and 20, then 43 is the largest number you cannot buy.',
+    45: 'A Kaprekar number: 45² = 2025, and 20 + 25 = 45. Also 1 + 2 + … + 9.',
+    46: 'Every human cell carries 46 chromosomes.',
+    50: 'The smallest number that is a sum of two squares in two ways: 1 + 49 and 25 + 25.',
+    52: 'Cards in a deck and weeks in a year. It is also the number of ways to split five things into groups.',
+    55: 'Triangular (1 + 2 + … + 10) and a Fibonacci number: the largest number that is both.',
+    60: 'The Babylonians counted in sixties, so an hour has 60 minutes and a minute 60 seconds. It is the smallest number that 1, 2, 3, 4, 5 and 6 all divide.',
+    64: 'The squares on a chessboard: a square (8²), a cube (4³) and a sixth power (2⁶) all at once.',
+    65: 'The smallest number that is the sum of two different squares in two ways: 1 + 64 and 16 + 49.',
+    69: '69² = 4761 and 69³ = 328509: between them, every digit from 0 to 9 exactly once.',
+    70: 'The smallest “weird” number: its divisors add up to more than 70, yet no selection of them adds up to exactly 70.',
+    72: 'The rule of 72: divide 72 by a rate of interest and you get roughly the years your money takes to double.',
+    73: 'The 21st prime. Its mirror image, 37, is the 12th prime, and 21 is 7 × 3.',
+    79: 'The atomic number of gold. The alchemists never guessed that what they were after was a number.',
+    81: 'The square of the sum of its own digits: (8 + 1)² = 81.',
+    88: 'The keys on a piano and the constellations in the sky: 88 of each.',
+    89: 'A Fibonacci number, and the decimals of 1/89 begin with the Fibonacci numbers themselves: 0.011235…',
+    90: 'The degrees in a right angle.',
+    91: 'It looks prime but is 7 × 13. It is also 1 + 2 + … + 13, and 1 + 4 + 9 + 16 + 25 + 36.',
+    97: 'The largest two-digit prime. The decimals of 1/97 run for 96 digits before they repeat.',
+    100: 'Ten tens: also 1³ + 2³ + 3³ + 4³, and the sum of the first ten odd numbers.',
+    105: '3 × 5 × 7, the first three odd primes multiplied together.',
+    108: '1¹ × 2² × 3³. Each corner of a regular pentagon measures 108 degrees, and a string of prayer beads in India has 108.',
+    111: 'Every row of a 6 by 6 magic square adds up to 111. It is 3 × 37.',
+    113: '355/113 gives Pi correct to six decimal places. Zu Chongzhi found it in China fifteen centuries ago.',
+    118: 'The number of chemical elements known so far.',
+    120: '5 × 4 × 3 × 2 × 1, and also 1 + 2 + … + 15. It is the smallest number with sixteen divisors.',
+    121: '11², a palindrome, and 1 + 3 + 9 + 27 + 81.',
+    128: '2⁷, and the largest number that cannot be made by adding up different squares.',
+    135: '1¹ + 3² + 5³: its own digits, raised to the powers 1, 2 and 3.',
+    137: 'Very nearly 1/137 is the number that sets the strength of electricity and magnetism. Sir Arthur Eddington was sure it was exactly 137, which is why this number has a knight for a champion.',
+    144: 'A dozen dozens, called a gross, and the largest square anywhere in the Fibonacci sequence.',
+    145: '1! + 4! + 5! = 1 + 24 + 120 = 145: the sum of the factorials of its own digits.',
+    153: 'The sum of the cubes of its digits, 1 + 125 + 27. Also 1 + 2 + … + 17, and 1! + 2! + 3! + 4! + 5!.',
+    163: 'e to the power π√163 misses being a whole number by less than a trillionth. No accident, but it takes deep mathematics to see why.',
+    168: 'The hours in a week, and the number of primes below 1,000.',
+    169: '13² = 169, and backwards, 31² = 961.',
+    180: 'The degrees in a half turn. The three angles of every flat triangle add up to it.',
+    196: 'Reverse a number and add; keep going and you nearly always reach a palindrome. 196 never has, in hundreds of millions of digits of trying.',
+    204: '1 + 4 + 9 + … + 64: the number of squares of every size on a chessboard.',
+    206: 'The bones in a grown human body.',
+    210: '2 × 3 × 5 × 7, the first four primes multiplied together. Also 1 + 2 + … + 20.',
+    212: 'Water boils at 212 degrees Fahrenheit.',
+    216: '6³ = 3³ + 4³ + 5³, the smallest cube that is a sum of three cubes. Many think it is the mysterious “nuptial number” of Plato’s Republic.',
+    220: '220 and 284 are friends: the divisors of each add up to the other. The Pythagoreans made the pair a symbol of friendship.',
+    239: 'To build 239 out of cubes you need nine of them. Only 23 and 239 are that stubborn.',
+    240: 'It has twenty divisors, more than any smaller number.',
+    256: '2⁸: the number of values a single byte can hold.',
+    257: 'A Fermat prime, 2⁸ + 1, which means a regular 257-sided polygon can be drawn with ruler and compass.',
+    273: 'Absolute zero, the coldest anything can be, is about 273 degrees below zero Celsius.',
+    276: 'Replace a number by the sum of its smaller divisors, again and again. Nobody knows where 276 ends up; it is the smallest such mystery.',
+    284: '284 and 220 are friends: the divisors of each add up to the other. The Pythagoreans made the pair a symbol of friendship.',
+    288: '1! × 2! × 3! × 4! = 288. It is also two gross.',
+    325: 'The smallest number that is a sum of two squares in three ways: 1 + 324, 36 + 289 and 100 + 225.',
+    341: 'The smallest number that fools Fermat’s test for primes: it passes with base 2, yet it is 11 × 31.',
+    343: '7 × 7 × 7. Sound travels about 343 meters a second through air.',
+    360: 'The degrees in a circle, thanks to the Babylonians. Every number from 1 to 10 divides it, except 7.',
+    364: 'All the gifts in “The Twelve Days of Christmas” come to 364: one for every day of the year but one.',
+    365: 'The days in a year. Also 10² + 11² + 12², and 13² + 14² as well.',
+    366: 'The days in a leap year.',
+    404: 'The number the web shows you when a page cannot be found.',
+    420: 'The smallest number that 1, 2, 3, 4, 5, 6 and 7 all divide.',
+    451: 'The temperature at which book paper catches fire, according to Ray Bradbury’s novel Fahrenheit 451.',
+    495: 'Take any three digits, not all the same. Arrange them largest first, subtract the reverse, and repeat: you always arrive at 495.',
+    496: 'The third perfect number: its divisors add up to itself. It is also 1 + 2 + 3 + … + 31.',
+    512: '2⁹ and 8³, and also (5 + 1 + 2)³: the cube of the sum of its own digits.',
+    541: 'The hundredth prime.',
+    561: 'The smallest Carmichael number: it slips through Fermat’s test for primes again and again, yet it is 3 × 11 × 17.',
+    563: 'One of only three Wilson primes ever found. The others are 5 and 13.',
+    567: '567² = 321489: between them, every digit from 1 to 9 exactly once.',
+    641: 'Euler discovered that 641 divides 2³² + 1, which sank Fermat’s guess that such numbers are always prime.',
+    666: 'The “number of the beast”. It is the sum of the squares of the first seven primes, and of all the numbers on a roulette wheel.',
+    679: 'Multiply its digits together, then the digits of the answer, and so on: 378, 168, 48, 32, 6. No smaller number lasts five steps.',
+    720: '6 × 5 × 4 × 3 × 2 × 1: the ways to line up six things.',
+    729: '9³ and 3⁶. Plato reckoned that a just king lives exactly 729 times more pleasantly than a tyrant.',
+    747: 'A palindrome, and a jumbo jet.',
+    836: 'A “weird” number: its divisors add up to more than 836, yet no selection of them adds up to exactly 836. Only 70 is smaller and weird.',
+    840: 'It has 32 divisors, more than any other number up to 1,000, and it is the smallest that 1 through 8 all divide.',
+    871: 'Play “halve it if even, triple it and add 1 if odd” from here and it takes 178 steps to reach 1: longer than any other number below 1,000.',
+    873: '1! + 2! + 3! + 4! + 5! + 6! = 873.',
+    887: 'After 887 comes the longest stretch without a prime below 1,000: the next one is 907.',
+    888: 'In Roman numerals it is DCCCLXXXVIII, longer than any other number up to 1,000.',
+    911: 'The emergency telephone number in North America, and a prime.',
+    945: 'The smallest odd abundant number: its smaller divisors add up to 975.',
+    997: 'The largest three-digit prime.',
+    999: '27 × 37, and a Kaprekar number: 999² = 998001, and 998 + 001 = 999.',
+    1000: '10 × 10 × 10. The mile is named for it: a thousand paces of a Roman soldier.',
+  };
+  // Where to read more: the Wikipedia article behind each hand-written note…
+  const MORE = {
+    1: '1', 2: '2', 3: '3', 4: 'Four color theorem', 5: 'Platonic solid', 6: 'Perfect number', 7: 'Heptagon', 8: 'Catalan\'s conjecture', 9: 'Divisibility rule', 10: 'Tetractys',
+    11: 'Pascal\'s triangle', 12: 'Duodecimal', 13: 'Triskaidekaphobia', 15: 'Magic square', 16: '16 (number)', 17: 'Heptadecagon', 18: '18 (number)', 20: 'Vigesimal', 21: '21 (number)',
+    22: 'Approximations of pi', 23: 'Birthday problem', 24: 'Cannonball problem', 25: 'Pythagorean triple', 26: '26 (number)', 27: 'Collatz conjecture', 28: 'Perfect number', 30: '30 (number)',
+    32: '32 (number)', 33: 'Sums of three cubes', 36: 'Square triangular number', 37: '37 (number)', 40: '40 (number)', 41: 'Lucky numbers of Euler', 42: '42 (number)', 43: 'Coin problem',
+    45: 'Kaprekar number', 46: 'Chromosome', 50: '50 (number)', 52: 'Bell number', 55: '55 (number)', 60: 'Sexagesimal', 64: '64 (number)', 65: '65 (number)', 69: '69 (number)',
+    70: 'Weird number', 72: 'Rule of 72', 73: '73 (number)', 79: 'Gold', 81: '81 (number)', 88: '88 (number)', 89: '89 (number)', 90: 'Right angle', 91: '91 (number)', 97: '97 (number)',
+    100: '100', 105: '105 (number)', 108: '108 (number)', 111: '111 (number)', 113: 'Milü', 118: 'Periodic table', 120: '120 (number)', 121: '121 (number)', 128: '128 (number)',
+    135: '135 (number)', 137: 'Fine-structure constant', 144: '144 (number)', 145: 'Factorion', 153: '153 (number)', 163: 'Heegner number', 168: 'Prime-counting function', 169: '169 (number)',
+    180: 'Sum of angles of a triangle', 196: 'Lychrel number', 204: '204 (number)', 206: 'List of bones of the human skeleton', 210: 'Primorial', 212: 'Fahrenheit', 216: 'Plato\'s number',
+    220: 'Amicable numbers', 239: 'Waring\'s problem', 240: 'Highly composite number', 256: 'Byte', 257: '257-gon', 273: 'Absolute zero', 276: 'Aliquot sequence', 284: 'Amicable numbers',
+    288: 'Superfactorial', 325: 'Sum of two squares theorem', 341: 'Pseudoprime', 343: 'Speed of sound', 360: 'Degree (angle)', 364: 'The Twelve Days of Christmas (song)', 365: '365 (number)',
+    366: 'Leap year', 404: 'HTTP 404', 420: 'Least common multiple', 451: 'Fahrenheit 451', 495: '495 (number)', 496: '496 (number)', 512: '512 (number)', 541: 'List of prime numbers',
+    561: 'Carmichael number', 563: 'Wilson prime', 567: 'Pandigital number', 641: 'Fermat number', 666: '666 (number)', 679: 'Persistence of a number', 720: 'Factorial', 729: 'Plato\'s number',
+    747: 'Boeing 747', 836: 'Weird number', 840: '840 (number)', 871: 'Collatz conjecture', 873: 'Factorial', 887: 'Prime gap', 888: 'Roman numerals', 911: '911 (emergency telephone number)',
+    945: 'Abundant number', 997: 'List of prime numbers', 999: 'Kaprekar number', 1000: 'Mile',
+  };
+  // …and the article behind each kind of worked-out fact, recognized by its wording.
+  const TOPICS = [
+    [/sum of the cubes of its own digits/, 'Narcissistic number'], [/raised to the powers 1, 2 and 3/, 'the full list of such numbers (OEIS)|https://oeis.org/A032799'], [/start from 1 and double it/, 'Power of two'],
+    [/Mersenne prime|One less than 2/, 'Mersenne prime'], [/Fibonacci number/, 'Fibonacci sequence'], [/Lucas number/, 'Lucas number'], [/a cube of blocks/, 'Cube (algebra)'],
+    [/Add up the first few cubes/, 'Squared triangular number'], [/the square of a square/, 'Fourth power'], [/sum of the first \d+ odd numbers/, 'Square number'], [/times over\.$/, 'Exponentiation'],
+    [/triangular number: 1 \+/, 'Triangular number'], [/pyramid number/, 'Square pyramidal number'], [/tetrahedral/, 'Tetrahedral number'], [/hexagon number/, 'Centered hexagonal number'],
+    [/pentagonal/, 'Pentagonal number'], [/two neighbors multiplied/, 'Pronic number'], [/Catalan/, 'Catalan number'], [/Bell number/, 'Bell number'], [/more than any smaller number/, 'Highly composite number'],
+    [/Its square ends in itself/, 'Automorphic number'], [/Kaprekar/, 'Kaprekar number'], [/one repeated digit/, 'Repdigit'], [/palindromic prime/, 'Palindromic prime'], [/^A palindrome/, 'Palindromic number'],
+    [/Its twin/, 'Twin prime'], [/Double it and add 1/, 'Safe and Sophie Germain primes'], [/Read it backwards/, 'Emirp'], [/Fermat found|no two squares can ever/, 'Fermat\'s theorem on sums of two squares'],
+    [/as long as they possibly could/, 'Full reptend prime'], [/there is no prime until/, 'Prime gap'], [/guard secrets/, 'RSA cryptosystem'], [/two primes and nothing else|Both are prime/, 'Semiprime'],
+    [/three different primes/, 'Sphenic number'], [/As a product of primes/, 'Fundamental theorem of arithmetic'], [/abundant/, 'Abundant number'], [/sum of two squares in/, 'Sum of two squares theorem'],
+    [/sum of two cubes/, 'Sum of two cubes'], [/Three squares are never enough/, 'Lagrange\'s four-square theorem'], [/ruler and compass/, 'Constructible polygon'],
+    [/difference of two squares|neighboring squares/, 'Difference of two squares'], [/sum of two primes/, 'Goldbach\'s conjecture'], [/halve it if even/, 'Collatz conjecture'], [/happy number/, 'Happy number'],
+    [/decimals of 1\//, 'Repeating decimal'], [/In binary it is/, 'Binary number'], [/Roman numerals/, 'Roman numerals'],
+  ];
+  const topicOf = text => (TOPICS.find(([re]) => re.test(text)) || [])[1];
+  const SUP = '⁰¹²³⁴⁵⁶⁷⁸⁹', sup = k => String(k).split('').map(c => SUP[c]).join('');
+  const fmt = n => n.toLocaleString('en-US');
+  const ordinal = k => k + (k % 100 > 10 && k % 100 < 14 ? 'th' : ['th', 'st', 'nd', 'rd'][k % 10] || 'th');
+  const prime = n => { if (n < 2) return false; for (let d = 2; d * d <= n; d++) if (n % d === 0) return false; return true; };
+  const factors = n => { const f = []; for (let d = 2; d * d <= n; d++) { let e = 0; while (n % d === 0) { n /= d; e++; } if (e) f.push([d, e]); } if (n > 1) f.push([n, 1]); return f; };
+  const divisors = n => { const d = []; for (let i = 1; i <= n; i++) if (n % i === 0) d.push(i); return d; };
+  const digits = n => String(n).split('').map(Number);
+  const rev = n => +String(n).split('').reverse().join('');
+  const roman = n => { let s = ''; for (const [v, r] of [[1000, 'M'], [900, 'CM'], [500, 'D'], [400, 'CD'], [100, 'C'], [90, 'XC'], [50, 'L'], [40, 'XL'], [10, 'X'], [9, 'IX'], [5, 'V'], [4, 'IV'], [1, 'I']]) while (n >= v) { s += r; n -= v; } return s; };
+  const seq = (f, max = 1100) => { const m = new Map(); for (let k = 1; ; k++) { const v = f(k); if (v > max) break; m.set(v, k); } return m; };
+  const TRI = seq(k => k * (k + 1) / 2), SQ = seq(k => k * k), CUBE = seq(k => k * k * k), PYR = seq(k => k * (k + 1) * (2 * k + 1) / 6), TET = seq(k => k * (k + 1) * (k + 2) / 6);
+  const HEX = seq(k => 3 * k * (k - 1) + 1), PENT = seq(k => k * (3 * k - 1) / 2), PRON = seq(k => k * (k + 1)), POW2 = seq(k => 2 ** k);
+  const FIB = [1, 2], LUC = [1, 3]; while (FIB.at(-1) < 1100) FIB.push(FIB.at(-1) + FIB.at(-2)); while (LUC.at(-1) < 1100) LUC.push(LUC.at(-1) + LUC.at(-2));
+  const CATALAN = { 14: 4, 132: 6, 429: 7 }, BELL = { 203: 6, 877: 7 }, HIGHLY = new Set([48, 180]);
+  const PRIMES = []; for (let i = 2; i < 2200; i++) if (prime(i)) PRIMES.push(i);
+  const period = n => { let k = 1, r = 10 % n; while (r !== 1) { r = r * 10 % n; k++; } return k; };   // n must share no factor with 10
+  const collatz = n => { let s = 0, top = n; while (n !== 1) { n = n % 2 ? 3 * n + 1 : n / 2; s++; if (n > top) top = n; } return [s, top]; };
+  const twoSquares = n => { const w = []; for (let a = 1; 2 * a * a <= n; a++) { const b = Math.round(Math.sqrt(n - a * a)); if (b >= a && a * a + b * b === n) w.push([a, b]); } return w; };
+  const twoCubes = n => { for (let a = 1; 2 * a ** 3 <= n; a++) { const b = Math.round(Math.cbrt(n - a ** 3)); if (b >= a && a ** 3 + b ** 3 === n) return [a, b]; } return null; };
+  const fourSquares = n => { for (let a = Math.floor(Math.sqrt(n)); a >= 1; a--) for (let b = Math.min(a, Math.floor(Math.sqrt(n - a * a))); b >= 1; b--) for (let c = Math.min(b, Math.floor(Math.sqrt(n - a * a - b * b))); c >= 1; c--) { const d = Math.round(Math.sqrt(n - a * a - b * b - c * c)); if (d >= 1 && d <= c && a * a + b * b + c * c + d * d === n) return [a, b, c, d]; } return null; };
+  const needsFour = n => { while (n % 4 === 0) n /= 4; return n % 8 === 7; };
+  const gaussPolygon = n => { if (n < 3) return false; while (n % 2 === 0) n /= 2; for (const p of [3, 5, 17, 257]) if (n % p === 0) n /= p; return n === 1; };
+  const happy = n => { const seen = new Set(); while (n !== 1 && !seen.has(n)) { seen.add(n); n = digits(n).reduce((s, d) => s + d * d, 0); } return n === 1; };
+  const kaprekar = n => { const s = String(n * n); for (let i = 1; i < s.length; i++) { const a = +s.slice(0, i), b = +s.slice(i); if (b > 0 && a + b === n) return [s.slice(0, i), s.slice(i)]; } return null; };
+
+  function candidates(n) {
+    const out = [], add = (score, group, text) => out.push({ score, group, text });
+    const f = factors(n), isP = f.length === 1 && f[0][1] === 1, dg = digits(n), dv = divisors(n), sigma = dv.reduce((a, b) => a + b, 0) - n;
+    // shapes and famous sequences
+    if (dg.length === 3 && dg.reduce((s, d) => s + d ** 3, 0) === n) add(92, 'digits', `The sum of the cubes of its own digits: ${dg.map(d => d + '³').join(' + ')}. Only four three-digit numbers can do this.`);
+    if (dg.length === 3 && dg[0] + dg[1] ** 2 + dg[2] ** 3 === n) add(85, 'digits', `${dg[0]}¹ + ${dg[1]}² + ${dg[2]}³: its own digits, raised to the powers 1, 2 and 3.`);
+    if (POW2.has(n)) add(90, 'power', `2${sup(POW2.get(n))}: start from 1 and double it ${POW2.get(n)} times. In binary it is a 1 followed by ${POW2.get(n)} zeros.`);
+    if (POW2.has(n + 1) && n > 3) add(isP ? 91 : 60, 'power', isP ? `A Mersenne prime: 2${sup(POW2.get(n + 1))} − 1. The largest primes ever found are all of this kind.` : `One less than 2${sup(POW2.get(n + 1))}, so in binary it is ${POW2.get(n + 1)} ones in a row.`);
+    const fi = FIB.indexOf(n); if (fi > 1) add(88, 'fib', `A Fibonacci number: ${FIB[fi - 2]} + ${FIB[fi - 1]}, the two before it in the sequence 1, 1, 2, 3, 5, 8, 13…`);
+    const li = LUC.indexOf(n); if (li > 3) add(60, 'fib', `A Lucas number: ${LUC[li - 2]} + ${LUC[li - 1]}, in the sequence 2, 1, 3, 4, 7, 11… where each is the sum of the two before.`);
+    if (CUBE.has(n)) { const k = CUBE.get(n); add(86, 'cube', `${k}³ = ${k} × ${k} × ${k}: a cube of blocks, ${k} along every edge.`); }
+    if (SQ.has(n)) {
+      const k = SQ.get(n);
+      if (TRI.has(k) && k > 1) add(84, 'square', `${k}², and also 1³ + 2³ + … + ${TRI.get(k)}³. Add up the first few cubes and you always get a square.`);
+      else if (SQ.has(k)) add(80, 'square', `${SQ.get(k)}⁴: ${SQ.get(k)} multiplied by itself four times over, and so the square of a square (${k}²).`);
+      else add(72, 'square', `${k}² = ${k} × ${k}. It is also the sum of the first ${k} odd numbers, as every square is.`);
+    }
+    for (const [b, e] of [[3, 5], [2, 5], [2, 7], [2, 9]]) if (b ** e === n && !POW2.has(n)) add(80, 'power', `${b}${sup(e)}: ${b} multiplied by itself ${e} times over.`);
+    if (TRI.has(n) && TRI.get(n) > 3) { const k = TRI.get(n); add(70, 'tri', `A triangular number: 1 + 2 + 3 + … + ${k}. That many balls make a triangle with ${k} along each side.`); }
+    if (PYR.has(n) && PYR.get(n) > 2) { const k = PYR.get(n); add(68, 'pyr', `A pyramid number: ${k < 5 ? [1, 4, 9, 16].slice(0, k).join(' + ') : `1 + 4 + 9 + … + ${k}²`}. That many cannonballs stack into a square pyramid ${k} layers high.`); }
+    if (TET.has(n) && TET.get(n) > 2) { const k = TET.get(n); add(62, 'pyr', `A tetrahedral number: that many balls pile into a three-sided pyramid ${k} layers high.`); }
+    if (HEX.has(n) && HEX.get(n) > 1) { const k = HEX.get(n) - 1; add(58, 'hex', `A hexagon number: a honeycomb of ${k} ring${k > 1 ? 's' : ''} around a single cell has ${n} cells.`); }
+    if (PENT.has(n) && PENT.get(n) > 2) add(50, 'pent', `A pentagonal number: that many dots make nested pentagons with ${PENT.get(n)} along each side.`);
+    if (PRON.has(n) && PRON.get(n) > 2) { const k = PRON.get(n); add(44, 'tri', `${k} × ${k + 1}: two neighbors multiplied, and so twice a triangular number.`); }
+    if (CATALAN[n]) add(75, 'count', `A Catalan number: the number of ways to match up ${CATALAN[n]} pairs of brackets correctly.`);
+    if (BELL[n]) add(70, 'count', `A Bell number: the number of ways to split ${BELL[n]} things into groups.`);
+    if (HIGHLY.has(n)) add(78, 'divisors', `It has ${dv.length} divisors, more than any smaller number.`);
+    // curiosities in the digits
+    if (n > 9 && String(n * n).endsWith(String(n))) add(85, 'digits', `Its square ends in itself: ${n}² = ${fmt(n * n)}.`);
+    const kap = n > 9 && kaprekar(n); if (kap) add(82, 'digits', `A Kaprekar number: ${n}² = ${n * n}, and ${kap[0]} + ${kap[1]} = ${n}.`);
+    if (n > 10 && rev(n) === n) {
+      if (dg.every(d => d === dg[0])) add(70, 'pal', dg.length === 3 ? `${dg[0]} × 111, which makes it ${dg[0] * 3} × 37. Every three-digit number made of one repeated digit is a multiple of 37.` : `${dg[0]} × 11. Every two-digit number made of one repeated digit is a multiple of 11.`);
+      else add(isP ? 74 : 66, 'pal', isP ? 'A palindromic prime: a prime that reads the same in both directions.' : 'A palindrome: it reads the same in both directions.');
+    }
+    // primes
+    if (isP) {
+      const k = PRIMES.indexOf(n) + 1, more = [];
+      if (prime(n - 2) || prime(n + 2)) more.push(`Its twin, ${prime(n + 2) ? n + 2 : n - 2}, is prime too. Nobody knows whether such pairs of twins go on forever.`);
+      if (prime(2 * n + 1)) more.push(`Double it and add 1 and you get another prime, ${fmt(2 * n + 1)}.`);
+      if (n > 12 && rev(n) !== n && prime(rev(n))) more.push(`Read it backwards and you get a different prime, ${rev(n)}.`);
+      if (n % 4 === 1) { const [a, b] = twoSquares(n)[0]; more.push(`It is one more than a multiple of 4, so, as Fermat found, it is the sum of two squares: ${a}² + ${b}².`); }
+      else if (n > 2) more.push('It is one less than a multiple of 4, so no two squares can ever add up to it.');
+      if (n > 5 && period(n) === n - 1) more.push(`The decimals of 1/${n} run for ${n - 1} digits before they repeat, as long as they possibly could.`);
+      const next = PRIMES[k]; if (next - n >= 12) more.push(`After it there is no prime until ${next}.`);
+      add(64, 'prime', `The ${ordinal(k)} prime. ${more[k % more.length]}`);
+    } else if (n > 1) {
+      // how it is built from primes
+      const exp = f.reduce((s, [, e]) => s + e, 0), prod = f.map(([p, e]) => e > 1 ? p + sup(e) : p).join(' × ');
+      if (f.length === 2 && exp === 2) {
+        const [p, q] = [f[0][0], f[1][0]];
+        add(40, 'factors', [`Just two primes multiplied together: ${p} × ${q}. Enormous numbers of this kind guard secrets on the internet, because un-multiplying them is so hard.`,
+          `${p} × ${q}: two primes and nothing else. So it has only four divisors: 1, ${p}, ${q} and itself.`,
+          `Lay out ${n} tiles in a rectangle and, apart from one long row, there is only one way: ${p} by ${q}. Both are prime.`][n % 3]);
+      } else if (f.length === 3 && exp === 3) add(39, 'factors', `${prod}: three different primes multiplied together, so it has exactly eight divisors.`);
+      else if (!SQ.has(n) && !CUBE.has(n) && !POW2.has(n)) add(dv.length >= 16 ? 43 : 27, 'factors', `As a product of primes it is ${prod}, which gives it ${dv.length} divisors${dv.length >= 16 ? ', an unusually large number' : ''}.`);
+      if (sigma > n) add(36, 'divisors', `Its smaller divisors add up to ${fmt(sigma)}, more than itself. The Greeks called such numbers abundant.`);
+    }
+    // sums
+    const ts = twoSquares(n); if (ts.length > 1 && !isP) add(55, 'sums', `A sum of two squares in ${ts.length === 2 ? 'two' : 'three'} ways: ${ts.map(([a, b]) => `${a}² + ${b}²`).join(', ')}.`);
+    const tc = twoCubes(n); if (tc && n > 2 && !out.some(x => x.score === 92)) add(57, 'sums', `A sum of two cubes: ${tc[0]}³ + ${tc[1]}³.`);
+    if (needsFour(n)) { const q = fourSquares(n); if (q) add(42, 'sums', `Three squares are never enough to make it. It takes four: ${q.map(a => a + '²').join(' + ')}. No number ever needs more than four.`); }
+    if (gaussPolygon(n) && n > 6) add(48, 'polygon', `A regular polygon with ${n} sides can be drawn with nothing but ruler and compass. Gauss found the rule for which ones can.`);
+    if (n % 4 === 2 && n > 2) add(31, 'squares', 'It can never be the difference of two squares. No number that is twice an odd number can.');
+    if (n % 2 === 1 && n > 1 && !isP) add(26, 'squares', `${(n + 1) / 2}² − ${(n - 1) / 2}²: like every odd number, it is the gap between two neighboring squares.`);
+    if (n % 2 === 0 && n > 6) { const w = []; for (const p of PRIMES) { if (p > n / 2) break; if (prime(n - p)) w.push(p); } add(24, 'sums', `Like every even number anyone has tried, it is a sum of two primes: ${w.at(-1)} + ${n - w.at(-1)}, for one. It can be done in ${w.length} way${w.length > 1 ? 's' : ''}.`); }
+    // games and notations
+    if (n > 1) { const [s, top] = collatz(n); add(s >= 100 ? 47 : 20, 'game', `Play “halve it if even, triple it and add 1 if odd” from here and you reach 1 in ${s} steps${top > 4 * n ? `, after climbing as high as ${fmt(top)}` : ''}. Nobody has proved that every number gets there.`); }
+    if (n > 1 && happy(n)) add(30, 'game', 'A happy number: square its digits and add them up, do the same to the answer, and keep going. You arrive at 1.');
+    if (n % 2 && n % 5 && n > 3 && !isP) add(25, 'decimal', `The decimals of 1/${n} repeat every ${period(n)} digits.`);
+    const bin = n.toString(2); if (n > 8 && bin === bin.split('').reverse().join('') && !POW2.has(n + 1)) add(37, 'notation', `In binary it is ${bin}, a palindrome.`);
+    const ro = roman(n); if (ro.length >= 8) add(28, 'notation', `In Roman numerals it is ${ro}.`);
+    return out;
+  }
+  // Returns { text, more }: the fact, and the titles of the Wikipedia articles that tell the rest of the story.
+  const fact = n => {
+    if (NOTED[n]) return { text: NOTED[n], more: [MORE[n]] };
+    // the dullest facts take turns, so neighbors do not all say the same thing
+    const c = candidates(n).map(x => ({ ...x, rank: x.score < 45 ? x.score + (n * 7 + x.group.length * 5) % 12 : x.score })).sort((a, b) => b.rank - a.rank);
+    const first = c[0], second = c.find(x => x.group !== first.group && (x.score >= 34 || first.score < 45) && first.text.length + x.text.length < 270);
+    const shown = second ? [first, second] : [first];
+    return { text: shown.map(x => x.text).join(' '), more: [...new Set(shown.map(x => topicOf(x.text)))] };
+  };
+  fact.all = { MORE, TOPICS, candidates, topicOf };   // for the checks
+  return fact;
+})();
+const wikiUrl = title => 'https://en.wikipedia.org/wiki/' + encodeURIComponent(title.replace(/ /g, '_'));
+
+// ───── 50-film.js ─────
+// ── the script, laid out in time ────────────────────────────────────────────
+const SCRIPT = JSON.parse($('script').textContent), LENGTHS = JSON.parse($('lengths').textContent || '{}');
+const LINE = {}; SCRIPT.lines.forEach(l => LINE[l.id] = l);
+const HAVE_CLIPS = SCRIPT.lines.every(l => LENGTHS[l.id] > 0);
+const SEQ = [
+  ['mark', 'study'], ['wait', 2.4], 'n01', 'n02', ['wait', 0.5], 'n03', ['wait', 1.4],
+  ['mark', 'fall'], ['wait', 7.2], 'n04', 'n05', 'n06', ['mark', 'pi'], 'n07', ['mark', 'dress'], 'n08', 'n09', 'n10',
+  ['mark', 'ballet'], ['wait', 1.2], 'n11', ['wait', 5.5], 'n12', ['wait', 1.4], 'c01', ['wait', 2.4], 'c02', ['wait', 2.4], 'c03', ['wait', 5.5],
+  ['mark', 'intro'], 'n13', ['wait', 0.9], 'i01', 'i02', 'i03', 'i04', 'i05', 'i06', 'i07', 'i08', 'i09', 'i10', ['wait', 0.5],
+  ['mark', 'bored'], 'n14', 'p01', ['wait', 0.3], ['mark', 'outcry'], 'n15', ['wait', 0.6], 'i11', 'i12', 'i13', ['wait', 0.4], 'n16', ['wait', 0.2], 'q01', ['wait', 2.2], 'n17', ['wait', 1.8],
+  ['mark', 'rebel'], 'n18', 'n19', 'k01', ['wait', 0.4], 'n20', ['mark', 'trial'], 'r01', ['wait', 0.3], 'n21', 'p02', 'n22', 'p03', 'r02', 'r03', 'r04', ['wait', 1.4],
+  ['mark', 'swarm'], 'n23', 'n24', 'p04', ['wait', 1.6], 'n25', ['wait', 3.2],
+  ['mark', 'wake'], ['wait', 3.4], 'n26', 'p05', ['wait', 5.5], ['mark', 'end'],
+];
+const MK = {}; let TOTAL = 0;
+{
+  let t = 0;
+  for (const s of SEQ) {
+    if (Array.isArray(s)) { if (s[0] === 'mark') MK[s[1]] = t; else t += s[1]; continue; }
+    const l = LINE[s]; l.t0 = t; l.len = LENGTHS[s] > 0 ? LENGTHS[s] : 0.8 + l.text.length * 0.064; l.t1 = t + l.len; t = l.t1 + 0.45;
+  }
+  TOTAL = t;
+}
+const ORDER = SEQ.filter(s => typeof s === 'string').map(s => LINE[s]);
+const Ln = id => LINE[id], fr = (id, f) => lerp(LINE[id].t0, LINE[id].t1, f), within = (t, id, a = 0, b = 1) => t >= fr(id, a) && t < fr(id, b);
+const CHAPTERS = [['study', 'The study'], ['fall', 'The dream'], ['dress', 'The uniforms'], ['ballet', 'The ballet'], ['intro', 'The introductions'], ['outcry', 'The outcry'], ['rebel', 'One hundred and thirty-seven'], ['swarm', 'The swarm'], ['wake', 'Waking']].map(([m, name]) => ({ t: MK[m], name }));
+const SPEAKERS = [['i01', 1], ['i02', 2], ['i03', 3], ['i04', 4], ['i05', 5], ['i06', 6], ['i07', 7], ['i08', 8], ['i09', 9], ['i10', 10], ['i11', 11], ['i12', 12], ['i13', 13]];
+const T_DANCE_END = Ln('n13').t0 + 0.5, T_SILENCE = Ln('q01').t0 + 0.2, T_SWARM = fr('n23', 0.6), T_BLOW = fr('p04', 0.42), T_GONE = T_BLOW + 5.2;
+const A137 = 0.6, REBEL_SPOT = polar(3.75, A137), ROAM_T = Ln('n05').t1 + 0.1;
+const ringPos = (n, r) => polar(r ?? byN[n].r, byN[n].a);
+
+// ── stage directions: everything about the dream at story time t ────────────
+const S = { look: null, cross: null, pair: null, rebel: null, fume: null, rebelAt: REBEL_SPOT };
+function stage(t) {
+  S.reveal = keys(t, [[MK.fall + 1.2, 0], [MK.fall + 4.4, 13.6], [MK.fall + 7, 33], [Ln('n04').t0 + 3.5, 82], [Ln('n05').t0 + 1, 100], [Ln('n05').t0 + 7, 250], [Ln('n05').t1, 3000]]);
+  S.dream = sstep(MK.fall + 0.8, MK.fall + 4, t) * (t < MK.wake - 0.4 ? 1 : 0);
+  S.gone = t >= T_GONE;
+  S.dance = sstep(MK.ballet, MK.ballet + 1.2, t) * (1 - sstep(T_DANCE_END - 0.8, T_DANCE_END, t)); S.du = t - MK.ballet;
+  S.sing = t >= Ln('c01').t0 && t < Ln('c03').t1 && (within(t, 'c01') || within(t, 'c02') || within(t, 'c03'));
+  S.sneak = pulse(S.du, 17, 27, 2.5);
+  // who has the floor
+  S.speaker = 0; S.talk = false; S.fwd = 0; S.look = null; S.cross = null; S.angrySpeaker = false;
+  for (const [id, n] of SPEAKERS) { const l = Ln(id); if (t >= l.t0 - 0.6 && t < l.t1 + 0.4) { S.speaker = n; S.talk = t >= l.t0 && t < l.t1; S.fwd = pulse(t, l.t0 - 0.6, l.t1 + 0.4, 0.5); S.look = ringPos(n); S.angrySpeaker = n >= 11; S.line = id; } }
+  if (within(t, 'i02', 0.45, 1.15) || within(t, 'i08', 0.5, 1.15)) S.cross = [1];
+  if (within(t, 'i06', 0.3, 0.95)) S.cross = [28, 496];
+  if (within(t, 'i10', 0, 0.45)) S.cross = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+  if (within(t, 'i12', 0.45, 1.1)) S.cross = [10];
+  S.pairK = pulse(t, Ln('n06').t0, Ln('n06').t1 + 0.5, 0.5); S.pair = S.pairK > 0 ? [7, 8] : null;
+  S.outcry = sstep(fr('n15', 0.55), fr('n15', 0.9), t) * (1 - sstep(T_SILENCE - 0.1, T_SILENCE + 0.15, t));
+  S.bowR = t > T_SILENCE ? (t - T_SILENCE) * 60 : 0;
+  S.bow = sstep(T_SILENCE, T_SILENCE + 0.3, t) * (1 - sstep(Ln('n17').t1, Ln('n17').t1 + 1.5, t));
+  S.pale = sstep(T_SILENCE, T_SILENCE + 0.7, t) * (1 - sstep(Ln('n18').t0, Ln('n18').t0 + 5, t));
+  S.waveR = t > T_SILENCE && t < T_SILENCE + 9 ? (t - T_SILENCE) * 60 : -1;
+  // one hundred and thirty-seven
+  const tPush = fr('n18', 0.48);
+  S.rebel = null; S.fume = null;
+  if (t >= tPush && t < T_GONE) {
+    S.rebel = { x: REBEL_SPOT.x, z: REBEL_SPOT.z, spd: 3.1, push: t < Ln('n18').t1 + 0.3, talk: within(t, 'r01') || within(t, 'r02') || within(t, 'r03') || within(t, 'r04'), fist: within(t, 'r01'), face: t > Ln('n19').t0 ? PROF : null };
+    if (t > fr('n18', 0.78) && t < Ln('r01').t0) S.fume = REBEL_SPOT;
+  }
+  S.knight = sstep(Ln('n19').t0 - 0.3, Ln('n19').t0 + 1.6, t) * (1 - sstep(T_BLOW, T_BLOW + 0.8, t));
+  S.urge = within(t, 'k01') ? 1 : 0;
+  S.love = pulse(t, fr('r03', 0.6), Ln('r03').t1 + 0.4, 0.7);
+  S.angry = sstep(fr('n23', 0.22), fr('n23', 0.4), t) * (t < T_GONE ? 1 : 0);
+  S.swarm = t >= T_SWARM ? (t < T_BLOW ? t - T_SWARM : T_BLOW - T_SWARM + (t - T_BLOW) * 0.2) : -1;
+  S.blow = t >= T_BLOW ? t - T_BLOW : -1;
+  S.mist = sstep(T_BLOW + 3.2, T_BLOW + 6.6, t) * (1 - sstep(MK.wake + 0.8, MK.wake + 3.2, t));
+  S.flash = Math.max(pulse(t, T_SILENCE - 0.05, T_SILENCE + 0.5, 0.08) * 0.75 * (1 - sstep(T_SILENCE, T_SILENCE + 0.5, t)), pulse(t, T_BLOW - 0.05, T_BLOW + 0.7, 0.08) * 0.85 * (1 - sstep(T_BLOW, T_BLOW + 0.7, t)));
+  S.shake = Math.max(S.outcry * 0.012, sstep(T_SILENCE, T_SILENCE + 0.1, t) * (1 - sstep(T_SILENCE, T_SILENCE + 1.4, t)) * 0.09, S.swarm >= 0 && S.blow < 0 ? 0.035 * sstep(0, 3, S.swarm) : 0, S.blow >= 0 ? 0.08 * (1 - sstep(0, 1.2, S.blow)) : 0);
+  // the study
+  S.wake = t >= MK.wake - 0.4;
+  S.studyK = S.wake ? 1 : 1 - sstep(MK.fall + 2.4, MK.fall + 5.6, t);
+  S.fall = S.wake ? 0 : sstep(MK.fall + 0.5, MK.fall + 4.4, t);
+  S.hi = -1;
+  if (within(t, 'n05', 0.27, 0.92)) S.hi = t < fr('n05', 0.47) ? 0 : t < fr('n05', 0.62) ? 1 : t < fr('n05', 0.8) ? 2 : 3 + (t - fr('n05', 0.8)) / (Ln('n05').len * 0.12) * 4;
+  if (within(t, 'n09', 0.05, 0.42)) S.hi = (t - fr('n09', 0.05)) / (Ln('n09').len * 0.37) * 7 - 0.5;
+  if (within(t, 'i10', 0.42, 1.05)) S.hi = 1 + (t - fr('i10', 0.42)) / (Ln('i10').len * 0.5) * 6;
+  return S;
+}
+function profAct(t, T) {
+  const sp = S.speaker ? ringPos(S.speaker) : null, to = (v) => Math.atan2(v.x - PROF.x, v.z - PROF.z), toPi = to(PI_POS), toR = A137;
+  if (t >= MK.wake - 0.4) {
+    if (t < Ln('n26').t0 + 0.5) return ['asleep', { seated: 1, rate: 30 }];
+    if (t < Ln('p05').t1 + 0.6) return ['awake', { seated: 1, rate: 13, talk: within(t, 'p05'), hy: t > Ln('p05').t0 ? -0.5 : 0 }];
+    return ['reading', { seated: 1, rate: 2.5, hp: 0.05, hy: -0.75, eyes: 1 }];
+  }
+  if (t < Ln('n03').t0 + 0.6) return ['reading', { seated: 1, hp: 0.38 + Math.sin(T * 0.7) * 0.03 }];
+  if (t < MK.fall + 2.7) return ['asleep', { seated: 1, rate: 1.3, hp: 0.5 + Math.sin(T * 1.2) * 0.03 }];
+  if (t < Ln('n06').t0) return ['wonder', { scan: 1, rate: 2.2 }];
+  if (t < MK.pi) return ['stand', { yaw: 4.4 - TAU }];
+  if (t < MK.dress) return ['wonder', { yaw: toPi * 0.6, hy: 0.7, hp: -0.42 }];
+  if (t < MK.ballet) return ['stand', { scan: 1 }];
+  if (t < T_DANCE_END) return ['wonder', { scan: 1, yaw: Math.sin(T * 0.25) * 1.2 }];
+  if (t < MK.bored) return ['stand', { yaw: sp ? to(sp) : 0.3, rate: 3 }];
+  if (t < Ln('p01').t0) return ['bored', { yaw: 0.6 }];
+  if (t < Ln('p01').t1 + 0.3) return ['speak', { yaw: toPi * 0.55, hy: 0.75, hp: -0.3, talk: within(t, 'p01') }];
+  if (t < fr('n16', 0.16)) return ['stand', { yaw: sp ? to(sp) : 0.3, rate: 4 }];
+  if (t < T_SILENCE + 0.6) return ['ears', { rate: 9, shake: t < T_SILENCE ? 0.5 : 0, yaw: t < fr('n16', 0.42) ? 0.3 : toPi * 0.55 }];
+  if (t < Ln('n18').t0) return ['stand', { yaw: 0.2 }];
+  if (t < fr('n21', 0.4)) return ['stand', { yaw: toR, hp: within(t, 'n20') ? -0.05 + Math.sin(T * 3) * 0.05 : 0 }];
+  if (t < Ln('p02').t1 + 0.2) return ['plead', { yaw: toPi * 0.55, talk: within(t, 'p02') }];
+  if (t < Ln('p03').t0) return ['stand', { yaw: toPi * 0.5, hy: 0.6, hp: -0.3 }];
+  if (t < Ln('p03').t1 + 0.2) return ['speak', { yaw: toR, talk: within(t, 'p03') }];
+  if (t < T_SWARM - 0.4) return ['stand', { yaw: toR, hp: Math.sin(T * 2.6) * 0.07 + 0.03 }];
+  if (t < fr('n24', 0.5)) return ['cower', { rate: 9, yaw: 0.2 }];
+  if (t < Ln('p04').t0 - 0.15) return ['stand', { rate: 3.5, yaw: 0.15, hp: -0.1 }];
+  return ['shout', { rate: 12, yaw: 0.15, talk: within(t, 'p04') }];
+}
+const PI_IDLE = { rs: 0, rr: 0.15, re: -0.2, ls: 0, lr: 0.15, le: -0.2, bt: 0.3, hy: 0, hp: 0, frown: 0, eyes: 1, yaw: 0.25, vis: 1, lean: 0 };
+function piAct(t, T) {
+  const p = { ...PI_IDLE };
+  p.vis = sstep(MK.fall + 5.0, MK.fall + 7.2, t) * (1 - sstep(T_BLOW + 0.1, T_BLOW + 1.0, t)) * (t < MK.wake - 0.4 ? 1 : 0);
+  p.hy = Math.sin(T * 0.4) * 0.12;
+  if (within(t, 'n07')) { p.eyes = 1 + 1.3 * pulse(t, fr('n07', 0.6), Ln('n07').t1, 0.6); p.hy = 0; p.yaw = 0.12; }
+  if (S.dance > 0.3) { const b = S.du * 2.8 * PI / 3 * 2; p.rs = -1.25 + 0.3 * Math.sin(b); p.rr = 0.55 + 0.3 * Math.cos(b); p.re = -0.7 + 0.25 * Math.sin(b + 1); p.bt = -0.5 + 0.5 * Math.cos(b); p.ls = -0.7; p.lr = 0.8 + 0.15 * Math.sin(b * 0.5); p.le = -0.4; p.yaw = 0.25 + Math.sin(S.du * 0.3) * 0.5; }
+  if (t >= T_DANCE_END - 1.0 && t < T_DANCE_END + 1.3) { p.rs = -2.75; p.rr = 0.2; p.re = -0.1; p.bt = -0.2; p.ls = 0; p.lr = 0.15; }
+  if (S.speaker && t > MK.intro) { const v = ringPos(S.speaker); p.yaw = Math.atan2(v.x - PI_POS.x, v.z - PI_POS.z) * 0.55; }
+  if (t >= Ln('p01').t0 && t < Ln('n15').t0 + 1) { p.yaw = -0.9; p.hy = -0.5; p.hp = 0.3; }
+  if (t >= fr('n16', 0.55) && t < T_SILENCE) { p.rs = -2.8; p.rr = 0.3; p.re = -0.1; p.bt = -0.15; p.yaw = 0.1; }
+  if (t >= T_SILENCE && t < T_SILENCE + 2.6) { const d = sstep(T_SILENCE, T_SILENCE + 0.25, t); p.rs = lerp(-2.8, -1.0, d); p.re = -0.15; p.bt = lerp(-0.15, 0.9, d); p.ls = -1.0; p.lr = 1.0; p.eyes = 2.6; p.yaw = 0.1; p.frown = 0.6; }
+  if (t >= fr('n18', 0.75) && t < T_GONE) { p.yaw = 0.75; p.hp = 0.22; p.frown = Math.max(p.frown, 0.35); }
+  if (t >= Ln('n21').t0 && t < Ln('n22').t0) p.frown = 1;
+  if (within(t, 'n22')) { p.frown = 0.3; p.hp = 0.22 + 0.16 * Math.sin((t - Ln('n22').t0) * 4.2); }
+  if (S.angry > 0) { p.frown = 1; p.yaw = -1.3; p.hp = 0.35; p.rs = -1.2 * S.angry; p.rr = 0.2; p.re = -0.3; p.bt = 1.1; p.eyes = 1.6; p.lean = 0.12 * S.angry; }
+  return p;
+}
+
+// ── the camera ──────────────────────────────────────────────────────────────
+const V = (x, y, z) => new THREE.Vector3(x, y, z);
+const camP = new THREE.Vector3(0, 2, 8), camL = new THREE.Vector3(0, 1, 0); let camFov = 42;
+const soft = u => lerp(u, ease(u), 0.4);
+const orbitAt = (c, d, az, el) => { camL.copy(c); camP.set(c.x + d * Math.sin(az) * Math.cos(el), c.y + d * Math.sin(el), c.z + d * Math.cos(az) * Math.cos(el)); };
+const om = (c0, d0, az0, el0, c1, d1, az1, el1, f0 = 42, f1 = f0) => (u) => { const k = soft(u); orbitAt(_p.lerpVectors(c0, c1 || c0, k).clone(), lerp(d0, d1, k), lerp(az0, az1, k), lerp(el0, el1, k)); camFov = lerp(f0, f1, k); };
+const mv = (p0, l0, p1, l1, f0 = 42, f1 = f0) => (u) => { const k = soft(u); camP.lerpVectors(p0, p1, k); camL.lerpVectors(l0, l1, k); camFov = lerp(f0, f1, k); };
+// A portrait of number n in three-quarter view. It picks the side that keeps clear of Pi and the Professor.
+const port = (n, o = {}) => {
+  let sel = 0, lastU = 2;
+  return (u) => {
+    const a = byN[n], r = Math.hypot(a.x, a.z) || 1, tier = r < 7.2 ? 0 : r < 14 ? 1 : 2, ix = -a.x / r, iz = -a.z / r;
+    const P = o.low ? { d: 3.2, side: 2.6, h: 0.5, up: 2.15, fov: 54 } : o.close ? { d: 1.8, side: 1.5, h: 1.1, up: 0.95, fov: 40 } : [{ d: 2.5, side: 2.0, h: 1.05, up: 0.86, fov: 40 }, { d: 2.7, side: 1.0, h: 2.1, up: 0.85, fov: 38 }, { d: 4.4, side: 0.8, h: 3.0, up: 0.75, fov: 36 }][tier];
+    const d = (o.d ?? P.d) - (o.push ?? 0.3) * u, side = Math.abs(o.side ?? P.side), want = Math.sign(o.side ?? 1);
+    if (u < lastU || !sel) { const sc = s => { const x = a.x + ix * d + iz * s * side, z = a.z + iz * d - ix * s * side; return Math.min(Math.hypot(x - PI_POS.x, z - PI_POS.z) - 1.25, Math.hypot(x - PROF.x, z - PROF.z) - 0.7, 0.6); }; sel = sc(want) >= 0.5 || sc(want) >= sc(-want) ? want : -want; }
+    lastU = u;
+    camP.set(a.x + ix * d + iz * sel * side, o.h ?? P.h, a.z + iz * d - ix * sel * side); camL.set(a.x, o.up ?? P.up, a.z); camFov = o.fov ?? P.fov;
+  };
+};
+const SHOTS = [];
+const shot = (t0, t1, fn) => SHOTS.push({ t0, t1, fn });
+const cuts = (id, parts, tEnd) => { const l = Ln(id); parts.forEach(([f, fn], i) => shot(fr(id, f), i + 1 < parts.length ? fr(id, parts[i + 1][0]) : tEnd ?? l.t1 + 0.45, fn)); };
+{
+  const O = V(0, 1.1, 0), PIH = V(PI_POS.x, 3.03, PI_POS.z), a = n => byN[n].a;
+  const maskShot = (dx = 0.3, d0 = 2.4, d1 = 1.75) => mv(V(PI_POS.x + dx + 0.2, 3.0, PI_POS.z + d0), PIH, V(PI_POS.x + dx, 3.03, PI_POS.z + d1), PIH, 30, 26);
+  // the study
+  shot(0, Ln('n02').t0, om(O, 7.2, 0.5, 0.2, O, 5.6, 0.22, 0.16));
+  shot(Ln('n02').t0, Ln('n03').t0, mv(V(0.9, 1.75, 1.5), V(-3.5, 1.85, -0.3), V(-0.2, 1.8, 0.75), V(-3.5, 1.72, -0.5), 40, 31));
+  shot(Ln('n03').t0, MK.fall + 0.8, om(V(0, 1.05, 0.1), 3.0, -0.6, 0.12, V(0, 1.05, 0.1), 2.3, -0.32, 0.1, 36));
+  // the walls fall away and the plain opens
+  shot(MK.fall + 0.8, Ln('n04').t0 + 1.4, om(V(0, 1.0, 0), 3.2, -0.32, 0.12, V(0, 1.6, 0), 22, 0.3, 0.44));
+  shot(Ln('n04').t0 + 1.4, Ln('n05').t0, (u) => { const th = lerp(5.55, 3.05, soft(u)); camP.copy(polar(1.2, th, 1.2)); camL.copy(polar(5, th - 0.1, 0.95)); camFov = 44; });
+  shot(Ln('n05').t0, Ln('n06').t0, om(V(0, 0.5, 0), 15, 0.55, 0.28, V(0, 0, 0), 150, 1.2, 0.6));
+  shot(Ln('n06').t0, Ln('n07').t0, (u) => { camP.copy(polar(lerp(0.75, 1.15, u), 4.4, 1.5)); camL.copy(polar(5, 4.4, 0.62)); camFov = 40; });
+  cuts('n07', [[0, mv(V(PI_POS.x + 0.9, 0.55, PI_POS.z + 5.0), V(PI_POS.x - 0.3, 1.1, PI_POS.z), V(PI_POS.x + 0.5, 1.0, PI_POS.z + 4.3), V(PI_POS.x - 0.2, 2.75, PI_POS.z), 42)], [0.56, maskShot()]]);
+  cuts('n08', [[0, port(9, { close: true })], [0.2, port(4, { side: -1 })], [0.35, port(8)], [0.47, port(10, { side: -1 })], [0.6, port(7)], [0.83, port(6, { side: -1 })]]);
+  cuts('n09', [[0, om(V(0, 0, 0), 64, -0.7, 0.5, V(0, 0, 0), 105, -0.3, 0.78)], [0.43, port(100)], [0.63, port(13, { side: -1 })], [0.8, port(666)]]);
+  shot(Ln('n10').t0, MK.ballet + 1.2, port(1000));
+  // the ballet
+  shot(MK.ballet + 1.2, fr('n11', 0.52), om(V(0, 0, 0), 25, 0.2, 1.02, V(0, 0, 0), 33, 0.75, 0.86));
+  shot(fr('n11', 0.52), Ln('n11').t1 + 2.2, om(V(0, 1, 0), 12.5, -0.9, 0.2, V(0, 1, 0), 11.5, -0.15, 0.25));
+  shot(Ln('n11').t1 + 2.2, Ln('c01').t0, mv(V(-6.4, 0.7, 6.8), V(0.8, 1.9, -0.4), V(-4.2, 0.85, 7.8), V(0.8, 2.0, -0.4), 44));
+  shot(Ln('c01').t0, Ln('c02').t0, (u) => { const th = lerp(-0.7, 0.05, u); camP.copy(polar(18.8, th, 2.3)); camL.copy(polar(13.6, th + 0.26, 0.9)); camFov = 40; });
+  shot(Ln('c02').t0, Ln('c03').t0, om(V(0, 0, 0), 40, 0, 1.5, V(0, 0, 0), 62, 0.6, 1.5));
+  shot(Ln('c03').t0, Ln('c03').t1 + 1.4, mv(polar(35.2, 2.2, 1.5), V(0, 3, 0), polar(36.4, 2.6, 2.6), V(0, 3.6, 0), 46));
+  shot(Ln('c03').t1 + 1.4, MK.intro, om(V(0, 0, 0), 62, 2.6, 0.3, V(0, 0, 0), 150, 3.0, 0.52));
+  // the introductions
+  shot(MK.intro, Ln('i01').t0 - 0.25, om(V(0.6, 1.4, 0), 12.5, 0.12, 0.36, V(0.6, 1.4, 0), 9.6, 0.0, 0.27));
+  shot(Ln('i01').t0 - 0.25, Ln('i02').t0, port(1, { low: true }));
+  cuts('i02', [[0, port(2, { side: -1 })], [0.62, port(1, { close: true, side: -1 })]]);
+  cuts('i03', [[0, port(3)], [0.52, port(3, { low: true })]]);
+  shot(Ln('i04').t0, Ln('i05').t0, port(4, { low: true, side: -1 }));
+  cuts('i05', [[0, port(5, { low: true })], [0.52, mv(polar(4.2, a(5) + PI, 2.1), polar(9.5, a(5), 5.4), polar(5.4, a(5) + PI, 2.3), polar(9.5, a(5), 6.0), 46)]]);
+  cuts('i06', [[0, port(6, { low: true, side: -1 })], [0.32, port(28)], [0.56, port(496, { side: -1 })], [0.78, port(6, { close: true })]]);
+  shot(Ln('i07').t0, Ln('i08').t0, port(7, { low: true }));
+  cuts('i08', [[0, port(8, { low: true, side: -1 })], [0.55, port(1, { close: true })]]);
+  shot(Ln('i09').t0, Ln('i10').t0, port(9, { low: true, side: -1 }));
+  cuts('i10', [[0, port(10)], [0.4, (u) => { camP.copy(polar(lerp(1.6, 0.4, u), a(10), lerp(3.0, 7.5, soft(u)))); camL.copy(polar(lerp(22, 60, u), a(10), 0)); camFov = 50; }]], MK.bored);
+  shot(MK.bored, Ln('p01').t0, om(V(0.7, 1.9, 0), 7.2, 0.18, 0.1, V(0.7, 1.9, 0), 6.3, 0.06, 0.08));
+  shot(Ln('p01').t0, Ln('n15').t0, om(V(0, 1.5, 0), 2.8, 1.28, 0.05, V(0, 1.5, 0), 2.5, 1.18, 0.05, 36));
+  // the outcry and the silence
+  shot(Ln('n15').t0, Ln('i11').t0, om(V(0, 1, 0), 12.5, -0.4, 0.42, V(0, 1, 0), 17, -0.15, 0.35));
+  shot(Ln('i11').t0, Ln('i12').t0, port(11));
+  cuts('i12', [[0, port(12, { side: -1 })], [0.6, port(10, { close: true })]]);
+  shot(Ln('i13').t0, Ln('n16').t0, port(13, { close: true }));
+  cuts('n16', [[0, om(V(0, 1.5, 0), 2.5, 0.12, 0.05, V(0, 1.52, 0), 2.0, 0.38, 0.05, 36)], [0.56, mv(V(PI_POS.x - 1.3, 0.9, PI_POS.z + 4.4), V(PI_POS.x, 2.7, PI_POS.z), V(PI_POS.x - 1.0, 1.0, PI_POS.z + 3.7), V(PI_POS.x, 3.0, PI_POS.z), 44)]], Ln('q01').t0);
+  shot(Ln('q01').t0, T_SILENCE + 0.9, mv(V(PI_POS.x + 0.25, 3.0, PI_POS.z + 2.0), PIH, V(PI_POS.x + 0.15, 3.03, PI_POS.z + 1.45), PIH, 26, 22));
+  shot(T_SILENCE + 0.9, Ln('n17').t0, om(V(0, 0, 0), 44, 0.6, 0.66, V(0, 0, 0), 64, 0.85, 0.6));
+  shot(Ln('n17').t0, MK.rebel, (u) => { const th = lerp(0.95, 1.5, soft(u)); camP.copy(polar(6.5, th, 1.25)); camL.copy(polar(11, th + 0.5, 0.6)); camFov = 42; });
+  // one hundred and thirty-seven
+  cuts('n18', [[0, port(137)],
+    [0.47, (u) => { const b = byN[137], r = Math.hypot(b.x, b.z) || 1, ox = b.x / r, oz = b.z / r; camP.set(b.x + ox * 3.4 + oz * 1.3, 2.3, b.z + oz * 3.4 - ox * 1.3); camL.set(b.x - ox * 2.5, 0.9, b.z - oz * 2.5); camFov = 44; }],
+    [0.8, mv(polar(2.3, 0.94 + PI, 2.3), polar(4.3, 0.75, 0.9), polar(2.0, 0.94 + PI, 2.15), polar(4.3, 0.75, 0.9), 44)]]);
+  shot(Ln('n19').t0, Ln('k01').t0, port(137, { side: -1, d: 2.9, h: 1.3, up: 1.15 }));
+  shot(Ln('k01').t0, Ln('n20').t0, port(137, { close: true, side: -1, h: 1.45, up: 1.4 }));
+  cuts('n20', [[0, om(V(0, 1.55, 0), 2.1, 0.78, 0.02, V(0, 1.55, 0), 1.85, 0.7, 0.02, 32)], [0.5, mv(polar(5.6, 0.42, 1.5), V(0.8, 2.2, -0.2), polar(5.2, 0.5, 1.5), V(0.8, 2.25, -0.2), 40)]], MK.trial);
+  shot(MK.trial, Ln('n21').t0, port(137, { h: 0.75, up: 1.15, d: 2.3 }));
+  cuts('n21', [[0, maskShot(0.3, 1.8, 1.25)], [0.46, om(V(0, 1.45, 0), 2.8, 1.2, 0.05, V(0, 1.45, 0), 2.5, 1.12, 0.05, 36)]]);
+  cuts('p02', [[0, mv(polar(6.5, A137 + 0.14, 1.75), V(0.7, 1.85, -0.2), polar(6.1, A137 + 0.1, 1.7), V(0.7, 1.9, -0.2), 40)], [0.5, om(V(0, 1.5, 0), 2.3, 1.05, 0.03, V(0, 1.5, 0), 2.05, 0.95, 0.03, 34)]]);
+  shot(Ln('n22').t0, Ln('p03').t0, mv(V(PI_POS.x - 0.1, 2.9, PI_POS.z + 2.3), PIH, V(PI_POS.x + 0.1, 2.95, PI_POS.z + 2.0), PIH, 28));
+  cuts('p03', [[0, om(V(0, 1.5, 0), 2.6, 0.32, 0.04, V(0, 1.5, 0), 2.2, 0.45, 0.04, 34)], [0.46, port(137, { side: -1 })], [0.74, om(V(0, 1.52, 0), 2.0, 0.5, 0.03, V(0, 1.52, 0), 1.8, 0.55, 0.03, 32)]]);
+  shot(Ln('r02').t0, Ln('r03').t0, port(137, { close: true }));
+  cuts('r03', [[0, port(137, { side: -1 })], [0.55, (u) => { camP.copy(polar(lerp(0.9, 1.3, u), 4.4, 1.5)); camL.copy(polar(5, 4.4, 0.7)); camFov = 40; }]]);
+  shot(Ln('r04').t0, MK.swarm, port(137, { close: true }));
+  // the swarm
+  cuts('n23', [[0, om(V(0, 1.5, 0), 2.5, 0.5, 0.04, V(0, 1.5, 0), 2.25, 0.42, 0.04, 34)], [0.2, mv(polar(7.6, 0.2, 0.7), V(0.9, 2.4, -0.3), polar(6.6, 0.05, 0.8), V(0.9, 2.5, -0.3), 46)], [0.52, om(V(0, 4, 0), 150, 0.9, 0.3, V(0, 5, 0), 44, 1.5, 0.42, 46)]]);
+  cuts('n24', [[0, om(V(0, 1.0, 0), 2.3, 2.6, 0.45, V(0, 1.0, 0), 2.0, 3.6, 0.3, 52)], [0.5, om(V(0, 1.35, 0), 2.15, 0.3, -0.02, V(0, 1.4, 0), 1.9, 0.15, -0.08, 46)]], Ln('p04').t0);
+  shot(Ln('p04').t0, T_BLOW + 0.3, mv(V(0.5, 0.5, 2.15), V(0, 1.7, 0), V(0.3, 0.45, 1.85), V(0, 1.9, 0), 46, 50));
+  shot(T_BLOW + 0.3, Ln('n25').t0, om(V(0, 2, 0), 24, 0.5, 0.52, V(0, 2.4, 0), 31, 0.7, 0.46));
+  shot(Ln('n25').t0, MK.wake, om(V(0, 2.4, 0), 31, 0.7, 0.46, V(0, 4, 0), 46, 1.0, 0.36));
+  // waking
+  shot(MK.wake, Ln('n26').t0 + 0.35, om(O, 6.4, 0.28, 0.18, O, 5.7, 0.16, 0.16));
+  shot(Ln('n26').t0 + 0.35, Ln('p05').t1 + 1.0, om(V(0, 1.12, 0.1), 2.6, -0.4, 0.1, V(0, 1.12, 0.1), 2.25, -0.25, 0.08, 34));
+  shot(Ln('p05').t1 + 1.0, TOTAL + 60, mv(V(1.7, 1.5, 2.7), V(-1.0, 1.3, -0.2), V(2.6, 1.75, 3.9), V(-1.6, 1.5, -0.45), 40));
+  SHOTS.sort((x, y) => x.t0 - y.t0);
+}
+let shotIdx = 0;
+function filmCamera(t) {
+  if (SHOTS[shotIdx].t0 > t) shotIdx = 0;
+  while (shotIdx + 1 < SHOTS.length && SHOTS[shotIdx + 1].t0 <= t) shotIdx++;
+  const s = SHOTS[shotIdx]; s.fn(clamp((t - s.t0) / (s.t1 - s.t0)));
+}
+
+// ── direct one frame: t is story time, T the running clock ──────────────────
+const roam = { on: false, az: 0.4, el: 0.35, d: 16, c: new THREE.Vector3(0, 1, 0) };
+// The viewer's own camera while the film runs. It circles whatever the director is looking at,
+// from the side and height the viewer chose, at the director's distance times the viewer's zoom.
+const free = { on: false, az: 0, el: 0.2, zoom: 1, d: 5, fov: 42, c: new THREE.Vector3(0, 1, 0) };
+let dirFov = 42;
+function takeCamera() {
+  if (free.on) return;
+  const v = camP.clone().sub(camL), d = v.length() || 1;
+  free.on = true; free.c.copy(camL); free.d = d; free.fov = dirFov; free.zoom = 1; free.az = Math.atan2(v.x, v.z); free.el = Math.asin(clamp(v.y / d, -1, 1));
+}
+const white = $('white'), black = $('black');
+let lastShot = -1;
+function direct(t, T, dt, snap) {
+  stage(t);
+  const d = S.dream;
+  G.uT.value = T; G.uReveal.value = S.reveal; G.uDream.value = d; G.uPale.value = S.pale; G.uDance.value = S.dance; G.uDu.value = S.du; G.uBow.value = S.bow; G.uBowR.value = S.bowR; G.uOutcry.value = S.outcry;
+  G.uSwarm.value = S.swarm; G.uBlow.value = S.blow; G.uCtr.value.copy(PROF); G.uWaveR.value = S.waveR; G.uHi.value = S.hi;
+  groundMat.uniforms.uRug.value = 0;
+  skyMat.uniforms.uMist.value = S.mist; skyMat.uniforms.uAnger.value = S.angry * (S.blow < 0 ? 1 : 1 - sstep(0, 1, S.blow));
+  for (const l of skyArt.children) l.material.opacity = 0.3 * d * (1 - S.mist) * sstep(100, 260, S.reveal);
+  skyArt.rotation.y = T * 0.004;
+  // light
+  const morning = S.wake ? 1 : 0;
+  hemi.intensity = lerp(morning ? 1.5 : 0.22, 1.0, d); rim.intensity = 0.9 * d;
+  if (morning) { moon.color.setRGB(1.0, 0.86, 0.66); moon.position.set(30, 20, 10); moon.intensity = 1.7; hemi.color.setRGB(1.0, 0.93, 0.82); }
+  else { moon.color.setRGB(0.75, 0.82, 1.0); moon.position.set(-30, 60, 25); moon.intensity = 2.3 * d; hemi.color.setRGB(0.44, 0.47, 0.85); }
+  hearth.intensity = 44 * d * sstep(2, 14, S.reveal) * (1 + 0.5 * S.dance);
+  scene.fog.color.lerpColors(FOG_NIGHT, FOG_MIST, S.mist); scene.fog.density = lerp(0.0042, 0.045, S.mist * S.mist) * (d > 0 ? 1 : 0); G.uFogD.value = scene.fog.density;
+  const wo = Math.max(S.flash, sstep(0.35, 1, S.mist)); white.style.opacity = wo.toFixed(3); document.body.classList.toggle('onwhite', wo > 0.45);
+  black.style.opacity = (started ? Math.max(1 - sstep(0.2, 2.2, t), 0) : 0.62).toFixed(3);
+  // players
+  crowd.visible = host.visible = d > 0 && !S.gone;
+  burst.visible = S.blow >= 0 && S.blow < 7 && !S.wake;
+  applyStudy(S.studyK, S.fall, morning);
+  const [pn, px] = roam.on && t === ROAM_T ? ['wonder', { scan: 1 }] : profAct(t, T); applyProf(pn, px, T, dt, snap);
+  applyPi(piAct(t, T), dt, snap);
+  updateHelix(t - MK.pi + 1.5, piPose.vis * d * (S.blow < 0 ? 1 : 1 - sstep(0, 0.8, S.blow)));
+  updateActors(dt, S, T, snap);
+  applyKnight(S.knight, byN[137], T, S.urge);
+  // a light for the speaker; apparitions for the boasts
+  if (S.speaker) lightOn(byN[S.speaker], S.fwd); else if (S.rebel && t > Ln('n19').t0 && S.swarm < 0) lightOn(byN[137], 0.7 * sstep(Ln('n19').t0, Ln('n19').t0 + 1, t)); else lightOn(PROF, 0);
+  const ap = (name, id, f0, f1, n, r, extra = 0) => { const k = pulse(t, fr(id, f0), fr(id, f1) + extra, 0.6); const p = r ? ringPos(n, r) : V(byN[n].x, 0, byN[n].z); showApp(name, k, p, T); if (k > 0.01) APP[name].rotation.y = Math.atan2(camP.x - p.x, camP.z - p.z); };
+  ap('one', 'i01', 0.25, 1.05, 1, 0); ap('orion', 'i03', 0.5, 1.0, 3, 0, 0.6); ap('square', 'i04', 0.02, 0.62, 4, 0);
+  ap('penta', 'i05', 0.2, 0.52, 5, 0); ap('dodeca', 'i05', 0.5, 1.0, 5, 11, 0.8); APP.dodeca.position.y = 6.2;
+  ap('sum6', 'i06', 0.0, 0.32, 6, 0); ap('seven', 'i07', 0.16, 0.9, 7, 0); ap('cube8', 'i08', 0.03, 0.62, 8, 0); ap('muses', 'i09', 0.08, 1.0, 9, 0, 0.3);
+  { const k = pulse(t, fr('r03', 0.62), Ln('r03').t1 + 0.4, 0.5); showApp('heart', k, polar(5, 4.4), T); }
+  // camera
+  if (roam.on) { orbitAt(roam.c, roam.d, roam.az, roam.el); camFov = 42; }
+  else {
+    filmCamera(t); dirFov = camFov;
+    if (free.on) {
+      const dd = camP.distanceTo(camL) || 1, k = snap ? 1 : 1 - Math.exp(-dt / 0.38);
+      free.c.lerp(camL, k); free.d *= Math.pow(dd / free.d, k); free.fov += (camFov - free.fov) * k;
+      orbitAt(free.c, clamp(free.d * free.zoom, 0.7, 900), free.az, free.el); camFov = free.fov;
+    }
+  }
+  if (S.shake > 0 && !REDUCED && !roam.on && !free.on) { camL.x += Math.sin(T * 47) * S.shake; camL.y += Math.sin(T * 53 + 1) * S.shake; camP.x += Math.sin(T * 41 + 2) * S.shake * 0.5; }
+  camP.y = Math.max(camP.y, 0.25);
+  camera.position.copy(camP); camera.lookAt(camL);
+  // on a tall screen, widen the lens so the shot keeps what a 4:3 frame would show
+  if (camera.aspect < 1.33) camFov = Math.min(105, 2 * Math.atan(Math.tan(camFov * PI / 360) * Math.min(2.4, 1.33 / camera.aspect)) * 180 / PI);
+  if (Math.abs(camera.fov - camFov) > 0.01) { camera.fov = camFov; camera.updateProjectionMatrix(); }
+  sky.position.copy(camP);
+  G.uPx.value = renderer.domElement.height / (2 * Math.tan(camera.fov * PI / 360));
+}
+function lineAt(t) { for (const l of ORDER) if (t >= l.t0 && t < l.t1 + 0.25) return l; return null; }
+
+// ───── 60-audio.js ─────
+// ── sound: a waltz, the weather of the dream, and voices ────────────────────
+const snd = { vol: 1, ctx: null, on: false, master: null, music: null, fx: null, voiceBus: null, done: -1, els: {}, cur: null, drones: null, speechOK: 'speechSynthesis' in window };
+const midi = m => 440 * Math.pow(2, (m - 69) / 12);
+const loudness = () => snd.vol * snd.vol;   // the slider is squared, so that halfway sounds about half as loud
+function sndInit() {
+  if (snd.ctx) return;
+  const C = snd.ctx = new (window.AudioContext || window.webkitAudioContext)();
+  snd.master = C.createGain(); snd.master.gain.value = 0.9;
+  const comp = C.createDynamicsCompressor(); comp.threshold.value = -14; comp.ratio.value = 3.5; snd.master.connect(comp).connect(C.destination);
+  snd.music = C.createGain(); snd.music.gain.value = 0.5; snd.music.connect(snd.master);
+  snd.fx = C.createGain(); snd.fx.gain.value = 0.7; snd.fx.connect(snd.master);
+  snd.voiceBus = C.createGain(); snd.voiceBus.gain.value = 1.0; snd.voiceBus.connect(snd.master);
+  // a little hall for the music box
+  const len = C.sampleRate * 2.2, ir = C.createBuffer(2, len, C.sampleRate);
+  for (let ch = 0; ch < 2; ch++) { const d = ir.getChannelData(ch); for (let i = 0; i < len; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / len, 2.6); }
+  snd.hall = C.createConvolver(); snd.hall.buffer = ir; const wet = C.createGain(); wet.gain.value = 0.32; snd.hall.connect(wet).connect(snd.master);
+  snd.music.connect(snd.hall); snd.fx.connect(snd.hall);
+  const nb = C.createBuffer(1, C.sampleRate * 2, C.sampleRate), nd = nb.getChannelData(0); for (let i = 0; i < nd.length; i++) nd[i] = Math.random() * 2 - 1; snd.noise = nb;
+  // standing layers whose loudness follows the story
+  const layer = (build) => { const g = C.createGain(); g.gain.value = 0; build(g); return g; };
+  const osc = (type, f, dest, det = 0) => { const o = C.createOscillator(); o.type = type; o.frequency.value = f; o.detune.value = det; o.connect(dest); o.start(); return o; };
+  const noiseSrc = (dest) => { const s = C.createBufferSource(); s.buffer = nb; s.loop = true; s.connect(dest); s.start(); return s; };
+  snd.drones = {
+    dream: layer(g => { const f = C.createBiquadFilter(); f.type = 'lowpass'; f.frequency.value = 420; f.connect(g); osc('sawtooth', midi(38), f, -6); osc('sawtooth', midi(45), f, 5); osc('sine', midi(26), g); osc('sine', midi(57), f, 9); g.connect(snd.music); }),
+    wind: layer(g => { const f = C.createBiquadFilter(); f.type = 'bandpass'; f.frequency.value = 520; f.Q.value = 0.7; const l = osc('sine', 0.13, C.createGain()); const lg = C.createGain(); lg.gain.value = 260; l.connect(lg).connect(f.frequency); noiseSrc(f); f.connect(g); g.connect(snd.fx); }),
+    dread: layer(g => { const f = C.createBiquadFilter(); f.type = 'lowpass'; f.frequency.value = 300; f.connect(g); osc('sawtooth', midi(34), f, 0); osc('sawtooth', midi(40), f, 12); osc('sawtooth', midi(41), f, -9); g.connect(snd.music); }),
+    crowd: layer(g => { const f = C.createBiquadFilter(); f.type = 'bandpass'; f.frequency.value = 900; f.Q.value = 1.1; const am = C.createGain(); am.gain.value = 0.5; const l = osc('sawtooth', 6.3, C.createGain()); const lg = C.createGain(); lg.gain.value = 0.5; l.connect(lg).connect(am.gain); const l2 = osc('triangle', 9.7, C.createGain()); const lg2 = C.createGain(); lg2.gain.value = 300; l2.connect(lg2).connect(f.frequency); noiseSrc(f); f.connect(am).connect(g); g.connect(snd.fx); }),
+    buzz: layer(g => { const f = C.createBiquadFilter(); f.type = 'bandpass'; f.frequency.value = 700; f.Q.value = 1.4; const am = C.createGain(); am.gain.value = 0.6; const l = osc('sine', 31, C.createGain()); const lg = C.createGain(); lg.gain.value = 0.4; l.connect(lg).connect(am.gain); snd.buzzOsc = [osc('sawtooth', 110, f, 0), osc('sawtooth', 117, f, 0), osc('sawtooth', 147, f, 0), osc('square', 98, f, 0)]; f.connect(am).connect(g); g.connect(snd.fx); }),
+  };
+}
+// one plucked or struck note
+function note(when, freq, dur, type, gain, dest, opt = {}) {
+  const C = snd.ctx, o = C.createOscillator(), g = C.createGain();
+  o.type = type; o.frequency.setValueAtTime(freq, when); if (opt.glide) o.frequency.exponentialRampToValueAtTime(opt.glide, when + dur);
+  g.gain.setValueAtTime(0.0001, when); g.gain.exponentialRampToValueAtTime(gain, when + (opt.attack || 0.006)); g.gain.exponentialRampToValueAtTime(0.0001, when + dur);
+  o.connect(g).connect(dest || snd.music); o.start(when); o.stop(when + dur + 0.05);
+  if (opt.vib) { const l = C.createOscillator(), lg = C.createGain(); l.frequency.value = opt.vib; lg.gain.value = freq * 0.03; l.connect(lg).connect(o.frequency); l.start(when); l.stop(when + dur + 0.05); }
+}
+const box = (when, m, gain = 0.2, dur = 1.3) => { note(when, midi(m), dur, 'sine', gain); note(when, midi(m) * 3.01, dur * 0.35, 'sine', gain * 0.22); note(when, midi(m) * 5.4, 0.08, 'sine', gain * 0.12); };
+function burstNoise(when, dur, f0, f1, gain, q = 0.8) {
+  const C = snd.ctx, s = C.createBufferSource(), f = C.createBiquadFilter(), g = C.createGain();
+  s.buffer = snd.noise; s.loop = true; f.type = 'bandpass'; f.Q.value = q; f.frequency.setValueAtTime(f0, when); f.frequency.exponentialRampToValueAtTime(f1, when + dur);
+  g.gain.setValueAtTime(0.0001, when); g.gain.exponentialRampToValueAtTime(gain, when + 0.03); g.gain.exponentialRampToValueAtTime(0.0001, when + dur);
+  s.connect(f).connect(g).connect(snd.fx); s.start(when); s.stop(when + dur + 0.1);
+}
+// The waltz: sixteen bars in D minor, three beats to the bar, played on a music box.
+const BEAT = 1 / 2.8, BAR = BEAT * 3;
+const CH = { Dm: [38, 62, 65, 69], Gm: [43, 62, 67, 70], A: [45, 61, 64, 69], Bb: [46, 62, 65, 70] };
+const PROG = ['Dm', 'Dm', 'Gm', 'Gm', 'A', 'A', 'Dm', 'Dm', 'Bb', 'Bb', 'Gm', 'Gm', 'A', 'A', 'Dm', 'A'];
+const PAT = [[[0, 0], [1, 1], [2, 2]], [[3, 0]], [[2, 0], [1, 1], [0, 2]], [[1, 0], [2, 2]], [[0, 0], [1, 0.5], [2, 1], [3, 1.5], [2, 2], [1, 2.5]], [[0, 0]]];
+const TUNE = [0, 1, 2, 3, 4, 1, 2, 5, 4, 3, 0, 1, 2, 4, 0, 1];
+function waltzBar(b, when, soft) {
+  const ch = CH[PROG[b % 16]], tones = [ch[1] + 12, ch[2] + 12, ch[3] + 12, ch[1] + 24], v = soft ? 0.6 : 1;
+  note(when, midi(ch[0]), 0.7, 'triangle', 0.3 * v); note(when, midi(ch[0] + 12), 0.5, 'sine', 0.1 * v);
+  for (const k of [1, 2]) for (const m of ch.slice(1)) note(when + k * BEAT, midi(m), 0.22, 'triangle', 0.055 * v);
+  for (const [i, at] of PAT[TUNE[b % 16]]) box(when + at * BEAT, tones[i], 0.17 * v, at === 0 && PAT[TUNE[b % 16]].length === 1 ? 2.2 : 1.2);
+  if (b % 8 === 7) box(when + 2 * BEAT, tones[3] + 5, 0.07 * v, 1.6);
+}
+// One-off sounds, pinned to story time.
+const CUES = [];
+{
+  const cue = (t, fn) => CUES.push({ t, fn });
+  for (let i = 0; i < 12; i++) cue(MK.study + 0.6 + i * 1.0, w => burstNoise(w, 0.03, i % 2 ? 2600 : 2100, 1800, 0.12, 8));       // the study clock
+  for (let i = 0; i < 4; i++) cue(Ln('n03').t0 + 1 + i * 1.0, w => burstNoise(w, 0.03, i % 2 ? 2600 : 2100, 1800, 0.08, 8));
+  [62, 65, 69, 72, 74, 77, 81].forEach((m, i) => cue(MK.fall + 1.6 + i * 0.62, w => { box(w, m, 0.26, 3); box(w + 0.09, m + 12, 0.1, 3); }));  // the circles light, one by one
+  cue(MK.fall + 0.5, w => burstNoise(w, 3.2, 180, 60, 0.5, 0.5));                                                                 // the walls go over
+  cue(Ln('n07').t0 + Ln('n07').len * 0.58, w => { note(w, midi(26), 4, 'sine', 0.5, snd.fx); note(w, midi(33), 4, 'sawtooth', 0.05, snd.fx); });
+  cue(T_DANCE_END - 0.3, w => { for (const m of [86, 81, 77, 74]) box(w, m, 0.12, 2.5); });                                         // the baton stops the dance
+  cue(T_SILENCE, w => { burstNoise(w, 2.6, 900, 50, 1.0, 0.4); note(w, 70, 2.8, 'sine', 0.9, snd.fx, { glide: 28 }); burstNoise(w + 0.05, 0.4, 5000, 800, 0.5, 0.6); });   // thunder
+  cue(Ln('n19').t0 + 0.4, w => { note(w, midi(79), 3.5, 'sine', 0.06, snd.fx, { vib: 5 }); note(w, midi(86), 3.5, 'sine', 0.03, snd.fx, { vib: 5.5 }); });  // the specter
+  cue(Ln('r04').t1 - 0.25, w => { note(w, 900, 0.09, 'sine', 0.35, snd.fx, { glide: 120 }); burstNoise(w, 0.07, 3000, 600, 0.3, 1); });        // pop
+  cue(T_BLOW, w => { burstNoise(w, 1.8, 300, 5000, 0.9, 0.5); note(w, 55, 2.2, 'sine', 0.9, snd.fx, { glide: 30 }); });
+  cue(T_BLOW + 0.7, w => { const C = snd.ctx; for (const [f, g] of [[620, 0.22], [935, 0.1], [1250, 0.05]]) { const o = C.createOscillator(), gg = C.createGain(), l = C.createOscillator(), lg = C.createGain();   // the banshee wail
+      o.type = 'sawtooth'; o.frequency.setValueAtTime(f, w); o.frequency.exponentialRampToValueAtTime(f * 2.1, w + 1.3); o.frequency.exponentialRampToValueAtTime(f * 0.45, w + 4.4);
+      l.frequency.value = 6.5; lg.gain.value = f * 0.05; l.connect(lg).connect(o.frequency);
+      const fl = C.createBiquadFilter(); fl.type = 'bandpass'; fl.frequency.value = 1500; fl.Q.value = 2;
+      gg.gain.setValueAtTime(0.0001, w); gg.gain.exponentialRampToValueAtTime(g, w + 0.5); gg.gain.exponentialRampToValueAtTime(0.0001, w + 4.5);
+      o.connect(fl).connect(gg).connect(snd.fx); o.start(w); l.start(w); o.stop(w + 4.6); l.stop(w + 4.6); } });
+  for (let i = 0; i < 9; i++) cue(MK.wake + 1.2 + i * 0.9 + frand(i) * 0.5, w => { const f = 2300 + frand(i + 3) * 1500; for (let k = 0; k < 3; k++) note(w + k * 0.11, f * (1 + k * 0.06), 0.09, 'sine', 0.07, snd.fx, { glide: f * 1.25 }); });   // morning birds
+  for (let i = 0; i < 12; i++) cue(MK.wake + 0.8 + i * 1.0, w => burstNoise(w, 0.03, i % 2 ? 2600 : 2100, 1800, 0.1, 8));
+  CUES.sort((a, b) => a.t - b.t);
+}
+// Called every frame while playing: schedules what falls in the next quarter second.
+function sndTick(t, playing) {
+  if (!snd.ctx) return;
+  const C = snd.ctx, now = C.currentTime, set = (g, v, tc = 0.4) => g.gain.setTargetAtTime(v, now, tc);
+  const live = snd.on && playing;
+  set(snd.master, live ? 0.9 * loudness() : 0, 0.08);
+  if (!live) { snd.done = -1; return; }
+  const D = snd.drones, speaking = !!lineAt(t);
+  set(D.dream, S.dream * (S.dance > 0 ? 0.05 : 0.16) * (1 - S.mist), 0.8); set(D.wind, S.dream * 0.05 + S.mist * 0.12 + (S.swarm >= 0 ? 0.1 : 0), 0.6);
+  set(D.dread, (S.angry * 0.22 + (S.rebel ? 0.05 : 0) + S.pale * 0.1) * (S.blow < 0 ? 1 : 0), 0.5);
+  set(D.crowd, S.outcry * 0.5 + (S.swarm >= 0 && S.blow < 0 ? 0.25 : 0), 0.15);
+  const sw = S.swarm >= 0 && S.blow < 0 ? sstep(0, 5, S.swarm) : 0; set(D.buzz, sw * 0.4, 0.2);
+  snd.buzzOsc.forEach((o, i) => o.frequency.setTargetAtTime([110, 117, 147, 98][i] * (1 + sw * 0.9), now, 0.3));
+  set(snd.music, speaking ? 0.36 : 0.55, 0.25);
+  const from = Math.max(snd.done, t - 0.02), to = t + 0.25;
+  for (const c of CUES) if (c.t > from && c.t <= to) c.fn(now + Math.max(0, c.t - t));
+  const w0 = MK.ballet + 0.9, w1 = T_DANCE_END - 0.4;
+  if (to > w0 && from < w1) for (let b = Math.max(0, Math.ceil((from - w0) / BAR)); w0 + b * BAR <= Math.min(to, w1); b++) { const bt = w0 + b * BAR; if (bt > from) waltzBar(b, now + Math.max(0, bt - t), false); }
+  snd.done = to;
+}
+// ── voices: recorded clips when they exist, otherwise the browser's own voice ─
+function clip(l) {
+  let el = snd.els[l.id];
+  if (!el) { el = snd.els[l.id] = new Audio(`narration/${l.id}.mp4`); el.preload = 'auto'; el.volume = loudness(); el.addEventListener('error', () => { el.bad = true; }); }
+  return el;
+}
+function voiceTick(t, playing) {
+  const l = playing && snd.on ? lineAt(t) : null;
+  if (HAVE_CLIPS && !(l && clip(l).bad)) {
+    if (snd.cur && snd.cur !== l) { const el = snd.els[snd.cur.id]; if (el) el.pause(); snd.cur = null; }
+    if (l && t < l.t1 - 0.05) {
+      const el = clip(l), pos = t - l.t0;
+      if (!el.bad && (snd.cur !== l || (el.paused && !(el.ended && pos > l.len - 0.6)))) { snd.cur = l; if (Math.abs(el.currentTime - pos) > 0.3) el.currentTime = Math.max(0, pos); el.play().catch(e => { if (e && /NotAllowed|NotSupported/.test(e.name)) el.bad = true; }); }
+    }
+    const i = l ? ORDER.indexOf(l) + 1 : ORDER.findIndex(x => x.t0 > t), nx = ORDER[i]; if (nx && nx.t0 - t < 8) clip(nx);
+    return;
+  }
+  if (!snd.speechOK) return;
+  if (snd.cur !== l) {
+    snd.cur = l; snd.said = !l; try { speechSynthesis.cancel(); } catch (e) { }
+    if (l && t - l.t0 < 0.6) {
+      const who = l.who || 'narrator', u = new SpeechSynthesisUtterance(l.text), vs = speechSynthesis.getVoices().filter(v => /^en/i.test(v.lang));
+      const pick = (re) => vs.find(v => re.test(v.name) && /GB|UK|Brit/i.test(v.name + v.lang)) || vs.find(v => re.test(v.name));
+      const n = parseInt(who, 10), lady = !isNaN(n) && n % 2 === 0;
+      const voice = (lady ? pick(/female|Sonia|Libby|Hazel|Susan|Zira|Samantha|Google UK English Female/i) : pick(/male|Ryan|Thomas|George|David|Daniel|Google UK English Male/i)) || vs.find(v => /GB/i.test(v.lang)) || vs[0];
+      if (voice) u.voice = voice;
+      u.rate = 1.04; u.pitch = who === 'pi' ? 0.1 : who === 'narrator' ? 0.95 : who === 'knight' ? 0.6 : who.startsWith('prof') ? 0.8 : who === 'chorus' ? 1.5 : lady ? 1.35 + (n % 5) * 0.08 : 0.55 + (n % 7) * 0.09;
+      u.volume = loudness(); u.onend = u.onerror = () => { if (snd.cur === l) snd.said = true; }; try { speechSynthesis.speak(u); } catch (e) { snd.said = true; }
+    } else snd.said = true;
+  }
+}
+// The film waits for a voice that is running behind, so no line is ever cut off by the next one.
+let heldFor = 0;
+function voiceHold(t, dt) {
+  const l = snd.cur; let wait = false;
+  if (snd.on && l && heldFor < (HAVE_CLIPS ? 6 : 14)) {
+    const el = HAVE_CLIPS ? snd.els[l.id] : null;
+    if (el && !el.bad) wait = !el.ended && (el.readyState < 3 || t >= l.t1 + 0.15);   // still loading, or still speaking at the end
+    else wait = !snd.said && t >= l.t1 + 0.15;                                        // the browser's own voice, which says when it is done
+  }
+  heldFor = wait ? heldFor + dt : l && t >= l.t1 + 0.15 ? heldFor : 0;
+  return wait;
+}
+function sndStopVoices() { for (const id in snd.els) snd.els[id].pause(); snd.cur = null; if (snd.speechOK) try { speechSynthesis.cancel(); } catch (e) { } }
+
+// ───── 70-main.js ─────
+// ── the player ──────────────────────────────────────────────────────────────
+let filmT = 0, clock = 0, playing = false, started = false, ended = false, needSnap = true, lastNow = 0;
+const fmt = s => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, '0')}`;
+const who = $('who'), lineEl = $('line'), prog = $('prog'), seek = $('seek'), timeEl = $('time'), chapEl = $('chap'), tip = $('tip'), tipText = $('tipText'), bDir = $('bDir'), fact = $('fact');
+for (const c of CHAPTERS.slice(1)) { const i = document.createElement('i'); i.style.left = (c.t / TOTAL * 100) + '%'; seek.appendChild(i); }
+$('runlen').textContent = `About ${Math.round(TOTAL / 60)} minutes.`;
+seek.setAttribute('aria-valuemax', Math.round(TOTAL));
+let shownLine = null, shownChap = '';
+function showWords(t) {
+  const l = roam.on ? null : lineAt(t);
+  if (l !== shownLine) {
+    shownLine = l;
+    if (l) { const role = SCRIPT.roles[l.who || 'narrator']; who.textContent = role.label || ''; lineEl.textContent = l.text; lineEl.className = l.who ? 'said' : ''; }
+    else { who.textContent = ''; lineEl.textContent = ''; }
+  }
+  prog.style.width = (clamp(t / TOTAL) * 100) + '%';
+  timeEl.textContent = `${fmt(t)} / ${fmt(TOTAL)}`;
+  let ch = ''; for (const c of CHAPTERS) if (t >= c.t) ch = c.name;
+  if (ch !== shownChap) { shownChap = ch; chapEl.textContent = ch; }
+  seek.setAttribute('aria-valuenow', Math.round(t)); seek.setAttribute('aria-valuetext', `${fmt(t)}, ${ch}`);
+}
+function hint(text, withDirector) { tipText.textContent = text || ''; bDir.hidden = !withDirector; tip.hidden = !text; }
+function setPlaying(p) {
+  playing = p; $('bPlay').textContent = p ? 'Pause' : 'Play';
+  if (!p) sndStopVoices();
+  if (p && snd.ctx && snd.ctx.state === 'suspended') snd.ctx.resume();
+  wake();
+}
+const vol = $('vol');
+function setVolume(v, remember = true) {
+  snd.vol = clamp(v); vol.value = Math.round(snd.vol * 100); vol.setAttribute('aria-valuetext', vol.value + ' percent');
+  for (const id in snd.els) snd.els[id].volume = loudness();
+  if (remember) try { localStorage.setItem('nightmare.volume', String(snd.vol)); } catch (e) { /* not remembered, that is all */ }
+}
+try { const v = parseFloat(localStorage.getItem('nightmare.volume')); if (v >= 0.1 && v <= 1) setVolume(v, false); } catch (e) { }
+vol.addEventListener('input', () => { setVolume(vol.value / 100); if (snd.vol > 0 && !snd.on && started) setSound(true); });
+function setSound(on) {
+  snd.on = on; $('bSound').setAttribute('aria-pressed', on); $('bSound').textContent = on ? 'Sound on' : 'Sound off';
+  if (on) { sndInit(); if (snd.ctx.state === 'suspended') snd.ctx.resume(); } else sndStopVoices();
+}
+function seekTo(t) {
+  filmT = clamp(t, 0, TOTAL - 0.05); needSnap = true; ended = false; $('end').hidden = true; snd.done = -1; sndStopVoices(); hideFact();
+  if (roam.on) setRoam(false);
+}
+function begin(withSound) {
+  started = true; $('start').hidden = true; $('bar').hidden = false; setSound(withSound); filmT = 0; needSnap = true; setPlaying(true);
+}
+$('goSound').onclick = () => begin(true);
+$('goQuiet').onclick = () => begin(false);
+$('bPlay').onclick = () => { if (roam.on) setRoam(false); if (ended) seekTo(0); setPlaying(!playing); };
+$('bSound').onclick = () => setSound(!snd.on);
+$('bWords').onclick = () => { const off = document.body.classList.toggle('nocap'); $('bWords').setAttribute('aria-pressed', !off); };
+$('again').onclick = () => { giveBack(); seekTo(0); setPlaying(true); };
+const seekAt = e => { const r = seek.getBoundingClientRect(); seekTo((e.clientX - r.left) / r.width * TOTAL); };
+seek.addEventListener('pointerdown', e => { seek.setPointerCapture(e.pointerId); seekAt(e); });
+seek.addEventListener('pointermove', e => { if (e.buttons) seekAt(e); });
+seek.addEventListener('keydown', e => { const step = e.key === 'ArrowRight' ? 5 : e.key === 'ArrowLeft' ? -5 : e.key === 'PageDown' ? 30 : e.key === 'PageUp' ? -30 : 0; if (step) { e.preventDefault(); seekTo(filmT + step); } });
+addEventListener('keydown', e => {
+  if (!started) return;
+  if (e.key === 'Escape') { hideFact(); giveBack(); return; }
+  if (e.target.closest && e.target.closest('button,a,input,#seek')) return;
+  if (e.key === ' ') { e.preventDefault(); $('bPlay').click(); }
+  else if (e.key === 'ArrowRight') seekTo(filmT + 5); else if (e.key === 'ArrowLeft') seekTo(filmT - 5);
+  else if (e.key === 'ArrowUp' || e.key === 'ArrowDown') { e.preventDefault(); setVolume(snd.vol + (e.key === 'ArrowUp' ? 0.1 : -0.1)); }
+});
+document.addEventListener('visibilitychange', () => { if (document.hidden) sndStopVoices(); });
+// controls fade while the film runs
+let idleTimer = 0;
+function wake() { document.body.classList.remove('idle'); clearTimeout(idleTimer); if (playing && !roam.on) idleTimer = setTimeout(() => document.body.classList.add('idle'), 2800); }
+addEventListener('pointermove', wake); addEventListener('pointerdown', wake); addEventListener('keydown', wake);
+
+// ── the viewer's camera: drag while the film plays and it goes on from your side ──
+function grab() {
+  if (roam.on || free.on || !started || ended) return;
+  takeCamera(); hint('You have the camera: drag to look around, scroll or pinch to zoom.', true);
+}
+function giveBack() { if (!free.on) return; free.on = false; hint(''); }
+bDir.onclick = giveBack;
+
+// ── meeting the numbers: stop the film and walk through the assembled dream ─
+let roamT = 0, savedT = 0;
+function setRoam(on, fromEnd) {
+  if (on === roam.on) return;
+  free.on = false; hideFact();
+  roam.on = on; $('bRoam').textContent = on ? 'Back to the film' : 'Meet the numbers'; $('end').hidden = true;
+  if (on) {
+    savedT = filmT; setPlaying(false);
+    if (fromEnd || S.dream < 0.5 || S.gone || S.mist > 0.1) { roamT = ROAM_T; roam.az = 0.5; roam.el = 0.3; roam.d = 15; roam.c.set(0, 1, 0); needSnap = true; }
+    else { roamT = filmT; const v = camP.clone().sub(roam.c.set(0, 1, 0)); roam.d = clamp(v.length(), 3, 400); roam.el = clamp(Math.asin(v.y / v.length()), 0.03, 1.5); roam.az = Math.atan2(v.x, v.z); }
+    hint('Drag to turn, scroll or pinch to move in and out. Click any number and it will tell you something about itself.');
+  } else { hint(''); filmT = Math.min(savedT, TOTAL - 0.05); needSnap = true; if (filmT >= TOTAL - 0.2) seekTo(0); setPlaying(true); }
+  wake();
+}
+$('bRoam').onclick = () => setRoam(!roam.on);
+$('roam2').onclick = () => setRoam(true, true);
+
+// one set of gestures drives whichever camera the viewer holds
+const ptrs = new Map(); let dragMoved = 0, pinchD = 0;
+const spread = () => { const [a, b] = [...ptrs.values()]; return Math.hypot(a[0] - b[0], a[1] - b[1]) || 1; };
+function zoomBy(f) {
+  grab();
+  if (roam.on) roam.d = clamp(roam.d * f, 3, 600); else if (free.on) free.zoom = clamp(free.zoom * f, 0.12, 14);
+}
+canvas.addEventListener('pointerdown', e => { if (!started) return; canvas.setPointerCapture(e.pointerId); ptrs.set(e.pointerId, [e.clientX, e.clientY]); if (ptrs.size === 1) dragMoved = 0; else if (ptrs.size === 2) { pinchD = spread(); dragMoved = 99; } });
+canvas.addEventListener('pointermove', e => {
+  if (!ptrs.has(e.pointerId)) return;
+  const p = ptrs.get(e.pointerId), dx = e.clientX - p[0], dy = e.clientY - p[1]; ptrs.set(e.pointerId, [e.clientX, e.clientY]); dragMoved += Math.abs(dx) + Math.abs(dy);
+  if (ptrs.size === 1) {
+    if (dragMoved <= 6) return;
+    grab(); const o = roam.on ? roam : free.on ? free : null; if (!o) return;
+    o.az -= dx * 0.006; o.el = clamp(o.el + dy * 0.005, roam.on ? 0.03 : -0.3, 1.5);
+  } else if (ptrs.size === 2) { const d = spread(); zoomBy(pinchD / d); pinchD = d; }
+});
+const KINDS = { die: 'a cube, so it comes as a die', tile: 'a square, so it comes as a tile', cyl: 'a prime, so it comes as a cylinder that nothing can divide', ball: 'a round number, so it comes as a ball', tunic: 'in a plain coat', skirt: 'in a plain gown' };
+const ORD = ['first', 'second', 'third'];
+let factTimer = 0;
+function hideFact() { fact.hidden = true; clearTimeout(factTimer); }
+function showFact(a) {
+  const n = a.n, extra = [];
+  if (a.crown) extra.push('a perfect number, so it wears a crown');
+  if (PYRAMIDAL.has(n) && n > 1) extra.push('a pyramidal number');
+  if (isPow10(n)) extra.push('a power of ten, so it wears white');
+  if (n === 13 || n === 666) extra.push('dressed in black');
+  if (n === 137) extra.push('and not at all content with its place');
+  $('factN').textContent = n.toLocaleString('en-US'); $('factW').textContent = words(n);
+  const f = factFor(n), more = $('factM'), wiki = f.more.every(t => !t.includes('|'));
+  $('factT').textContent = f.text;
+  more.textContent = wiki ? 'Find out more on Wikipedia: ' : 'Find out more: ';
+  f.more.forEach((t, i) => {
+    const [label, url] = t.includes('|') ? t.split('|') : [t, wikiUrl(t)], a = document.createElement('a');
+    a.href = url; a.target = '_blank'; a.rel = 'noopener'; a.textContent = label; if (i) more.append(' · '); more.append(a);
+  });
+  $('factD').textContent = `${a.male ? 'A gentleman' : 'A lady'} of the ${ORD[a.g]} circle, ${[KINDS[a.kind], ...extra].join('; ')}.`;
+  fact.hidden = false; clearTimeout(factTimer); if (playing && !roam.on) factTimer = setTimeout(hideFact, 16000);
+}
+$('factX').onclick = hideFact;
+fact.addEventListener('pointerenter', () => clearTimeout(factTimer));   // it stays while you read it
+fact.addEventListener('pointerleave', () => { clearTimeout(factTimer); if (playing && !roam.on) factTimer = setTimeout(hideFact, 8000); });
+function numberAt(e) {
+  if (S.dream < 0.5 || S.gone || S.blow >= 0) return null;
+  const r = canvas.getBoundingClientRect(), ray = new THREE.Raycaster(); ray.setFromCamera(new THREE.Vector2((e.clientX - r.left) / r.width * 2 - 1, -((e.clientY - r.top) / r.height) * 2 + 1), camera);
+  // the first figure the line of sight passes through, each figure being an upright rod with a little slack that grows with distance
+  let best = null, bd = 1e9; const p0 = new THREE.Vector3(), p1 = new THREE.Vector3(), at = new THREE.Vector3();
+  for (const a of A) {
+    const d2 = ray.ray.distanceSqToSegment(p0.set(a.x, 0.15, a.z), p1.set(a.x, 1.75, a.z), at), d = at.distanceTo(camera.position), slack = 0.36 + d * 0.01;
+    if (d2 < slack * slack && d < bd) { bd = d; best = a; }
+  }
+  return best;
+}
+canvas.addEventListener('pointerup', e => {
+  if (!ptrs.delete(e.pointerId) || dragMoved > 6 || ptrs.size) return;
+  const a = numberAt(e);
+  if (!a) { hideFact(); return; }
+  showFact(a);
+  if (roam.on) { roam.c.set(a.x, 1, a.z); roam.d = Math.min(roam.d, 7); }
+});
+canvas.addEventListener('pointercancel', e => ptrs.delete(e.pointerId));
+canvas.addEventListener('wheel', e => { if (!started) return; e.preventDefault(); zoomBy(Math.exp(e.deltaY * 0.0012)); }, { passive: false });
+
+// ── the loop ────────────────────────────────────────────────────────────────
+let slow = 0, frames = 0;
+function frame(now) {
+  requestAnimationFrame(frame);
+  const dt = Math.min(0.1, (now - lastNow) / 1000 || 0.016); lastNow = now;
+  clock += dt;
+  if (playing && !roam.on) {
+    if (!voiceHold(filmT, dt)) filmT += dt;     // the pictures wait for a voice that is running behind
+    if (filmT >= TOTAL) { filmT = TOTAL - 0.01; ended = true; setPlaying(false); $('end').hidden = false; document.body.classList.remove('idle'); }
+  }
+  const t = roam.on ? roamT : filmT;
+  direct(t, roam.on ? clock + 1000 : filmT, dt, needSnap); needSnap = false;
+  sndTick(filmT, playing && !roam.on); voiceTick(filmT, playing && !roam.on);
+  showWords(filmT);
+  if (!fact.hidden && !roam.on && (S.dream < 0.5 || S.blow >= 0)) hideFact();   // the numbers have gone
+  composer.render();
+  // if the machine is struggling, trade sharpness for smoothness
+  if (started && ++frames > 90) { slow = slow * 0.95 + (dt > 0.034 ? 1 : 0) * 0.05; if (slow > 0.6 && quality < 2) { quality++; slow = 0; frames = 0; buildComposer(); } }
+}
+window.__film = { APP, camera, seekTo, setPlaying, begin, setRoam, grab, giveBack, free, factFor, showFact, byN, get T() { return filmT; }, TOTAL, MK, LINE, S, roam, snd, setVolume,
+  T_SILENCE, T_SWARM, T_BLOW, audio: { sndInit, note, box, burstNoise, waltzBar, midi, BAR, CUES } };   // the last line is for tools/trailer.mjs
+buildComposer();
+direct(0, 0, 0.016, true); composer.render();
+$('veil').classList.add('gone'); setTimeout(() => $('veil').remove(), 900);
+$('start').hidden = false;
+requestAnimationFrame(frame);
+
+</script>
+</body>
+</html>

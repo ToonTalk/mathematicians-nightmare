@@ -1,0 +1,142 @@
+<title>Professor Squarepunt's Vision</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Libre+Caslon+Display&family=Libre+Caslon+Text:ital,wght@0,400;0,700;1,400&display=swap">
+<style>
+/* Layout: one full-bleed stage. Words sit low like film subtitles; controls are a thin strip that fades when idle. */
+:root{
+  color-scheme:dark;
+  --night:#07060f;      /* the void behind the dream */
+  --paper:#f3ead6;      /* caption ink: old book paper */
+  --dim:#b9b0c9;        /* secondary ink */
+  --gilt:#e8c877;       /* Pi's gold: speaker names, progress */
+  --panel:rgba(14,12,28,.72);
+  --edge:rgba(232,200,119,.28);
+  --display:"Libre Caslon Display","Libre Caslon Text",Georgia,"Times New Roman",serif;
+  --text:"Libre Caslon Text",Georgia,"Times New Roman",serif;
+  --ui:ui-sans-serif,system-ui,"Segoe UI",Helvetica,Arial,sans-serif;
+}
+html,body{height:100%}
+body{background:var(--night);color:var(--paper);font-family:var(--text);overflow:hidden;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+#c{position:fixed;inset:0;width:100%;height:100%;display:block;outline:none;touch-action:none}
+.over{position:fixed;inset:0;pointer-events:none}
+#white{background:#eef0fb;opacity:0}
+#black{background:#000;opacity:1}
+#veil{display:grid;place-items:center;font:italic 18px var(--text);color:var(--dim);background:var(--night);transition:opacity .8s}
+#veil.gone{opacity:0}
+
+#cap{position:fixed;left:0;right:0;bottom:calc(64px + env(safe-area-inset-bottom,0px));text-align:center;pointer-events:none;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));transition:opacity .35s}
+#who{font:600 11px var(--ui);letter-spacing:.22em;text-transform:uppercase;color:var(--gilt);min-height:16px;margin-bottom:6px;text-shadow:0 1px 6px #000}
+#line{max-width:44em;margin:0 auto;font-size:clamp(16px,2.1vw,24px);line-height:1.42;text-wrap:balance;
+  text-shadow:0 0 3px #000,0 1px 10px #000,0 0 26px rgba(0,0,0,.9)}
+#line.said{font-style:italic}
+body.nocap #cap{opacity:0}
+body.onwhite #line{color:#1b1724;text-shadow:none}
+body.onwhite #who{color:#6a5320;text-shadow:none}
+
+#bar{position:fixed;left:0;right:0;bottom:0;display:flex;align-items:center;gap:10px;
+  padding:10px max(16px,env(safe-area-inset-right,0px)) calc(10px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));
+  background:linear-gradient(transparent,rgba(4,3,10,.82));transition:opacity .5s}
+body.idle #bar{opacity:0}
+body.idle{cursor:none}
+button{font:500 13px var(--ui);color:var(--paper);background:var(--panel);border:1px solid var(--edge);border-radius:4px;padding:7px 12px;cursor:pointer;white-space:nowrap}
+button:hover{border-color:var(--gilt)}
+button:focus-visible,#seek:focus-visible{outline:2px solid var(--gilt);outline-offset:2px}
+button[aria-pressed="true"]{background:rgba(232,200,119,.18)}
+#seek{flex:1;min-width:60px;height:24px;position:relative;cursor:pointer;touch-action:none}
+#seek::before{content:"";position:absolute;left:0;right:0;top:11px;height:2px;background:rgba(243,234,214,.22)}
+#prog{position:absolute;left:0;top:11px;height:2px;width:0;background:var(--gilt)}
+#prog::after{content:"";position:absolute;right:-5px;top:-4px;width:10px;height:10px;border-radius:50%;background:var(--gilt)}
+#seek i{position:absolute;top:8px;width:1px;height:8px;background:rgba(243,234,214,.5)}
+#vol{flex:none;width:84px;margin:0;accent-color:var(--gilt);cursor:pointer}
+#time{font:12px var(--ui);font-variant-numeric:tabular-nums;color:var(--dim);min-width:86px;text-align:right}
+#chap{font:600 11px var(--ui);letter-spacing:.16em;text-transform:uppercase;color:var(--dim);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:22vw}
+
+.card{position:fixed;inset:0;display:grid;place-items:center;padding:24px max(16px,env(safe-area-inset-right,0px)) 24px max(16px,env(safe-area-inset-left,0px));text-align:center}
+.card>div{max-width:34em}
+.card h1{font:400 clamp(30px,6vw,64px)/1.05 var(--display);margin:0 0 .3em;text-wrap:balance;text-shadow:0 2px 30px #000}
+.card p{margin:.5em auto;color:var(--dim);font-size:clamp(14px,1.6vw,17px);line-height:1.5;text-shadow:0 1px 8px #000}
+.card p.by{font-style:italic;color:var(--paper)}
+.card a{color:var(--gilt)}
+.card .row{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:22px}
+.card button{font-size:15px;padding:11px 20px}
+.card button.go{background:var(--gilt);color:#1a1408;border-color:var(--gilt);font-weight:600}
+#end{background:rgba(5,4,12,.55)}
+#top{position:fixed;top:calc(12px + env(safe-area-inset-top,0px));left:0;right:0;display:flex;flex-direction:column;align-items:center;gap:8px;pointer-events:none;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+#top>*{pointer-events:auto}
+#tip{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px 12px;font:13px var(--ui);color:var(--dim);
+  background:var(--panel);border:1px solid var(--edge);border-radius:4px;padding:7px 12px;max-width:100%;text-align:center}
+#tip button{padding:4px 10px;font-size:12px;border-color:var(--gilt)}
+#tip{transition:opacity .5s}
+body.idle #tip{opacity:.35}
+/* the card that introduces a number */
+#fact{position:relative;box-sizing:border-box;width:min(100%,31em);background:rgba(14,12,28,.9);border:1px solid var(--edge);border-radius:6px;padding:14px 42px 14px 18px;text-align:left;box-shadow:0 8px 30px rgba(0,0,0,.5)}
+#fact .fh{display:flex;align-items:baseline;flex-wrap:wrap;gap:4px 14px}
+#factN{font:400 40px/1 var(--display);color:var(--gilt);font-variant-numeric:lining-nums}
+#factW{font:600 11px var(--ui);letter-spacing:.16em;text-transform:uppercase;color:var(--dim);min-width:0}
+#factT{margin:10px 0 0;font-size:16px;line-height:1.45;color:var(--paper);text-wrap:pretty}
+#factM{margin:8px 0 0;font:13px/1.45 var(--ui);color:var(--dim)}
+#factM a{color:var(--gilt);text-underline-offset:2px}
+#factD{margin:8px 0 0;font:12px/1.45 var(--ui);color:var(--dim)}
+#factX{position:absolute;top:6px;right:6px;border:0;background:none;font-size:20px;line-height:1;padding:6px 10px;color:var(--dim)}
+@media (max-width:760px){#vol{width:56px}}
+@media (max-width:640px){#chap,#time,#vol{display:none}#bar{gap:6px}#bar button{padding:7px 8px;font-size:12px}#cap{bottom:calc(58px + env(safe-area-inset-bottom,0px))}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+<canvas id="c" tabindex="0" aria-label="A 3D film: Professor Squarepunt dreams of living numbers standing in endless circles around the masked figure of Pi"></canvas>
+<div id="white" class="over" aria-hidden="true"></div>
+<div id="black" class="over" aria-hidden="true"></div>
+
+<div id="cap" aria-live="off"><div id="who"></div><div id="line"></div></div>
+
+<nav id="bar" aria-label="Film controls" hidden>
+  <button id="bPlay" type="button">Pause</button>
+  <button id="bSound" type="button" aria-pressed="false">Sound</button>
+  <input id="vol" type="range" min="0" max="100" step="1" value="100" aria-label="Volume" title="Volume">
+  <div id="seek" role="slider" tabindex="0" aria-label="Position in the film" aria-valuemin="0" aria-valuenow="0"><div id="prog"></div></div>
+  <span id="chap"></span>
+  <span id="time">0:00</span>
+  <button id="bWords" type="button" aria-pressed="true">Words</button>
+  <button id="bRoam" type="button">Meet the numbers</button>
+</nav>
+
+<div id="top">
+  <div id="tip" hidden><span id="tipText"></span><button id="bDir" type="button" hidden>Director&rsquo;s view</button></div>
+  <div id="fact" role="status" hidden>
+    <button id="factX" type="button" aria-label="Close">&times;</button>
+    <div class="fh"><span id="factN"></span><span id="factW"></span></div>
+    <p id="factT"></p>
+    <p id="factM"></p>
+    <p id="factD"></p>
+  </div>
+</div>
+
+<div id="start" class="card" hidden>
+  <div>
+    <h1>The Mathematician&rsquo;s Nightmare</h1>
+    <p class="by">The vision of Professor Squarepunt</p>
+    <p>A short film in three dimensions, after the story by Bertrand Russell in <a href="https://archive.org/details/nightmaresofemin032011mbp/page/40/mode/1up" target="_blank" rel="noopener"><i>Nightmares of Eminent Persons</i></a> (1954). <span id="runlen"></span></p>
+    <div class="row">
+      <button id="goSound" type="button" class="go">Play with sound</button>
+      <button id="goQuiet" type="button">Play silently</button>
+    </div>
+    <p style="font-size:13px;margin-top:18px">At any moment you can drag to watch from another side, and click a number to learn something about it.</p>
+    <p style="font-size:12px">The voices are computer-generated. The words retell Russell&rsquo;s story; they are not his text.</p>
+  </div>
+</div>
+
+<div id="end" class="card" hidden>
+  <div>
+    <h1>So much for Plato.</h1>
+    <p>Retold from Bertrand Russell, &ldquo;The Mathematician&rsquo;s Nightmare&rdquo;, in <a href="https://archive.org/details/nightmaresofemin032011mbp/page/40/mode/1up" target="_blank" rel="noopener"><i>Nightmares of Eminent Persons</i></a> (1954). The closing line is his.</p>
+    <div class="row">
+      <button id="again" type="button" class="go">Watch again</button>
+      <button id="roam2" type="button">Walk among the numbers</button>
+    </div>
+  </div>
+</div>
+
+<div id="veil" class="over">Summoning the numbers&hellip;</div>
