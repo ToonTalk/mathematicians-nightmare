@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- Pi at the center of the circles of numbers, in the film's own colors -->
+  <defs>
+    <radialGradient id="night" cx="50%" cy="42%" r="70%"><stop offset="0" stop-color="#2b1e60"/><stop offset="1" stop-color="#08061a"/></radialGradient>
+    <radialGradient id="floor" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#3a2a70"/><stop offset="1" stop-color="#17102f"/></radialGradient>
+  </defs>
+  <rect width="64" height="64" rx="14" fill="url(#night)"/>
+  <circle cx="32" cy="32" r="27.5" fill="none" stroke="#3d86d8" stroke-width="3"/>
+  <circle cx="32" cy="32" r="23" fill="none" stroke="#3fae5c" stroke-width="3"/>
+  <circle cx="32" cy="32" r="18.5" fill="url(#floor)" stroke="#f0b53a" stroke-width="3"/>
+  <path d="M20.500 28.500c1.600-3.400 3.900-4.500 7.400-4.500h16.100M27.800 24.500v8.500c0 4.200-1.100 6.900-3.300 9M37.200 24.500v12.700c0 3.300 1.900 4.900 5.300 4.300" fill="none" stroke="#ffe7a8" stroke-width="4.400" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

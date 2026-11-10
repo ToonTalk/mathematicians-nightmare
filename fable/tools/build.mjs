@@ -9,6 +9,9 @@ const root = path.dirname(path.dirname(fileURLToPath(import.meta.url)));
 const src = f => fs.readFileSync(path.join(root, 'src', f), 'utf8');
 const parts = fs.readdirSync(path.join(root, 'src')).filter(f => /^\d\d-.*\.js$/.test(f)).sort();
 const js = parts.map(f => `// ───── ${f} ─────\n` + src(f)).join('\n');
+// The tab icon travels inside the stand-alone page. favicon.png and apple-touch-icon.png (the same drawing, square)
+// are for browsers and phones that want a picture file.
+const icon = 'data:image/svg+xml,' + encodeURIComponent(src('favicon.svg').replace(/<!--.*?-->/gs, '').replace(/\s+/g, ' ').trim());
 const lengths = fs.existsSync(path.join(root, 'src', 'lengths.json')) ? src('lengths.json') : '{}';
 
 // Fail fast on a syntax error: check the module as .mjs so node parses it strictly.
@@ -26,5 +29,5 @@ ${js}
 `;
 fs.writeFileSync(path.join(root, 'nightmare.html'), page);
 fs.writeFileSync(path.join(root, 'index.html'),
-  `<!doctype html>\n<html lang="en">\n<head>\n<meta charset="utf-8">\n<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">\n<style>[hidden]{display:none!important}body{margin:0}</style>\n</head>\n<body>\n${page}</body>\n</html>\n`);
+  `<!doctype html>\n<html lang="en">\n<head>\n<meta charset="utf-8">\n<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">\n<link rel="icon" type="image/png" sizes="64x64" href="favicon.png">\n<link rel="icon" type="image/svg+xml" href="${icon}">\n<link rel="apple-touch-icon" href="apple-touch-icon.png">\n<meta name="theme-color" content="#07060f">\n<style>[hidden]{display:none!important}body{margin:0}</style>\n</head>\n<body>\n${page}</body>\n</html>\n`);
 console.log(`built: ${parts.length} parts, ${(page.length / 1024).toFixed(0)} KB`);
